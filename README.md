@@ -9,11 +9,11 @@
 -  Sweep algorithm. 
 -  Savings algorithm with its versions: sequential and parallel.
 
-Finally, it solves *four variants of VRP*:
-- 🔸 Capacitated Vehicle Routing Problem (CVRP).
-- 🔸 Multi Depot Vehicle Routing Problem (MDVRP).
-- 🔸 Truck and Trailer Routing Problem (TTRP).
-- 🔸 Heterogenous Fleet Vehicle Routing Problem (HFVRP).
+🔸Finally, it solves *four variants of VRP*:
+-  Capacitated Vehicle Routing Problem (CVRP).
+-  Multi Depot Vehicle Routing Problem (MDVRP).
+-  Truck and Trailer Routing Problem (TTRP).
+-  Heterogenous Fleet Vehicle Routing Problem (HFVRP).
 
 ## 🤓 To do ❗❗
 🔷First version of BHCVRP in Python.
