@@ -413,6 +413,81 @@ public class StrategyHeuristic {
 		return loaded;
 	}*/
 
+        //Método para la carga de datos de CVRP con coordenadas y listas de distancias
+        public boolean loadCVRP(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> idDepots, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles,
+			ArrayList<ArrayList<Double>> listDistances, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ProblemType typeProblem)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+            
+            boolean loaded = false;
+            
+            Problem.getProblem().setTypeProblem(typeProblem);
+            
+            if((idCustomers != null && !idCustomers.isEmpty()) && (requestCustomers != null && !requestCustomers.isEmpty()) && 
+				(idDepots != null && !idDepots.isEmpty()) && (countVehicles != null && !countVehicles.isEmpty()) && 
+				(capacityVehicles != null && !capacityVehicles.isEmpty()) && (listDistances != null && !listDistances.isEmpty()) && 
+				(axisXCustomers != null && !axisXCustomers.isEmpty()) && (axisYCustomers != null && !axisYCustomers.isEmpty()) && (axisXDepots != null && !axisXDepots.isEmpty()) && (axisYDepots != null && !axisYDepots.isEmpty()))
+		{
+			ArrayList<Customer> listCustomers = new ArrayList<Customer>();
+			ArrayList<Depot> listDepots = new ArrayList<Depot>();
+
+			for(int i = 0; i < idCustomers.size(); i ++)
+			{
+				Customer customer = new Customer();
+				customer.setIdCustomer(idCustomers.get(i).intValue());
+				customer.setRequestCustomer(requestCustomers.get(i).doubleValue());
+
+				Location locationCustomer = new Location();
+				locationCustomer.setAxisX(axisXCustomers.get(i));
+				locationCustomer.setAxisY(axisYCustomers.get(i));
+				customer.setLocationCustomer(locationCustomer);
+
+				listCustomers.add(customer);
+			}
+
+			DepotMDVRP depot = new DepotMDVRP();
+			depot.setIdDepot(idDepots.get(0));
+                        Location locationDepot = new Location();
+			locationDepot.setAxisX(axisXDepots.get(0));
+			locationDepot.setAxisY(axisYDepots.get(0));
+			depot.setLocationDepot(locationDepot);
+                                
+                        Fleet fleet = new Fleet();
+			fleet.setCountVehicles(countVehicles.get(0));
+			fleet.setCapacityVehicle(capacityVehicles.get(0));
+
+			ArrayList<Fleet> listFleets = new ArrayList<Fleet>();
+			listFleets.add(fleet);
+			depot.setListFleets(listFleets);
+
+			listDepots.add(depot);
+			
+
+			Problem.getProblem().setListCustomers(listCustomers);
+			Problem.getProblem().setListDepots(listDepots);
+                        
+                        //System.out.println("Llegué hasta aquí");
+
+			if((Problem.getProblem().getTotalCapacity() >= Problem.getProblem().getTotalRequest()))
+			{
+				loaded = true;
+                                //System.out.println("Se cargó");
+
+				Problem.getProblem().setCostMatrix(fillCostMatrix(listDistances));
+				//fillCostMatrix(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, DistanceType.Euclidean);
+
+				ArrayList<ArrayList<Integer>> listCountV = new ArrayList<ArrayList<Integer>>(); 
+				ArrayList<ArrayList<Double>> listCapV = new ArrayList<ArrayList<Double>>();
+
+				listCountV.add(countVehicles);
+				listCapV.add(capacityVehicles);	
+			}
+                        else
+                            System.out.println("La demanda total excede a la capacidad total");
+		}
+            
+            return loaded;
+                        
+        }
+        
 	/* M�todo encargado de cargar los datos del problema usando listas de distancias y las coordenadas*/
 	public boolean loadProblem(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> idDepots, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles,
 			ArrayList<ArrayList<Double>> listDistances, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ProblemType typeProblem, AssignmentType typeAssignment)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
@@ -487,13 +562,99 @@ public class StrategyHeuristic {
 					Controller.getController().executeAssignment(typeAssignment);
 					adapt(Controller.getController().getSolution().getClusters());
 
-					System.out.println(Controller.getController().getSolution().getClusters().size());
+					//System.out.println(Controller.getController().getSolution().getClusters().size());
 				}	
 			}
 		}
 		return loaded;
 	}
 
+        //Método para la carga de datos del HFVRP usando listas de distancias y coordenadas
+        public boolean loadHFVRP(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> idDepots, 
+                ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles, ArrayList<ArrayList<Double>> listDistances,
+                ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots,
+                ProblemType typeProblem, OrderType typeOrder)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+            boolean loaded = false;
+            
+            if((typeProblem != null) && (idCustomers != null && !idCustomers.isEmpty()) && (requestCustomers != null && !requestCustomers.isEmpty()) && 
+				(idDepots != null && !idDepots.isEmpty()) && (countVehicles != null && !countVehicles.isEmpty()) && 
+				(capacityVehicles != null && !capacityVehicles.isEmpty()) && (listDistances != null && !listDistances.isEmpty()) && 
+				(axisXCustomers != null && !axisXCustomers.isEmpty()) && (axisYCustomers != null && !axisYCustomers.isEmpty()) && (axisXDepots != null && !axisXDepots.isEmpty()) && (axisYDepots != null && !axisYDepots.isEmpty()))
+            {
+			ArrayList<Customer> listCustomers = new ArrayList<Customer>();
+			ArrayList<Depot> listDepots = new ArrayList<Depot>();
+
+			for(int i = 0; i < idCustomers.size(); i ++)
+			{
+				Customer customer = new Customer();
+				customer.setIdCustomer(idCustomers.get(i).intValue());
+				customer.setRequestCustomer(requestCustomers.get(i).doubleValue());
+
+				Location locationCustomer = new Location();
+				locationCustomer.setAxisX(axisXCustomers.get(i));
+				locationCustomer.setAxisY(axisYCustomers.get(i));
+				customer.setLocationCustomer(locationCustomer);
+
+				listCustomers.add(customer);
+			}
+
+			DepotMDVRP depot = new DepotMDVRP();
+			depot.setIdDepot(idDepots.get(0));
+                        Location locationDepot = new Location();
+			locationDepot.setAxisX(axisXDepots.get(0));
+			locationDepot.setAxisY(axisYDepots.get(0));
+			depot.setLocationDepot(locationDepot);
+                                
+                        Fleet fleet = new Fleet();
+			fleet.setCountVehicles(countVehicles.get(0));
+                        ArrayList<Fleet> listFleets = new ArrayList<Fleet>();
+                        
+                        for(int i = 0; i < (countVehicles.get(0)); i++)
+                        {
+                            fleet.setCapacityVehicle(capacityVehicles.get(i));
+                            listFleets.add(fleet);
+                            depot.setListFleets(listFleets);                    
+                        }
+
+                        listDepots.add(depot);
+                        
+			Problem.getProblem().setListCustomers(listCustomers);
+			Problem.getProblem().setListDepots(listDepots);
+                        
+                        System.out.println("Llegué hasta aquí");
+                        
+                        if((Problem.getProblem().getTotalCapacity() >= Problem.getProblem().getTotalRequest()))
+			{
+				loaded = true;
+                                System.out.println("Se cargó");
+
+				Problem.getProblem().setCostMatrix(fillCostMatrix(listDistances));
+				//fillCostMatrix(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, DistanceType.Euclidean);
+
+				ArrayList<ArrayList<Integer>> listCountV = new ArrayList<ArrayList<Integer>>(); 
+				ArrayList<ArrayList<Double>> listCapV = new ArrayList<ArrayList<Double>>();
+
+				listCountV.add(countVehicles);
+				listCapV.add(capacityVehicles);
+                                
+                                if(typeProblem.equals(ProblemType.HFVRP))
+                                {
+                                    if(typeOrder == null)
+                                        typeOrder = OrderType.Ascending;
+
+                                    Problem.getProblem().fillListCapacities(0); /***/
+                                    Tools.OrdenateMethod(Problem.getProblem().getListCapacities(), typeOrder);
+                                    
+                                    System.out.println("Ordenó las capacidades HFVRP");
+                                }
+			}
+                        else
+                            System.out.println("La demanda total excede a la capacidad total");
+                    
+            }
+            
+            return loaded;
+        }
 
 	/* M�todo encargado de cargar los datos del problema usando listas de distancias*/
 	public boolean loadProblem(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> typeCustomers, ArrayList<Integer> idDepots, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles, ArrayList<Integer> countTrailers, ArrayList<Double> capacityTrailers, ArrayList<ArrayList<Double>> listDistances, ProblemType typeProblem, AssignmentType typeAssignment, OrderType typeOrder)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
