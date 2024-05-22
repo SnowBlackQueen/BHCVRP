@@ -21,7 +21,7 @@ public abstract class Save extends Heuristic{
 		// TODO Auto-generated constructor stub
 	}
 
-/* Método que construye la matriz de ahorro */	
+/* Mï¿½todo que construye la matriz de ahorro */	
 	protected NumericMatrix fillSaveMatrix(int idDepot, ArrayList<Customer> CustomersToVisit){
 		int countCustomer = CustomersToVisit.size();
 		NumericMatrix saveMatrix = new NumericMatrix(countCustomer, countCustomer);
@@ -29,12 +29,14 @@ public abstract class Save extends Heuristic{
 		
 		for(int i = 0; i < countCustomer; i++)
 		{
+                    //Fill save matrix
 			for(int j = i; j < countCustomer; j++)
 			{
 				if(i == j)
 					saveMatrix.setItem(i, j, Double.NEGATIVE_INFINITY);
 				else 
 				{
+                                    //Problema aquÃ­
 					save = Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(CustomersToVisit.get(i).getIdCustomer()), Problem.getProblem().getPosElement(idDepot)) + Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(idDepot), Problem.getProblem().getPosElement(CustomersToVisit.get(j).getIdCustomer())) - (parameterShape * Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(CustomersToVisit.get(i).getIdCustomer()), Problem.getProblem().getPosElement(CustomersToVisit.get(j).getIdCustomer())));
 					saveMatrix.setItem(i, j, save);
 					saveMatrix.setItem(j, i, save);
@@ -45,7 +47,7 @@ public abstract class Save extends Heuristic{
 		return saveMatrix;
 	}
 
-	/* Método que devuelve la posición de una ruta */
+	/* Mï¿½todo que devuelve la posiciï¿½n de una ruta */
 	protected int getPositionRoute(ArrayList<Route> listRoutes, int idCustomer){
 		int index = -1;
 		boolean stop = false;
@@ -70,7 +72,7 @@ public abstract class Save extends Heuristic{
 		return index;
 	}
 	
-	/* Método para crear las rutas iniciales */
+	/* Mï¿½todo para crear las rutas iniciales */
 	protected ArrayList<Route> createInitialRoutes(ArrayList<Customer> listCustomers){
 		ArrayList<Route> listRoutes = new ArrayList<Route>();
 		Route route;
@@ -110,7 +112,7 @@ public abstract class Save extends Heuristic{
 	}	
 	
 	
-	/* Método que retorna la ruta que fue cerrada porque cumplia con la capacidad de un vehículo*/
+	/* Mï¿½todo que retorna la ruta que fue cerrada porque cumplia con la capacidad de un vehï¿½culo*/
 /*	public Route closedRoute(ArrayList<Route> listRoutes, double capacityTotal){
 		Route route = new Route();
 		boolean isPossible = false;

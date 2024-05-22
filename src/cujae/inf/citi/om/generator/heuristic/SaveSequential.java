@@ -12,7 +12,7 @@ import cujae.inf.citi.om.generator.solution.*;
 import cujae.inf.citi.om.matrix.NumericMatrix;
 import cujae.inf.citi.om.matrix.RowCol;
 
-/* Clase que modela la heurística de Ahorro en su versión Secuencial */
+/* Clase que modela la heurï¿½stica de Ahorro en su versiï¿½n Secuencial */
 
 public class SaveSequential extends Save {
 
@@ -21,7 +21,7 @@ public class SaveSequential extends Save {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* Método encargado de generar la solución */
+	/* Mï¿½todo encargado de generar la soluciï¿½n */
 	
 	public Solution getSolutionInicial() {
 		if(parameterShape <= 0)
@@ -36,6 +36,7 @@ public class SaveSequential extends Save {
 		{
 			CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getListCustomers());
 			posDepot = 0;
+                        idDepot = Problem.getProblem().getListDepots().get(posDepot).getIdDepot();
 		}	
 		else
 		{
@@ -50,6 +51,7 @@ public class SaveSequential extends Save {
 				{
 					found = true;
 					posDepot = i;
+                                        idDepot = Problem.getProblem().getListDepots().get(posDepot).getIdDepot();
 				}	
 				else
 					i++;
@@ -66,7 +68,9 @@ public class SaveSequential extends Save {
 		//inspect ?
 		
 		int cantCustomers = CustomersToVisit.size();
+                
 		NumericMatrix saveMatrix = new NumericMatrix(cantCustomers, cantCustomers);
+                
 		saveMatrix = fillSaveMatrix(idDepot, CustomersToVisit);
 
 		Random random = new Random ();
@@ -526,22 +530,28 @@ public class SaveSequential extends Save {
 	/* Metodo que verifica si se pueden unir dos rutas */
 	public int checkingMerge(Route currentRoute, Route saveRoute, double capacityTruck, double capacityTrailer, boolean posSave){
 		int join = 0;
-		
-		RouteType typeRouteIni = null;
 		double requestTotal = currentRoute.getRequestRoute() + saveRoute.getRequestRoute();
-		 
-		if(posSave) //fin
-			typeRouteIni = ((RouteTTRP)currentRoute).getTypeRoute();
-		else
-			typeRouteIni = ((RouteTTRP)saveRoute).getTypeRoute();	
-	
-		if(typeRouteIni.equals(RouteType.PTR))
-			if(requestTotal > capacityTruck)
-				join = -1;
-		else
-			if((typeRouteIni.equals(RouteType.PVR)) || (typeRouteIni.equals(RouteType.CVR)))	
-				if(requestTotal > (capacityTruck + capacityTrailer))
-					join = -1;
+                
+                if(Problem.getProblem().getTypeProblem().equals(ProblemType.TTRP)){
+                    RouteType typeRouteIni = null;
+                    
+                    if(posSave) //fin
+                            typeRouteIni = ((RouteTTRP)currentRoute).getTypeRoute();
+                    else
+                            typeRouteIni = ((RouteTTRP)saveRoute).getTypeRoute();	
+
+                    if(typeRouteIni.equals(RouteType.PTR))
+                            if(requestTotal > capacityTruck)
+                                    join = -1;
+                    else
+                            if((typeRouteIni.equals(RouteType.PVR)) || (typeRouteIni.equals(RouteType.CVR)))	
+                                    if(requestTotal > (capacityTruck + capacityTrailer))
+                                            join = -1;
+                }
+                else
+                    if(requestTotal > capacityTruck)
+                                    join = -1;
+		
 		
 		return join;
 	}

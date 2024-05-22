@@ -94,6 +94,24 @@ public class LoadFile {
 			capacityVehicles.add(capacityFleet);
 		}
 	}
+        
+        public void loadCapacityVehiclesForHFVRP(ArrayList<ArrayList<Double>> capacityVehicles){
+            StringTokenizer tool = new StringTokenizer(instanceFile.get(1), " ");
+            ArrayList<Double> capacityFleet = new ArrayList<>();
+            while (tool.hasMoreTokens()) {
+                capacityFleet.add(Double.valueOf(tool.nextToken()));
+            }
+            
+            capacityVehicles.add(capacityFleet);
+
+//            // Dividir las capacidades de los vehículos en sublistas según la cantidad de vehículos por depósito
+//            int startIndex = 0;
+//            for (ArrayList<Integer> countList : countVehicles) {
+//                int endIndex = startIndex + countList.size();
+//                capacityVehicles.add(new ArrayList<>(capacityFleet.subList(startIndex, endIndex)));
+//                startIndex = endIndex;
+//            }
+        }
 
 	public void loadCustomers(ArrayList<Integer> idCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> requestCustomers){		
 		int totalCustomers = loadTotalCustomers();

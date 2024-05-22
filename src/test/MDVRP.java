@@ -21,7 +21,7 @@ public class MDVRP
                                         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
     	try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_CMT20.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_SaveSequential20.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
@@ -56,7 +56,7 @@ public class MDVRP
 			loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, 
                                 listDistances);
 			
-                        HeuristicType heuristicType = HeuristicType.CMT;
+                        HeuristicType heuristicType = HeuristicType.SaveSequential;
 /*			FleetAux fleet = loadFile.loadCountVehiclesFleet();
 			int countCustomers = loadFile.loadCountCustomers();
 	    	int countDepots = loadFile.loadCountDepots();
