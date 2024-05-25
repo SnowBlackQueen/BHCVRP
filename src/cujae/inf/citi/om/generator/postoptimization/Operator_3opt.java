@@ -25,15 +25,19 @@ public class Operator_3opt extends StepOptimization{
 		int keySecond = random.nextInt(route.getListIdCustomers().size());
 		int keyThird = random.nextInt(route.getListIdCustomers().size());	
 
-		while((keyFirst == keySecond)||(keyFirst == keyThird)||(keySecond == keyThird)||(Math.abs(keyFirst - keySecond) <= 1)||(Math.abs(keyFirst - keyThird) <= 1)||(Math.abs(keySecond - keyThird) <= 1)
+		if(route.getListIdCustomers().size() > 5){
+                    while((keyFirst == keySecond)||(keyFirst == keyThird)||(keySecond == keyThird)||(Math.abs(keyFirst - keySecond) <= 1)||(Math.abs(keyFirst - keyThird) <= 1)||(Math.abs(keySecond - keyThird) <= 1)
 			||((keyFirst == route.getListIdCustomers().size()-1) && (keySecond == 0 || keyThird == 0))
 			||((keySecond == route.getListIdCustomers().size()-1) && (keyFirst == 0 || keyThird == 0))
 			||((keyThird == route.getListIdCustomers().size()-1) && (keySecond == 0 || keyFirst == 0)))
-		{
-			keyFirst = random.nextInt(route.getListIdCustomers().size());
-			keySecond = random.nextInt(route.getListIdCustomers().size());
-			keyThird = random.nextInt(route.getListIdCustomers().size());	
-		}
+                    {
+                            keyFirst = random.nextInt(route.getListIdCustomers().size());
+                            keySecond = random.nextInt(route.getListIdCustomers().size());
+                            keyThird = random.nextInt(route.getListIdCustomers().size());	
+                    }
+                    
+                }
+                
 
 		if(((Math.min(keyFirst, keySecond)) == keyFirst) && ((Math.min(keyFirst, keyThird)) == keyFirst))
 		{

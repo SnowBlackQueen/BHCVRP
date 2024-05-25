@@ -21,7 +21,7 @@ public class MDVRP
                                         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
     	try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_SaveSequential20.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_SaveSequential21.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);

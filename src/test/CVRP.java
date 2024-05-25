@@ -26,7 +26,7 @@ public class CVRP {
     public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Instancia_CVRP_4/Resultado_SaveSequential20.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Instancia_CVRP_4/Resultado_SaveSequential21.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);

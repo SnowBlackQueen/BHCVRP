@@ -94,7 +94,8 @@ public class MoleJameson extends Heuristic{
 					for(int i = 0; i < CustomersToVisit.size(); i++) 
 					{
 						if(capacityVehicle >= (requestRoute + CustomersToVisit.get(i).getRequestCustomer()))
-							listBestPositions.add(getPositionWithBestCost(route, CustomersToVisit.get(i).getIdCustomer()));
+
+                                                   listBestPositions.add(getPositionWithBestCost(route, CustomersToVisit.get(i).getIdCustomer()));
 						else
 							countNoFeasible++;		
 					}
@@ -134,7 +135,8 @@ public class MoleJameson extends Heuristic{
 							route.getListIdCustomers().remove(0);
 							route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 							
-							ThreeOpt.toOptimize(route);
+							if(route.getListIdCustomers().size() >= 6)
+                                                            ThreeOpt.toOptimize(route);
 							
 							route.getListIdCustomers().add(0, idDepot);
 							route.getListIdCustomers().add(idDepot);	
@@ -180,7 +182,8 @@ public class MoleJameson extends Heuristic{
 							route.getListIdCustomers().remove(0);
 							route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 							
-							ThreeOpt.toOptimize(route);
+                                                        if(route.getListIdCustomers().size() >= 6)
+                                                            ThreeOpt.toOptimize(route);
 							
 							route.getListIdCustomers().add(0, idDepot);
 							route.getListIdCustomers().add(idDepot); 
@@ -251,8 +254,9 @@ public class MoleJameson extends Heuristic{
 							route.getListIdCustomers().remove(0);
 							route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 							
-							ThreeOpt.toOptimize(route);
-							
+                                                        if(route.getListIdCustomers().size() >= 6)
+                                                            ThreeOpt.toOptimize(route);
+                                                        
 							route.getListIdCustomers().add(0, idDepot);
 							route.getListIdCustomers().add(idDepot);
 						}
@@ -297,7 +301,8 @@ public class MoleJameson extends Heuristic{
 							route.getListIdCustomers().remove(0);
 							route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 							
-							ThreeOpt.toOptimize(route);
+							if(route.getListIdCustomers().size() >= 6)
+                                                            ThreeOpt.toOptimize(route);
 							
 							route.getListIdCustomers().add(0, idDepot);
 							route.getListIdCustomers().add(idDepot);
@@ -388,7 +393,8 @@ public class MoleJameson extends Heuristic{
 								route.getListIdCustomers().remove(0);
 								route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 								
-								ThreeOpt.toOptimize(route);
+								if(route.getListIdCustomers().size() >= 6)
+                                                                    ThreeOpt.toOptimize(route);
 								
 								route.getListIdCustomers().add(0, idDepot);
 								route.getListIdCustomers().add(idDepot); 
@@ -434,7 +440,8 @@ public class MoleJameson extends Heuristic{
 								route.getListIdCustomers().remove(0);
 								route.getListIdCustomers().remove((route.getListIdCustomers().size() - 1));
 							
-								ThreeOpt.toOptimize(route);
+                                                                if(route.getListIdCustomers().size() >= 6)
+                                                                    ThreeOpt.toOptimize(route);
 							
 								route.getListIdCustomers().add(0, idDepot);
 								route.getListIdCustomers().add(idDepot);
@@ -577,7 +584,7 @@ public class MoleJameson extends Heuristic{
 		return solution;
 	}
 
-	/* Método que devuelve la métrica del cliente con el mejor C1*/	
+	/* Mï¿½todo que devuelve la mï¿½trica del cliente con el mejor C1*/	
 	private Metric getPositionWithBestCost(Route route, int idCustomer){
 		int bestPosition = 1;
 		double bestCost = 0.0;
@@ -611,7 +618,7 @@ public class MoleJameson extends Heuristic{
 		return bestC1;
 	}
 	
-	/* Método que calcula la métrica c1 */
+	/* Mï¿½todo que calcula la mï¿½trica c1 */
 	private double calculateC1(int previousElement, int nextElement, int currentElement){
 		double costFirst = Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(previousElement), Problem.getProblem().getPosElement(currentElement));
 		double costSecond = Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(currentElement), Problem.getProblem().getPosElement(nextElement));
@@ -625,7 +632,7 @@ public class MoleJameson extends Heuristic{
 		return ((parameterC2 * costToDepot) - costC1);
 	}
 	
-	/* Método que devuelve el cliente con el mejor C2*/
+	/* Mï¿½todo que devuelve el cliente con el mejor C2*/
 	private Metric getMJCustomer(ArrayList<Metric> listBestPositions, int idDepot){
 		double currentValue = 0.0;
 		double maxValue = 0.0;
@@ -653,7 +660,7 @@ public class MoleJameson extends Heuristic{
 		return listBestPositions.remove(positionMJ);
 	}
 	
-	/* Método que dice si existen clientes de tipo TC en la ruta construida */
+	/* Mï¿½todo que dice si existen clientes de tipo TC en la ruta construida */
 	private boolean existTC(Route route){
 		boolean exist = false;
 		int i = 0;
