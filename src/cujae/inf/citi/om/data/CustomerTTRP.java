@@ -14,6 +14,11 @@ public class CustomerTTRP extends Customer{
 		super();
 		this.typeCustomer = typeCustomer;
 	}
+        
+        public CustomerTTRP(int idCustomer, double requestCustomer, Location locationCustomer, int typeCustomer){
+            super(idCustomer, requestCustomer, locationCustomer);
+            this.setTypeCustomer(typeCustomer);
+        }
 
 	public CustomerType getTypeCustomer() {
 		return typeCustomer;

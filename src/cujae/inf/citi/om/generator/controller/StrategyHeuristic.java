@@ -144,16 +144,20 @@ public class StrategyHeuristic {
 	}
 
 	/* M�todo encargado de cargar los datos de los clientes TTRP sin coordenadas*/
-	private ArrayList<Customer> loadCustomerTTRP(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> typeCustomers){
-		ArrayList<Customer> listCustomers = new ArrayList<Customer>();
+        private ArrayList<Customer> loadCustomerTTRP(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> typeCustomers) {
+            ArrayList<Customer> listCustomers = loadCustomer(idCustomers, requestCustomers);
 
-		listCustomers = loadCustomer(idCustomers, requestCustomers);
 
-		for (int i = 0; i < listCustomers.size(); i++) 
-			((CustomerTTRP)listCustomers.get(i)).setTypeCustomer(typeCustomers.get(i).intValue());
+            for (int i = 0; i < listCustomers.size(); i++) {
+                Customer c = listCustomers.get(i);
 
-		return listCustomers;
-	}
+                CustomerTTRP customerTTRP = new CustomerTTRP(c.getIdCustomer(), c.getRequestCustomer(), c.getLocationCustomer(), typeCustomers.get(i).intValue());
+
+                listCustomers.set(i, customerTTRP);
+            }
+
+            return listCustomers;
+        }
 
 	/* M�todo encargado de cargar los datos de los dep�sitos y las flotas con coordenadas y asignaci�n predeterminada*/
 	private ArrayList<Depot> loadDepot(ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ArrayList<ArrayList<Integer>> idAssignedCustomers, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles){
@@ -312,8 +316,10 @@ public class StrategyHeuristic {
 
 		for (int i = 0; i < listDepots.size(); i++) 
 		{
-			((FleetTTRP)listDepots.get(i).getListFleets().get(0)).setCountTrailers(countTrailers.get(i));
-			((FleetTTRP)listDepots.get(i).getListFleets().get(0)).setCapacityTrailer(capacityTrailers.get(i));			
+                    Fleet f = listDepots.get(i).getListFleets().get(0);
+                    FleetTTRP fleetTTRP = new FleetTTRP(f.getCountVehicles(), f.getCapacityVehicle(), countTrailers.get(i), capacityTrailers.get(i));
+                    
+                    listDepots.get(i).getListFleets().set(0, fleetTTRP);
 		}
 
 		return listDepots;
@@ -620,13 +626,14 @@ public class StrategyHeuristic {
                         
 			Problem.getProblem().setListCustomers(listCustomers);
 			Problem.getProblem().setListDepots(listDepots);
+                        Problem.getProblem().setTypeProblem(typeProblem);
                         
-                        System.out.println("Llegué hasta aquí");
+                        //System.out.println("Llegué hasta aquí");
                         
                         if((Problem.getProblem().getTotalCapacity() >= Problem.getProblem().getTotalRequest()))
 			{
 				loaded = true;
-                                System.out.println("Se cargó");
+                                //System.out.println("Se cargó");
 
 				Problem.getProblem().setCostMatrix(fillCostMatrix(listDistances));
 				//fillCostMatrix(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, DistanceType.Euclidean);
@@ -645,7 +652,7 @@ public class StrategyHeuristic {
                                     Problem.getProblem().fillListCapacities(0); /***/
                                     Tools.OrdenateMethod(Problem.getProblem().getListCapacities(), typeOrder);
                                     
-                                    System.out.println("Ordenó las capacidades HFVRP");
+                                    //System.out.println("Ordenó las capacidades HFVRP");
                                 }
 			}
                         else

@@ -1,27 +1,25 @@
-package cujae.inf.citi.om.data;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package test;
 
-/* Clase que modela los datos de una flota en el TTRP*/
-
-public class FleetTTRP extends Fleet {
-	
-	private int countTrailers;
+/**
+ *
+ * @author kmych
+ */
+public class FleetTTRPAux extends FleetAux {
+    private int countTrailers;
 	private double capacityTrailer;
 
-	public FleetTTRP() {
+	public FleetTTRPAux() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public FleetTTRP(int countTrailers,
+	public FleetTTRPAux(int countTrailers,
 			double capacityTrailer) {
 		super();
-		this.countTrailers = countTrailers;
-		this.capacityTrailer = capacityTrailer;
-	}
-        
-        public FleetTTRP(int countVehicles, double capacityVehicle, int countTrailers,
-			double capacityTrailer) {
-		super(countVehicles, capacityVehicle);
 		this.countTrailers = countTrailers;
 		this.capacityTrailer = capacityTrailer;
 	}
