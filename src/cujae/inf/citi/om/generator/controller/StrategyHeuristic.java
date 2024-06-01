@@ -26,6 +26,8 @@ import cujae.inf.citi.om.heuristic.controller.Controller;
 import cujae.inf.citi.om.heuristic.output.Cluster;
 import cujae.inf.citi.om.matrix.NumericMatrix;
 import cujae.inf.citi.om.tools.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StrategyHeuristic {
 
@@ -611,17 +613,44 @@ public class StrategyHeuristic {
 			locationDepot.setAxisY(axisYDepots.get(0));
 			depot.setLocationDepot(locationDepot);
                                 
-                        Fleet fleet = new Fleet();
-			fleet.setCountVehicles(countVehicles.get(0));
+                        //Fleet fleet = new Fleet();
+                        int countVeh = countVehicles.get(0);
+                        /*ArrayList<Double> capacities = new ArrayList<Double>();
+			//fleet.setCountVehicles(countVehicles.get(0));
                         ArrayList<Fleet> listFleets = new ArrayList<Fleet>();
                         
-                        for(int i = 0; i < (countVehicles.get(0)); i++)
+                        for(int i = 0; i < countVeh; i++) {
+                            capacities.add(capacityVehicles.get(i));
+                        }
+
+                        
+                        for(int i = 0; i < countVeh; i++)
                         {
                             fleet.setCapacityVehicle(capacityVehicles.get(i));
                             listFleets.add(fleet);
                             depot.setListFleets(listFleets);                    
                         }
 
+                        listDepots.add(depot);*/
+                        HashMap<Double, Integer> capacityCountMap = new HashMap<>();
+                        for(int i = 0; i < countVeh; i++) {
+                            double capacity = capacityVehicles.get(i);
+                            if (capacityCountMap.containsKey(capacity)) {
+                                capacityCountMap.put(capacity, capacityCountMap.get(capacity) + 1);
+                            } else {
+                                capacityCountMap.put(capacity, 1);
+                            }
+                        }
+
+                        // Crear las flotas y agregarlas al depósito
+                        for (Map.Entry<Double, Integer> entry : capacityCountMap.entrySet()) {
+                            Fleet fleet = new Fleet();
+                            fleet.setCountVehicles(entry.getValue());
+                            fleet.setCapacityVehicle(entry.getKey());
+                            depot.getListFleets().add(fleet);
+                        }
+
+                        // Agregar el depósito a la lista de depósitos
                         listDepots.add(depot);
                         
 			Problem.getProblem().setListCustomers(listCustomers);
@@ -654,6 +683,8 @@ public class StrategyHeuristic {
                                     
                                     //System.out.println("Ordenó las capacidades HFVRP");
                                 }
+                                else
+                                    Tools.OrdenateMethod(Problem.getProblem().getListCapacities(), typeOrder);
 			}
                         else
                             System.out.println("La demanda total excede a la capacidad total");

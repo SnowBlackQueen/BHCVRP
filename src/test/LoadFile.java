@@ -1,5 +1,6 @@
 package test;
 
+import cujae.inf.citi.om.data.CustomerType;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -69,9 +70,41 @@ public class LoadFile {
 		for(int i = 0; i < totalDepots; i++)
 			countVehicles.add(countFleet);
 	}
+        
+        public void loadCountVehiclesForDepotTTRP(ArrayList<Integer> countVehicles){
+		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+                tool.nextToken();
+		tool.nextToken();
+                tool.nextToken();
+		int totalVehicles = Integer.valueOf(tool.nextToken());
+		int totalDepots = 1;
+		
+		for(int i = 0; i < totalDepots; i++)
+			countVehicles.add(totalVehicles);
+	}
+        
+        public void loadCountTrailersForDepotTTRP(ArrayList<Integer> countTrailers){
+		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+                tool.nextToken();
+		tool.nextToken();
+                tool.nextToken();
+                tool.nextToken();
+		int totalTrailers = Integer.valueOf(tool.nextToken());
+		int totalDepots = 1;
+		
+		for(int i = 0; i < totalDepots; i++)
+			countTrailers.add(totalTrailers);
+	}
 	
 	public int loadTotalCustomers(){
 		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+		tool.nextToken();
+		return Integer.valueOf(tool.nextToken());
+	}
+        
+        public int loadTotalCustomersTTRP(){
+		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+		tool.nextToken();
 		tool.nextToken();
 		return Integer.valueOf(tool.nextToken());
 	}
@@ -92,6 +125,27 @@ public class LoadFile {
 			ArrayList<Double> capacityFleet = new ArrayList<Double>();
 			capacityFleet.add(Double.valueOf(tool.nextToken()));
 			capacityVehicles.add(capacityFleet);
+		}
+	}
+        
+        public void loadCapacityVehiclesTTRP(ArrayList<Double> capacityVehicles){
+		int totalDepots = 1;
+		
+		for(int i = 1; i < (totalDepots + 1); i++)		
+		{
+			StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+			capacityVehicles.add(Double.valueOf(tool.nextToken()));
+		}
+	}
+        
+        public void loadCapacityTrailersTTRP(ArrayList<Double> capacityTrailers){
+		int totalDepots = 1;
+		
+		for(int i = 1; i < (totalDepots + 1); i++)		
+		{
+			StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+                        tool.nextToken();
+			capacityTrailers.add(Double.valueOf(tool.nextToken()));
 		}
 	}
         
@@ -126,6 +180,21 @@ public class LoadFile {
 			requestCustomers.add(Double.valueOf(tool.nextToken()));
 		}
 	}
+        
+        public void loadCustomersTTRP(ArrayList<Integer> idCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> typeCustomers){		
+		int totalCustomers = loadTotalCustomers();
+		int totalDepots = 1;
+		
+		for(int i = (totalDepots + 1); i < (totalCustomers + totalDepots + 1); i++)		
+		{
+			StringTokenizer tool = new StringTokenizer(instanceFile.get(i), " ");
+			idCustomers.add(Integer.valueOf(tool.nextToken()));
+			axisXCustomers.add(Double.valueOf(tool.nextToken()));
+			axisYCustomers.add(Double.valueOf(tool.nextToken()));
+			requestCustomers.add(Double.valueOf(tool.nextToken()));
+                        typeCustomers.add(Integer.valueOf(tool.nextToken()));
+		}
+	}
 
 	public void loadDepots(ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots){		
 		int totalCustomers = loadTotalCustomers();
@@ -138,7 +207,15 @@ public class LoadFile {
 			axisXDepots.add(Double.valueOf(tool.nextToken()));
 			axisYDepots.add(Double.valueOf(tool.nextToken()));
 		}
-	}	
+	}
+        
+        public void loadDepotsTTRP(ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots){		
+		StringTokenizer tool = new StringTokenizer(instanceFile.get(1), " ");
+		idDepots.add(Integer.valueOf(tool.nextToken()));
+		axisXDepots.add(Double.valueOf(tool.nextToken()));
+		axisYDepots.add(Double.valueOf(tool.nextToken()));
+		
+	}
 	
     public Double calculateDistance(double axisXStart, double axisYStart, double axisXEnd, double axisYEnd) {
     	double distance = 0.0;
@@ -192,6 +269,17 @@ public class LoadFile {
 		fleet.setCountVehicles(Integer.valueOf(tool.nextToken()));
 		return fleet;
 	}
+        
+        public FleetTTRPAux loadCountVehiclesTTRPFleet(){
+		FleetTTRPAux fleet = new FleetTTRPAux();
+		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");
+		tool.nextToken();
+                tool.nextToken();
+                tool.nextToken();
+		fleet.setCountVehicles(Integer.valueOf(tool.nextToken()));
+                fleet.setCountTrailers(Integer.valueOf(tool.nextToken()));
+		return fleet;
+	}
 	
 	public int loadCountCustomers(){
 		StringTokenizer tool = new StringTokenizer(instanceFile.get(0), " ");	
@@ -238,6 +326,26 @@ public class LoadFile {
 		}
 		return listCustomer;
 	}
+        
+        public ArrayList<CustomerTTRPAux> loadCustomersTTRP(){		
+		ArrayList<CustomerTTRPAux> listCustomer = new ArrayList<CustomerTTRPAux>();
+		
+		for(int i = loadCountDepots() + 1; i < loadCountCustomers() + loadCountDepots() + 1; i++)		
+		{
+			StringTokenizer tool = new StringTokenizer(instanceFile.get(i), " ");
+			
+			CustomerTTRPAux customer = new CustomerTTRPAux();	
+			customer.setIdCustomer(Integer.valueOf(tool.nextToken()));
+			customer.setAxisX(Double.valueOf(tool.nextToken()));
+			customer.setAxisY(Double.valueOf(tool.nextToken()));
+			customer.setRequestCustomer(Double.valueOf(tool.nextToken()));
+                        customer.setTypeCustomer(Integer.valueOf(tool.nextToken()));
+			
+			listCustomer.add(customer);
+		}
+		return listCustomer;
+	}
+        
 	
 	public ArrayList<DepotAux> loadDepots(){		
 		ArrayList<DepotAux> listDepots = new ArrayList<DepotAux>();
