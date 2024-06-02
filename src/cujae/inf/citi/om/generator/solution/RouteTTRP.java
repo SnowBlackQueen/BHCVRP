@@ -24,6 +24,13 @@ public class RouteTTRP extends Route{
 		this.listAccessVC = listAccessVC;
 		// TODO Auto-generated constructor stub
 	}
+        
+        public RouteTTRP(ArrayList<Integer> listIdCustomers, double requestRoute, double costRoute, int idDepot,
+                ArrayList<Integer> listAccessVC, RouteType typeRoute){
+            super(listIdCustomers, requestRoute, costRoute, idDepot, listAccessVC);
+            setListAccessVC(listAccessVC);
+            setTypeRoute(typeRoute);
+        }
 
 	public RouteType getTypeRoute() {
 		return typeRoute;
@@ -62,11 +69,11 @@ public class RouteTTRP extends Route{
 		this.listAccessVC = listAccessVC;
 	}
 	
-	/* Método que calcula el costo de una ruta con subtour (CVR) incluyendo los clientes de tipo VC en las sub-rutas*/
+	/* Mï¿½todo que calcula el costo de una ruta con subtour (CVR) incluyendo los clientes de tipo VC en las sub-rutas*/
 	public Double getCostRouteWithSubTour(){
 		Double costRoute = 0.0;
 		Double requestSubRoute = 0.0;
-		Integer customerIni = null;
+		Integer customerIni = 0;
 		Integer customerNext = null;
 		CustomerType typeCustomerIni = null;
 		CustomerType typeCustomerNext = null;
@@ -75,7 +82,7 @@ public class RouteTTRP extends Route{
 		
 		int posCustomerIni = -1;
 		int posCustomerNext = -1;
-		int posCustomerLastVC = -1;
+		int posCustomerLastVC = 0;
 
 		double capacityVehicle =  Problem.getProblem().getListDepots().get(0).getListFleets().get(0).getCapacityVehicle();	
 

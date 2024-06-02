@@ -182,7 +182,7 @@ public class LoadFile {
 	}
         
         public void loadCustomersTTRP(ArrayList<Integer> idCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> typeCustomers){		
-		int totalCustomers = loadTotalCustomers();
+		int totalCustomers = loadTotalCustomersTTRP();
 		int totalDepots = 1;
 		
 		for(int i = (totalDepots + 1); i < (totalCustomers + totalDepots + 1); i++)		

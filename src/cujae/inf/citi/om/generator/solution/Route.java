@@ -27,6 +27,7 @@ public class Route {
 		this.requestRoute = requestRoute;
 		this.costRoute = 0.0;
 		this.idDepot = idDepot;
+                listAccessVC = new ArrayList<Integer>();
 	}
 
 	public ArrayList<Integer> getListIdCustomers() {
@@ -61,7 +62,7 @@ public class Route {
 		this.idDepot = idDepot;
 	}
 	
-	/* Método que calcula el costo de una ruta simple (PTR ó PVR) */
+	/* Mï¿½todo que calcula el costo de una ruta simple (PTR ï¿½ PVR) */
 	public Double getCostSingleRoute(){
 		Double costRoute = 0.0;
 		int customerIni;

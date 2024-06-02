@@ -76,6 +76,7 @@ public abstract class Save extends Heuristic{
 	protected ArrayList<Route> createInitialRoutes(ArrayList<Customer> listCustomers){
 		ArrayList<Route> listRoutes = new ArrayList<Route>();
 		Route route;
+                ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
 
 		for(int i = 0; i < listCustomers.size(); i++)
 		{
@@ -86,10 +87,14 @@ public abstract class Save extends Heuristic{
 			
 			if(Problem.getProblem().getTypeProblem().equals(ProblemType.TTRP))
 			{
-				if(((CustomerTTRP)listCustomers.get(i)).getTypeCustomer().equals(CustomerType.VC))
+				/*if(((CustomerTTRP)listCustomers.get(i)).getTypeCustomer().equals(CustomerType.VC))
 					((RouteTTRP)route).setTypeRoute(RouteType.PVR);
 				else
-					((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+					((RouteTTRP)route).setTypeRoute(RouteType.PTR);*/
+                            
+                            route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), 
+                                    route.getCostRoute(), route.getIdDepot(), listAccessVC, 
+                          ((CustomerTTRP) listCustomers.get(i)).getTypeCustomer().equals(CustomerType.VC) ? RouteType.PVR : RouteType.PTR);
 			}
 
 			listRoutes.add(route);

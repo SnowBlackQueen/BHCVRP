@@ -209,7 +209,7 @@ public class CMT extends Heuristic{
 						solution.getListRoutes().add(route);
 					}
 					
-					//Si quedan clientes y no quedan vehículos
+					//Si quedan clientes y no quedan vehï¿½culos
 					if(!CustomersToVisit.isEmpty()) 
 					{
 						route = new Route();
@@ -311,13 +311,14 @@ public class CMT extends Heuristic{
 			
 			case 4:
 			{
+                            ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
 				while(!CustomersToVisit.isEmpty())
 				{	
 					boolean isTC = false;
 					double capacityTrailer = ((FleetTTRP)Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0)).getCapacityTrailer();
 					double capacityTotal = 0.0;
 					
-					CustomerType typeCustomer;
+					CustomerType typeCustomer = CustomerType.TC; //ARREGLAR !!!
 				
 					listCandidateRoutes = doFirstPhase(CustomersToVisit, idDepot, posDepot, capacityVehicle, countVehicles);
 					listRootCustomers = updateCustomersToVisit(listCandidateRoutes, CustomersToVisit);
@@ -335,7 +336,10 @@ public class CMT extends Heuristic{
 						rootCustomer = new Customer();
 						rootCustomer = getCustomerByID(route.getListIdCustomers().get(0).intValue(), listRootCustomers);
 						requestRoute = rootCustomer.getRequestCustomer();
-						typeCustomer = ((CustomerTTRP)rootCustomer).getTypeCustomer();	
+                                                
+                                                // ARREGLAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                rootCustomer = new CustomerTTRP(rootCustomer.getIdCustomer(), rootCustomer.getRequestCustomer(), rootCustomer.getLocationCustomer(), typeCustomer.ordinal());
+						//typeCustomer = ((CustomerTTRP)rootCustomer).getTypeCustomer();	
 						listRootCustomers.remove(rootCustomer);
 						route.setIdDepot(idDepot);
 						
@@ -375,13 +379,16 @@ public class CMT extends Heuristic{
 						route.setRequestRoute(requestRoute);
 
 						if(typeCustomer.equals(CustomerType.TC))
-							((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+							route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
 						else
 						{
 							if(isTC)
-								((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
 							else
-								((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
 						}
 							
 						//route.setIdDepot(idDepot);
@@ -396,7 +403,7 @@ public class CMT extends Heuristic{
 		return solution;
 	}
 
-	/* Método que realiza la primera fase del algoritmo CMT*/
+	/* Mï¿½todo que realiza la primera fase del algoritmo CMT*/
 	private ArrayList<Route> doFirstPhase(ArrayList<Customer> CustomersToVisit, int idDepot, int posDepot, double capacityVehicle, int countVehicles){
 		ArrayList<Route> listRoutes = new ArrayList<Route>();
 		ArrayList<Customer> listCustomers = new ArrayList<Customer>(CustomersToVisit);
@@ -639,7 +646,7 @@ public class CMT extends Heuristic{
 		return listRoutes;
 	}
 	
-	/* Método que calcula el costo de insertar un cliente en la ruta */
+	/* Mï¿½todo que calcula el costo de insertar un cliente en la ruta */
 	private double calculateCostOfCMT(int idDepot, int currentElement, int nextElement){
 		double costDepotToNext = Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(idDepot), Problem.getProblem().getPosElement(nextElement));
 		double costNextToCurrent = Problem.getProblem().getCostMatrix().getItem(Problem.getProblem().getPosElement(nextElement), Problem.getProblem().getPosElement(currentElement));
@@ -647,7 +654,7 @@ public class CMT extends Heuristic{
 		return (costDepotToNext + (parameterL * costNextToCurrent)); 
 	}
 	
-	/* Método que vacia la lista de rutas dejando solo el primer cliente en cada una */
+	/* Mï¿½todo que vacia la lista de rutas dejando solo el primer cliente en cada una */
 	private void emptyRoutes(ArrayList<Route> listRoutes){
 		for(int i = 0; i < listRoutes.size(); i++)
 		{
@@ -658,7 +665,7 @@ public class CMT extends Heuristic{
 		}
 	}
 	
-	/* Método que devuelve en una lista los clientes a eliminar que ya pertenecen a una ruta */
+	/* Mï¿½todo que devuelve en una lista los clientes a eliminar que ya pertenecen a una ruta */
 	private ArrayList<Customer> updateCustomersToVisit(ArrayList<Route> listRoutes, ArrayList<Customer> CustomersToVisit){	
 		ArrayList<Customer> listRootCustomers = new ArrayList<Customer>();
 		
@@ -682,7 +689,7 @@ public class CMT extends Heuristic{
 		return listRootCustomers;
 	}
 	
-	/* Método que retorna la lista ordenada con los costos CMT en cada ruta para cada cliente*/
+	/* Mï¿½todo que retorna la lista ordenada con los costos CMT en cada ruta para cada cliente*/
 	private ArrayList<ArrayList<Metric>> calculateCostCMTByCustomer(int idDepot, ArrayList<Customer> listCustomers, ArrayList<Route> listRoutes){
 		ArrayList<ArrayList<Metric>> listMetricsCMTByCustomer = new ArrayList<ArrayList<Metric>>();
 		ArrayList<Metric> listMetricCMT;
@@ -709,7 +716,7 @@ public class CMT extends Heuristic{
 		return listMetricsCMTByCustomer;
 	}
 	
-	/* Método que devuelve listado de clientes con el TAU calculado y ordenado*/
+	/* Mï¿½todo que devuelve listado de clientes con el TAU calculado y ordenado*/
 	private ArrayList<Metric> calculateTau(ArrayList<ArrayList<Metric>> listMetricsCMTByCustomer, int posRoute){
 		ArrayList<Metric> listTauCosts = new ArrayList<Metric>();
 		double tauCost;
@@ -747,7 +754,7 @@ public class CMT extends Heuristic{
 		return listTauCosts;
 	}
 
-	/* Método que elimina un cliente de la lista ordenada de los costos */
+	/* Mï¿½todo que elimina un cliente de la lista ordenada de los costos */
 	private void deleteElement(int idCustomer, ArrayList<ArrayList<Metric>> listMetricsCMTByCustomer){
 		boolean deleted = false;
 		int i = 0;

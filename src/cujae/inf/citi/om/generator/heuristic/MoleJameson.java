@@ -467,6 +467,8 @@ public class MoleJameson extends Heuristic{
 				double capacityTrailer = ((FleetTTRP)Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0)).getCapacityTrailer();
 				
 				CustomerType typeCustomer;
+                                
+                                ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
 				
 				while(!CustomersToVisit.isEmpty())
 				{
@@ -513,13 +515,19 @@ public class MoleJameson extends Heuristic{
 						route.setRequestRoute(requestRoute);
 						
 						if(Problem.getProblem().getTypeByIDCustomer(route.getListIdCustomers().get(0)).equals(CustomerType.TC))
-							((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+                                                    route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
+							//((RouteTTRP)route).setTypeRoute(RouteType.PTR);
 						else
 						{
 							if(existTC(route))
-								((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+                                                            route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
+								//((RouteTTRP)route).setTypeRoute(RouteType.CVR);
 							else
-								((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+                                                            route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
+								//((RouteTTRP)route).setTypeRoute(RouteType.PVR);
 						}
 						
 						//3opt
@@ -561,13 +569,19 @@ public class MoleJameson extends Heuristic{
 					route.setRequestRoute(requestRoute);
 
 					if(Problem.getProblem().getTypeByIDCustomer(route.getListIdCustomers().get(0)).equals(CustomerType.TC))
-						((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+                                            route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
+						//((RouteTTRP)route).setTypeRoute(RouteType.PTR);
 					else
 					{
 						if(existTC(route))
-							((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+                                                    route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
+							//((RouteTTRP)route).setTypeRoute(RouteType.CVR);
 						else
-							((RouteTTRP)route).setTypeRoute(RouteType.PVR);	
+                                                    route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
+							//((RouteTTRP)route).setTypeRoute(RouteType.PVR);	
 					}
 						
 					//3opt

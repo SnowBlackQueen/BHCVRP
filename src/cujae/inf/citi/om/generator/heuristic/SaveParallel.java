@@ -12,7 +12,7 @@ import cujae.inf.citi.om.generator.solution.*;
 import cujae.inf.citi.om.matrix.NumericMatrix;
 import cujae.inf.citi.om.matrix.RowCol;
 
-/* Clase que modela la heurística de Ahorro en su versión Paralela */
+/* Clase que modela la heurï¿½stica de Ahorro en su versiï¿½n Paralela */
 
 public class SaveParallel extends Save {
 
@@ -520,8 +520,11 @@ public class SaveParallel extends Save {
 						if(join)
 						{
 							route.setRequestRoute(routeRow.getRequestRoute() + routeCol.getRequestRoute());
-							((RouteTTRP)route).setTypeRoute(typeRoute);
+							//((RouteTTRP)route).setTypeRoute(typeRoute);
 							route.setIdDepot(idDepot);
+                                                        ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
+                                                        route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, typeRoute);
 		
 							listRoutes.remove(routeRow);
 							listRoutes.remove(routeCol);
@@ -544,7 +547,7 @@ public class SaveParallel extends Save {
 		return solution;
 }
 
-	/*Método que revisa si alguna ruta cumple con la capacidad, la cierra y actualiza CustomersToVisite*/
+	/*Mï¿½todo que revisa si alguna ruta cumple con la capacidad, la cierra y actualiza CustomersToVisite*/
 	public void inspectRoutes(ArrayList<Route> listRoutes, ArrayList<Double> listCapacities, Solution solution, ArrayList<Customer> CustomersToVisit){
 		for(int i = 0; i < listRoutes.size(); i++)
 		{
@@ -569,7 +572,7 @@ public class SaveParallel extends Save {
 		}
 	}
 
-	/* Método que actualiza la lista de CustomersToVisit */
+	/* Mï¿½todo que actualiza la lista de CustomersToVisit */
 	public void updateCustomersToVisit(Route closeRoute, ArrayList<Customer> CustomersToVisit){
 		for(int i = 0; i < closeRoute.getListIdCustomers().size(); i++)
 		{
@@ -589,7 +592,7 @@ public class SaveParallel extends Save {
 		}	
 	}
 
-	/* Método que devuelve la ruta con la demanda mas cercana a la capacidad */
+	/* Mï¿½todo que devuelve la ruta con la demanda mas cercana a la capacidad */
 	public Route routeToClose(ArrayList<Route> listRoutes){
 		Route route = new Route();
 
@@ -611,7 +614,7 @@ public class SaveParallel extends Save {
 		return route;
 	}
 
-	/* Método que indica si dos rutas pueden unirse */
+	/* Mï¿½todo que indica si dos rutas pueden unirse */
 	public boolean checkingJoin(Route routeIni, Route routeEnd, int idCustomerIni, int idCustomerEnd, double totalCapacity){
 
 		boolean join = false;
@@ -626,7 +629,7 @@ public class SaveParallel extends Save {
 		return join;
 	}
 
-	/* Método que indica si dos rutas son compatibles */
+	/* Mï¿½todo que indica si dos rutas son compatibles */
 	public boolean compatibleRoutes(Route routeIni, Route routeEnd){
 		boolean isCompatible = true;
 

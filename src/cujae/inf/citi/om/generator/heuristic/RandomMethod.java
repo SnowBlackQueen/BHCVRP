@@ -13,7 +13,7 @@ import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.generator.solution.*;
 
-/* Clase que modela un método de construcción de forma aleatoria*/
+/* Clase que modela un mï¿½todo de construcciï¿½n de forma aleatoria*/
 
 public class RandomMethod extends Heuristic{
 	
@@ -376,8 +376,10 @@ public class RandomMethod extends Heuristic{
 				double capacityTrailer = ((FleetTTRP)Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0)).getCapacityTrailer(); 
 				
 				CustomerType typeCustomer = ((CustomerTTRP)customer).getTypeCustomer();
+                                
+                                ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
 			
-				while(!CustomersToVisit.isEmpty()) // condición de cant veh
+				while(!CustomersToVisit.isEmpty()) // condiciï¿½n de cant veh
 				{
 					customer = getRandomCustomer(CustomersToVisit);
 	
@@ -392,8 +394,10 @@ public class RandomMethod extends Heuristic{
 						else
 						{
 							route.setRequestRoute(requestRoute);
-							((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+							//((RouteTTRP)route).setTypeRoute(RouteType.PTR);
 							route.setIdDepot(idDepot);
+                                                        route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
 							solution.getListRoutes().add(route);
 							
 							// decrementar cantve y null route
@@ -423,9 +427,11 @@ public class RandomMethod extends Heuristic{
 							route.setRequestRoute(requestRoute);
 							
 							if(isTC)
-								((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
 							else
-								((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
 							
 							route.setIdDepot(idDepot);
 							solution.getListRoutes().add(route);
@@ -448,13 +454,16 @@ public class RandomMethod extends Heuristic{
 				route.setRequestRoute(requestRoute);
 				
 				if(typeCustomer.equals(CustomerType.TC))
-					((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+					route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
 				else
 				{
 					if(isTC)
-						((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+						route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
 					else
-						((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+						route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
 				}
 				
 				route.setIdDepot(idDepot);
@@ -467,7 +476,7 @@ public class RandomMethod extends Heuristic{
 		return solution;
 	}
 
-	/* Método que devuelve un cliente de la lista de forma aleatoria */
+	/* Mï¿½todo que devuelve un cliente de la lista de forma aleatoria */
 	private Customer getRandomCustomer(ArrayList<Customer> listCustomers){
 		Customer customer = new Customer();		
 		Random random = new Random();

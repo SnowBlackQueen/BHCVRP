@@ -13,7 +13,7 @@ import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.generator.solution.*;
 
-/* Clase que modela la heurística del Vecino más Cercano con RLC*/
+/* Clase que modela la heurï¿½stica del Vecino mï¿½s Cercano con RLC*/
 
 public class NearestNeighborWithRLC extends Heuristic{
 
@@ -385,6 +385,8 @@ public class NearestNeighborWithRLC extends Heuristic{
 				double capacityTrailer = ((FleetTTRP)Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0)).getCapacityTrailer();
 				
 				CustomerType typeCustomer = ((CustomerTTRP)customer).getTypeCustomer();
+                                
+                                ArrayList<Integer> listAccessVC = new ArrayList<Integer>();
 
 				while(!CustomersToVisit.isEmpty())
 				{
@@ -401,8 +403,12 @@ public class NearestNeighborWithRLC extends Heuristic{
 						else
 						{
 							route.setRequestRoute(requestRoute);
-							((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+							//((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+                                                        
 							route.setIdDepot(idDepot);
+                                                        
+                                                        route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
 							solution.getListRoutes().add(route);
 							
 							route = new Route();
@@ -429,9 +435,11 @@ public class NearestNeighborWithRLC extends Heuristic{
 							route.setRequestRoute(requestRoute);
 							
 							if(isTC)
-								((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
 							else
-								((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+								route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
 							
 							route.setIdDepot(idDepot);
 							solution.getListRoutes().add(route);
@@ -450,13 +458,16 @@ public class NearestNeighborWithRLC extends Heuristic{
 				route.setRequestRoute(requestRoute);
 				
 				if(typeCustomer.equals(CustomerType.TC))
-					((RouteTTRP)route).setTypeRoute(RouteType.PTR);
+					route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PTR);
 				else
 				{
 					if(isTC)
-						((RouteTTRP)route).setTypeRoute(RouteType.CVR);
+						route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.CVR);
 					else
-						((RouteTTRP)route).setTypeRoute(RouteType.PVR);
+						route = new RouteTTRP(route.getListIdCustomers(), route.getRequestRoute(), route.getCostRoute(),
+                                                        route.getIdDepot(), listAccessVC, RouteType.PVR);
 				}
 					
 				route.setIdDepot(idDepot);
@@ -469,7 +480,7 @@ public class NearestNeighborWithRLC extends Heuristic{
 		return solution;
 	}
 	
-	/* Método que devuelve el cliente más cercano al cliente referencia*/
+	/* Mï¿½todo que devuelve el cliente mï¿½s cercano al cliente referencia*/
 	private Customer getNNCustomer(ArrayList<Customer> listCustomers, int reference){
 		Customer customer = new Customer();
 		int RLC = -1;
@@ -494,7 +505,7 @@ public class NearestNeighborWithRLC extends Heuristic{
 		return customer;
 	}
 
-	/* Método que devuelve la lista de vecinos más cercanos */
+	/* Mï¿½todo que devuelve la lista de vecinos mï¿½s cercanos */
 	private ArrayList<Customer> getListNN(ArrayList<Customer> listCustomers, int reference){
 		ArrayList<Double> listDistances = new ArrayList<Double>();
 		ArrayList<Customer> listNN = new ArrayList<Customer>();
