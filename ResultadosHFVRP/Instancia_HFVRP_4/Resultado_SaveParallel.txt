@@ -1,5 +1,6 @@
  
 ------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
 HEURÍSTICA DE CONSTRUCCIÓN: SaveParallel
 COSTO TOTAL: 851.96
 TOTAL DE RUTAS: 7

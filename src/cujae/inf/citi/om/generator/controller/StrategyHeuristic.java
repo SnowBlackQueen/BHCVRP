@@ -36,7 +36,7 @@ public class StrategyHeuristic {
 	private Solution bestSolution;
 	private ArrayList<Solution> listSolutions = null;
 	private long timeExecute;
-	public boolean calculateTime = false;
+	public boolean calculateTime = true;
 
 	private StrategyHeuristic() {
 		super();

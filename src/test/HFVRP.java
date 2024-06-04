@@ -27,12 +27,12 @@ public class HFVRP {
     public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_1/Resultado_NN.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_p14/Resultado_NN20.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
 
-            String pathFiles = "modified-hfvrp//HFVRP_1";
+            String pathFiles = "modified-hfvrp//HFVRP_p14";
                 //int totalInstances = 5;
                 LoadFile loadFile = new LoadFile();
 
@@ -68,7 +68,7 @@ public class HFVRP {
                             countVehicles.get(0), capacityVehicles.get(0), listDistances, 
                             axisXCustomers, axisYCustomers, axisXDepots, axisYDepots, typeProblem, orderType))
                     {
-                                    StrategyHeuristic.getStrategyHeuristic().executeHeuristic(20, heuristicType);
+                                    StrategyHeuristic.getStrategyHeuristic().executeHeuristic(100, heuristicType);
                                     Solution result = StrategyHeuristic.getStrategyHeuristic().getBestSolution();
                                     double cost = StrategyHeuristic.getStrategyHeuristic().getTotalCostSolution();
                                     int requestByRoute = StrategyHeuristic.getStrategyHeuristic().getRequestByRoute().size();
@@ -77,9 +77,11 @@ public class HFVRP {
                                     System.out.println(" ");
                                     System.out.println("------------------------------------------");
                                     //System.out.println("INSTANCIA: P" + (i + 1));
+                                    System.out.println("CANTIDAD DE EJECUCIONES: " + 100);
                                     System.out.println("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristicType);
                                     System.out.println("COSTO TOTAL: " + cost);
                                     System.out.println("TOTAL DE RUTAS: " + requestByRoute);
+                                    System.out.println("TIEMPO DE EJECUCIÓN: " + time + " milisegundos");
                                     //System.out.println("TIEMPO DE EJECUCIÓN: " + time);
                                     System.out.println(" ");
                                     for(int j = 0; j < requestByRoute; j++)

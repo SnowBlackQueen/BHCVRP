@@ -1,5 +1,6 @@
  
 ------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
 HEURÍSTICA DE CONSTRUCCIÓN: NearestNeighborWithRLC
 COSTO TOTAL: 1327.04
 TOTAL DE RUTAS: 3
