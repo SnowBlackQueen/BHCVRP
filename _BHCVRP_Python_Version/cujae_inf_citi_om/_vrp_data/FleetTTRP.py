@@ -1,3 +1,5 @@
+from _vrp_data import Fleet
+
 # Clase que modela los datos de una flota en el TTRP
 
 class FleetTTRP(Fleet):

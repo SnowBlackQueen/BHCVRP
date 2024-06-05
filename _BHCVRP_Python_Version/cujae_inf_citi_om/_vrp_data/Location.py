@@ -1,3 +1,5 @@
+import math
+
 # Clase que modela la ubicación geográfica de un cliente VRP o depósito a partir de sus coordenadas cartesianas
 
 class Location:

@@ -1,3 +1,5 @@
+from _vrp_data import Depot
+
 # Clase que modela los datos de un depósito en el MDVRP
 
 class DepotMDVRP(Depot):

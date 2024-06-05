@@ -1,4 +1,4 @@
-from data import Location
+from _vrp_data import Location
 
 # Clase que modela los datos de un depósito en un VRP
 

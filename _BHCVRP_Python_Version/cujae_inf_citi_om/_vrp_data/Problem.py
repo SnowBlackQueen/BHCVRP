@@ -1,5 +1,6 @@
 from typing import List
 import numpy as np
+from cujae_inf_citi_om._vrp_data import Customer, CustomerTTRP, Depot, ProblemType
 
 # Clase que modela los datos de un problema VRP.
 
