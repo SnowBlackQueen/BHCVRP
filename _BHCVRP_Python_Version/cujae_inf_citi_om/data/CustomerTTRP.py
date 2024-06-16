@@ -1,4 +1,4 @@
-from _vrp_data import CustomerType, Customer
+from data import CustomerType, Customer
 
 # Clase que modela los datos de un cliente en el TTRP
 

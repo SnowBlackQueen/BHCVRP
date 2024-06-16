@@ -1,5 +1,5 @@
-from cujae_inf_citi_om._vrp_data import Problem, ProblemType
-from _vrp_generator.solution import RouteType
+from cujae_inf_citi_om.data import Problem, ProblemType
+from generator.solution import RouteType
 
 class Solution:
     def __init__(self, list_routes=None):

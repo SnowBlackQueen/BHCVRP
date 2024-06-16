@@ -1,6 +1,9 @@
 from typing import List
 import numpy as np
-from cujae_inf_citi_om._vrp_data import Customer, CustomerTTRP, Depot, ProblemType
+from cujae_inf_citi_om.data.Customer import Customer
+from cujae_inf_citi_om.data.CustomerTTRP import CustomerTTRP
+from cujae_inf_citi_om.data.Depot import Depot
+from cujae_inf_citi_om.data import ProblemType
 
 # Clase que modela los datos de un problema VRP.
 
@@ -193,21 +196,6 @@ class Problem:
         
         return current_request
     
-    # Método que dice si hay o no capacidad disponible en los depósitos
-    def exist_capacity_in_some_depot(self, list_depots):
-        exist = False
-        current_request = 0.0
-        total_capacity = get_total_capacity(list_depots)
-        count_depots = len(list_depots)
-        
-        for i in range(count_depots):
-            current_request += current_request_by_depot(i, list_depots)
-        
-        if current_request == total_capacity:
-            exist = True
-        
-        return exist
-
     # Método que devuelve la capacidad total de los vehículos de MDVRP
     def get_total_capacity(self, list_depots):
         total_capacity = 0.0
@@ -219,16 +207,31 @@ class Problem:
             for j in range(count_fleets):
                 total_capacity += list_depots[i].get_list_fleets()[j].get_capacity_vehicle() * list_depots[i].get_list_fleets()[j].get_count_vehicles()
                 
-                if type_problem == ProblemType.TTRP:
+                if self.type_problem == ProblemType.TTRP:
                     total_capacity += list_depots[i].get_list_fleets()[j].get_capacity_trailer() * list_depots[i].get_list_fleets()[j].get_count_trailers()
         
         return total_capacity
+    
+    # Método que dice si hay o no capacidad disponible en los depósitos
+    def exist_capacity_in_some_depot(self, list_depots):
+        exist = False
+        current_request = 0.0
+        total_capacity = self.get_total_capacity(list_depots)
+        count_depots = len(list_depots)
+        
+        for i in range(count_depots):
+            current_request += self.current_request_by_depot(i, list_depots)
+        
+        if current_request == total_capacity:
+            exist = True
+        
+        return exist
     
     # Método que dado el depósito devuelve la lista de clientes asignados
     def get_customers_assigned_by_id_depot(self, id_depot, list_customers, list_depots):
         list_customers_assigned = []
         count_customers = len(list_customers)
-        pos_depot = get_pos_element(id_depot, list_customers, list_depots) - count_customers
+        pos_depot = self.get_pos_element(id_depot, list_customers, list_depots) - count_customers
         count_assigned_customers = len(list_depots[pos_depot].get_list_assigned_customers())
 
         for i in range(count_assigned_customers):
@@ -274,7 +277,7 @@ class Problem:
     def is_full_depot(self, list_customers, pos_depot, list_depots):
         is_full = False
         capacity_total = (list_depots[pos_depot].get_list_fleets()[0].get_capacity_vehicle() * list_depots[pos_depot].get_list_fleets()[0].get_count_vehicles())
-        request_depot = current_request_by_depot(pos_depot, list_customers, list_depots)
+        request_depot = self.current_request_by_depot(pos_depot, list_customers, list_depots)
         ideal_request = capacity_total - request_depot
 
         if ideal_request != 0:

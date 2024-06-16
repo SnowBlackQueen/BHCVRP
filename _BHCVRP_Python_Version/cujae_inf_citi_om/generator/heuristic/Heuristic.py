@@ -1,7 +1,10 @@
-from _vrp_data import Customer, Problem, ProblemType
-from _vrp_generator.solution import Solution
+from data.Customer import Customer
+from data.Problem import Problem
+from data.ProblemType import ProblemType
+from generator.solution import Solution
 from typing import List
-from _vrp_generator.heuristic import Metric, FirstCustomerType
+from generator.heuristic.Metric import Metric
+from generator.heuristic.FirstCustomerType import FirstCustomerType
 import random
 
 # Clase abstracta que modela una heurística de construcción
@@ -67,7 +70,7 @@ class Heuristic:
                 list_nn[reference_pos] = current_customer
                 list_nn[current_pos] = customer_nn
                 
-    def _select_first_customer_in_mdvrp(customers_to_visit, first_customer_type, pos_matrix_depot):
+    def _select_first_customer_in_mdvrp(self, customers_to_visit, first_customer_type, pos_matrix_depot):
         selected_customer = None
         currentIndex = -1
         currentCost = 0.0
@@ -94,7 +97,7 @@ class Heuristic:
 
         return selected_customer
     
-    def _get_first_customer(customers_to_visit, first_customer_type, id_depot):
+    def _get_first_customer(self, customers_to_visit, first_customer_type, id_depot):
         firstCustomer = None
         index = -1
         posMatrixDepot = -1
@@ -107,7 +110,7 @@ class Heuristic:
             pos_matrix_depot = Problem.get_problem().get_pos_element(id_depot)
 
             if Problem.get_problem().get_type_problem() == ProblemType.MDVRP:
-                firstCustomer = select_first_customer_in_mdvrp(customers_to_visit, first_customer_type, pos_matrix_depot)
+                firstCustomer = self.select_first_customer_in_mdvrp(customers_to_visit, first_customer_type, pos_matrix_depot)
             else:
                 if first_customer_type == FirstCustomerType.NearestCustomer:
                     rc = Problem.get_problem().get_cost_matrix().index_lower_value(posMatrixDepot, 0, posMatrixDepot, len(customers_to_visit) - 1)

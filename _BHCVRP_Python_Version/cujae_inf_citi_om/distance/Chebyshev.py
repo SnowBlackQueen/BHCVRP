@@ -1,4 +1,4 @@
-from cujae_inf_citi_om import Distance
+from cujae_inf_citi_om.distance import Distance
 import math
 
 # Clase que modela como calcular la distancia mediante la fórmula de Chebyshev

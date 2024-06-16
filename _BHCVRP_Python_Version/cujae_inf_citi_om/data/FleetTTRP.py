@@ -1,4 +1,4 @@
-from _vrp_data import Fleet
+from data import Fleet
 
 # Clase que modela los datos de una flota en el TTRP
 

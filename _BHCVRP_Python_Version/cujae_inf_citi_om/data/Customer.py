@@ -1,4 +1,4 @@
-from _vrp_data import Location
+from data import Location
 
 # Clase que modela los datos de un cliente en un VRP.
 
