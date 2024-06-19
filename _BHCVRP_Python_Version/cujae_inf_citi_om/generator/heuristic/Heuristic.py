@@ -6,10 +6,64 @@ from typing import List
 from generator.heuristic.Metric import Metric
 from generator.heuristic.FirstCustomerType import FirstCustomerType
 import random
+from abc import ABC, abstractmethod
 
 # Clase abstracta que modela una heurística de construcción
 
-class Heuristic:
+class Heuristic(ABC):
+    
+    # Cómo usar el patrón Template 
+    def execute(self):
+        self.step1()
+        self.step2()
+        self.step3()
+        self.common_step()
+
+    @abstractmethod
+    def step1(self):
+        pass
+
+    @abstractmethod
+    def step2(self):
+        pass
+
+    @abstractmethod
+    def step3(self):
+        pass
+
+    def common_step(self):
+        print("Executing common step")
+
+    class HeuristicA(Heuristic):
+        def step1(self):
+            print("HeuristicA Step 1")
+
+        def step2(self):
+            print("HeuristicA Step 2")
+
+        def step3(self):
+            print("HeuristicA Step 3")
+
+    class HeuristicB(Heuristic):
+        def step1(self):
+            print("HeuristicB Step 1")
+
+        def step2(self):
+            print("HeuristicB Step 2")
+
+        def step3(self):
+            print("HeuristicB Step 3")
+
+    # Example usage
+    heuristic_a = HeuristicA()
+    heuristic_a.execute()
+
+    heuristic_b = HeuristicB()
+    heuristic_b.execute() 
+    
+    # Aquí empieza el código original
+    
+    @abstractmethod
     def get_solution_inicial(self):
         # Método abstracto encargado de generar la solución
         pass
@@ -77,11 +131,11 @@ class Heuristic:
 
         selected_customer = customers_to_visit[0]
         bestIndex = Problem.get_problem().get_pos_element(selected_customer.get_id_customer())
-        bestCost = Problem.get_problem().get_cost_matrix().get_item(pos_matrix_depot, bestIndex)
+        bestCost = Problem.get_problem().get_cost_matrix().item(pos_matrix_depot, bestIndex)
 
         for i in range(1, len(customers_to_visit)):
             currentIndex = Problem.get_problem().get_pos_element(customers_to_visit[i].get_id_customer())
-            currentCost = Problem.get_problem().get_cost_matrix().get_item(pos_matrix_depot, currentIndex)
+            currentCost = Problem.get_problem().get_cost_matrix().item(pos_matrix_depot, currentIndex)
 
             if first_customer_type == FirstCustomerType.FurthestCustomer:
                 if currentCost > bestCost:

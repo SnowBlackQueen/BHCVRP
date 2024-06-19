@@ -4,6 +4,8 @@ from cujae_inf_citi_om.data.Customer import Customer
 from cujae_inf_citi_om.data.CustomerTTRP import CustomerTTRP
 from cujae_inf_citi_om.data.Depot import Depot
 from cujae_inf_citi_om.data import ProblemType
+from exceptions.RequestException import RequestException
+from exceptions.WithoutCapacityException import WithoutCapacityException
 
 # Clase que modela los datos de un problema VRP.
 
@@ -13,7 +15,7 @@ class Problem:
         self._list_customers: List[Customer] = []
         self._list_depots: List[Depot] = []
         self._type_problem: ProblemType = None
-        # self._cost_matrix: NumericMatrix = NumericMatrix()
+        self._cost_matrix = np.empty(0,0)
         self._list_capacities: List[float] = None
 
     @staticmethod # Método que implementa el Patrón Singleton
@@ -49,11 +51,11 @@ class Problem:
         elif type_problem == 4:
             self._type_problem = ProblemType.TTRP
             
-    # def getCostMatrix(self):
-      #  return self.cost_matrix.getCostMatrix()
+    def getCostMatrix(self):
+      return self.cost_matrix
 
-    # def setCostMatrix(self, cost_matrix):
-      #  self.cost_matrix.setCostMatrix(cost_matrix)
+    def setCostMatrix(self, cost_matrix):
+      self.cost_matrix = cost_matrix
 
     def get_list_capacities(self):
         return self._list_capacities
@@ -67,7 +69,11 @@ class Problem:
 
     # Método que devuelve la demanda total
     def get_total_request(self):
-        return sum(customer.request_customer for customer in self.list_customers)
+        total_request = sum(customer.request_customer for customer in self.list_customers) 
+        if total_request > 0:
+            return total_request
+        else:
+            raise RequestException("La demanda total debe ser mayor que cero") 
 
     # Método que busca un cliente dado su identificador
     def get_customer_by_id_customer(self, id_customer):
@@ -96,8 +102,10 @@ class Problem:
                 found = True
             else:
                 i += 1
-        
-        return request_customer
+        if request_customer > 0:
+            return request_customer
+        else:
+            raise RequestException("La demanda del cliente debe ser mayor que cero")
 
     def get_list_request_customers(self, list_customers):
         return [customer.get_request_customer() for customer in list_customers]
@@ -176,7 +184,7 @@ class Problem:
         
         return id_depot
 
-    # Método que devuelve la demanda de un deposito dado
+    # Método que devuelve la demanda de un depósito dado
     def current_request_by_depot(self, pos_depot, list_customers, list_depots):
         current_request = 0.0
         id_customer = -1
@@ -193,8 +201,10 @@ class Problem:
                     current_request += list_customers[j].get_request_customer()
                     found = True
                 j += 1
-        
-        return current_request
+        if current_request > 0:
+            return current_request
+        else:
+            raise RequestException("La demanda actual del depósito debe ser mayor que cero")
     
     # Método que devuelve la capacidad total de los vehículos de MDVRP
     def get_total_capacity(self, list_depots):
@@ -210,7 +220,10 @@ class Problem:
                 if self.type_problem == ProblemType.TTRP:
                     total_capacity += list_depots[i].get_list_fleets()[j].get_capacity_trailer() * list_depots[i].get_list_fleets()[j].get_count_trailers()
         
-        return total_capacity
+        if total_capacity > 0:
+            return total_capacity
+        else:
+            raise WithoutCapacityException("La capacidad total de los vehículos de MDVRP debe ser mayor que cero")
     
     # Método que dice si hay o no capacidad disponible en los depósitos
     def exist_capacity_in_some_depot(self, list_depots):
