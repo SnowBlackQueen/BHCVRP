@@ -1,5 +1,6 @@
 from cujae_inf_citi_om.data import Problem, ProblemType
 from generator.solution import RouteType
+from exceptions.CostException import CostException
 
 class Solution:
     def __init__(self, list_routes=None):
@@ -20,7 +21,10 @@ class Solution:
             else:
                 total_cost = route.get_cost_route_with_sub_tour()
 
-        return total_cost
+        if total_cost > 0:
+            return total_cost
+        else:
+            raise CostException("El costo total debe ser mayor que cero") 
 
     def get_cost_solution(self):
         cost_solution = 0.0
@@ -28,4 +32,7 @@ class Solution:
         for route in self._list_routes:
             cost_solution += route.get_cost_route()
 
-        return cost_solution
+        if cost_solution > 0:
+            return cost_solution
+        else:
+            raise CostException("El costo de la solución debe ser mayor que cero")

@@ -1,4 +1,5 @@
 from data import Location
+from exceptions.RequestException import RequestException
 
 # Clase que modela los datos de un cliente en un VRP.
 
@@ -19,7 +20,10 @@ class Customer:
         return self._request_customer
 
     def set_request_customer(self, request_customer):
-        self._request_customer = request_customer
+        if request_customer > 0:
+            self._request_customer = request_customer
+        else:
+            raise RequestException("La demanda del cliente debe ser mayor que cero")
 
     def get_location_customer(self):
         return self._location_customer

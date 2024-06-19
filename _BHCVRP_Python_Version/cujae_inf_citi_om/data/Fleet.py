@@ -1,3 +1,5 @@
+from exceptions.WithoutCapacityException import WithoutCapacityException
+
 # Clase que modela los datos de una flota en un VRP
 
 class Fleet:
@@ -16,4 +18,7 @@ class Fleet:
         return self._capacity_vehicle
 
     def set_capacity_vehicle(self, capacity_vehicle):
-        self._capacity_vehicle = capacity_vehicle
+        if capacity_vehicle > 0:
+                self._capacity_vehicle = capacity_vehicle
+        else:
+            raise WithoutCapacityException("La capacidad del vehículo debe ser mayor que cero")
