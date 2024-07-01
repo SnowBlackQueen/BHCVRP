@@ -401,13 +401,13 @@ class StrategyHeuristic:
             self.list_solutions.append(current_solution)
 
             if i == 1:
-                best_solution = current_solution
+                self.best_solution = current_solution
             else:
-                if round(current_solution.get_cost_solution(), 2) < round(best_solution.get_cost_solution(), 2):
-                    best_solution = current_solution
+                if round(current_solution.get_cost_solution(), 2) < round(self.best_solution.get_cost_solution(), 2):
+                    self.best_solution = current_solution
 
         if self.calculate_time:
-            time_execute = abs(self.time.time() - time_execute)
+            time_execute = abs(time.time() - time_execute)
 
     # Método que devuelve el listado de los clientes de la mejor solución obtenida
     def get_orden_visit(self):

@@ -65,8 +65,15 @@ class Route:
         customer_ini = self.list_id_customers[0]
         pos_customer_ini = Problem.get_problem().get_pos_element(customer_ini)
 
-        # cost_route += Problem.get_problem().get_cost_matrix().item(Problem.get_problem().get_pos_element(self.id_depot), pos_customer_ini)
+        cost_matrix = Problem.get_problem().get_cost_matrix()
 
+        # Obtener los índices de self.id_depot y pos_customer_ini
+        depot_index = Problem.get_problem().get_pos_element(self.id_depot)
+        customer_ini_index = Problem.get_problem().get_pos_element(pos_customer_ini)
+
+        # Calcular el costo y sumarlo a cost_route
+        cost_route += cost_matrix[depot_index][customer_ini_index]
+        
         for i in range(1, len(self.list_id_customers)):
             customer_next = self.list_id_customers[i]
             pos_customer_next = Problem.get_problem().get_pos_element(customer_next)
@@ -74,7 +81,8 @@ class Route:
             customer_ini = customer_next
             pos_customer_ini = pos_customer_next
 
-        # cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, Problem.get_problem().get_pos_element(self.id_depot))
+        cost_route += cost_matrix[pos_customer_ini][depot_index]
+        
         self.set_cost_route(cost_route)
         return cost_route
 

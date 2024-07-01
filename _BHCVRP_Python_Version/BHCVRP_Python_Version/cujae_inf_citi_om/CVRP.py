@@ -51,13 +51,13 @@ def main():
             print(" ")
             print("------------------------------------------")
             # print("INSTANCIA: P" + (i + 1))
-            print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type)
-            print("COSTO TOTAL: " + cost)
-            print("TOTAL DE RUTAS: " + request_by_route)
-            # print("TIEMPO DE EJECUCIÓN: " + time)
+            print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
+            print("COSTO TOTAL: " + str(cost))
+            print("TOTAL DE RUTAS: " + str(request_by_route))
+            print("TIEMPO DE EJECUCIÓN: " + str(time))
             print(" ")
             for j in range(request_by_route):
-                print("R" + str(j + 1) + result.get_list_routes()[j].get_list_id_customers())
+                print("R" + str(j + 1) + str(result.get_list_routes()[j].get_list_id_customers()))
             print("------------------------------------------")
 
         file_output.close()

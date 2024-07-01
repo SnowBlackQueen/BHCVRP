@@ -36,6 +36,9 @@ class Problem:
     def get_list_depots(self) -> List[Depot]:
         return self._list_depots
 
+    def get_type_problem(self):
+        return self._type_problem
+    
     def set_type_problem(self, type_problem: ProblemType):
         self._type_problem = type_problem
 
@@ -119,15 +122,15 @@ class Problem:
         return [depot.get_list_fleets()[0].get_capacity_vehicle() for depot in list_depots]
     
     # Método que dado un id (deposito o cliente) devuelve la posicion
-    def get_pos_element(self, id_element, list_customers, list_depots):
+    def get_pos_element(self, id_element):
         i = 0
         found = False
         pos_element = -1
-        count_customers = len(list_customers)
-        count_depots = len(list_depots)
+        count_customers = len(self._list_customers)
+        count_depots = len(self._list_depots)
         
         while i < count_depots and not found:
-            if list_depots[i].get_id_depot() == id_element:
+            if self._list_depots[i].get_id_depot() == id_element:
                 pos_element = i + count_customers
                 found = True
             else:
@@ -135,7 +138,7 @@ class Problem:
         
         i = 0
         while i < count_customers and not found:
-            if list_customers[i].get_id_customer() == id_element:
+            if self._list_customers[i].get_id_customer() == id_element:
                 pos_element = i
                 found = True
             else:

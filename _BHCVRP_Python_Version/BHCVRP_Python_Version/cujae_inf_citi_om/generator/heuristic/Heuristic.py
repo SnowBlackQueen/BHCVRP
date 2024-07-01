@@ -2,7 +2,7 @@ from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from generator.solution import Solution
+from generator.solution.Solution import Solution
 from typing import List
 from generator.heuristic.Metric import Metric
 from generator.heuristic.FirstCustomerType import FirstCustomerType
@@ -22,7 +22,7 @@ class Heuristic(ABC):
     def template_method(self) -> Solution:
         self.comun_initialize()
         self.initialize_specifics()
-        self.get_solution_inicial()
+        return self.get_solution_inicial()
     
     @abstractmethod # Método para inicializar parámetros específicos de algunas heurísticas
     def initialize_specifics(self):
@@ -63,7 +63,7 @@ class Heuristic(ABC):
         self.type_problem = Problem.get_problem().get_type_problem()
 
     @abstractmethod # Método para ejecutar la variante específica del problema para cierta heurística
-    def get_solution_inicial(self):
+    def get_solution_inicial(self) -> Solution:
         pass
     
     def execute(self):
@@ -146,16 +146,16 @@ class Heuristic(ABC):
     # Redefinir
     def creating(self):
         if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
-            if request_route + self.customer.get_request_customer() <= self.capacity_vehicle:
-                request_route += self.customer.get_request_customer()
-                route.get_list_id_customers().append(self.customer.get_id_customer())
-                self.customers_to_visit.remove(self.customer)
+            if self.request_route + self.customer.get_request_customer() <= self.capacity_vehicle:
+                self.request_route += self.customer.get_request_customer()
+                # self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                # self.customers_to_visit.remove(self.customer)
             else:
-                route.set_request_route(request_route)
-                route.set_id_depot(self.id_depot)
-                self.solution.get_list_routes().append(route)
+                self.route.set_request_route(self.request_route)
+                self.route.set_id_depot(self.id_depot)
+                self.solution.get_list_routes().append(self.route)
                 return True, None
-            return False, route
+            return False, self.route
             
         if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
             while self.customers_to_visit:
@@ -225,12 +225,13 @@ class Heuristic(ABC):
     # Redefinir
     def processing(self, customers_to_visit, count_vehicles, request_route, route, id_depot, solution):
         if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
-            while customers_to_visit and count_vehicles > 0:
+            cv = int(count_vehicles)
+            while customers_to_visit and cv > 0:
                 self.initialize_specifics()  # Para que customer sea tratado según la variante
-                found, new_route = self.creating(route, request_route, self.customer, capacity_vehicle, id_depot, solution, customers_to_visit)
+                found, new_route = self.creating()
                 if found:
                     route = new_route
-                count_vehicles -= 1
+                cv -= 1
         
         if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
             list_capacities = Problem.get_problem().get_list_capacities()

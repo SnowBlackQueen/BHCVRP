@@ -1,14 +1,14 @@
-from heuristic.Heuristic import Heuristic
-from solution.Solution import Solution
+from generator.heuristic.Heuristic import Heuristic
+from generator.solution.Solution import Solution
 from data.ProblemType import ProblemType
 from data.Problem import Problem
 from data.DepotMDVRP import DepotMDVRP
 from data.Customer import Customer
-from solution.Route import Route
+from generator.solution.Route import Route
 from random import Random
 from data.CustomerType import CustomerType
-from solution.RouteType import RouteType
-from solution.RouteTTRP import RouteTTRP
+from generator.solution.RouteType import RouteType
+from generator.solution.RouteTTRP import RouteTTRP
 
 class RandomMethod(Heuristic):
     
@@ -33,7 +33,7 @@ class RandomMethod(Heuristic):
         random = Random()
         index = -1
         
-        index = random.nextInt(len(list_customers))
+        index = random.randint(0, len(list_customers)-1)
         customer = list_customers[index]
         
         return customer
