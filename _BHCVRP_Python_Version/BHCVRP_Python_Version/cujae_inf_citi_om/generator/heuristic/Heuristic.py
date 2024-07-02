@@ -144,7 +144,7 @@ class Heuristic(ABC):
         return self.solution
         
     # Redefinir
-    def creating(self):
+    def creating(self, route=None, request_route=None, list_tau=None, list_metrics=None):
         if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
             if self.request_route + self.customer.get_request_customer() <= self.capacity_vehicle:
                 self.request_route += self.customer.get_request_customer()
@@ -297,40 +297,40 @@ class Heuristic(ABC):
             
         return route 
     
-    def _get_customer_by_id(self, idCustomer, listCustomers):
+    def _get_customer_by_id(self, id_customer, list_customers):
         i = 0
         found = False
         customer = None
 
-        while i < len(listCustomers) and not found:
-            if listCustomers[i].get_id_customer() == idCustomer:
-                customer = listCustomers[i]
+        while i < len(list_customers) and not found:
+            if list_customers[i].get_id_customer() == id_customer:
+                customer = list_customers[i]
                 found = True
             else:
                 i += 1
 
         return customer
 
-    def _ascendent_ordenate(self, listWithOutOrder: List[Metric]):
-        for i in range(len(listWithOutOrder)):
-            minorInsertionCost = listWithOutOrder[i].getInsertionCost()
-            minorMetric = listWithOutOrder[i]
-            referencePos = i
+    def _ascendent_ordenate_list_without_order(self, list_without_order: List[Metric]):
+        for i in range(len(list_without_order)):
+            minor_insertion_cost = list_without_order[i].get_insertion_cost()
+            minor_metric = list_without_order[i]
+            reference_pos = i
 
-            currentMetric = None
-            currentPos = -1
+            current_metric = None
+            current_pos = -1
 
-            for j in range(i + 1, len(listWithOutOrder)):
-                if listWithOutOrder[j].getInsertionCost() < minorInsertionCost:
-                    minorInsertionCost = listWithOutOrder[j].getInsertionCost()
-                    currentMetric = listWithOutOrder[j]
-                    currentPos = j
+            for j in range(i + 1, len(list_without_order)):
+                if list_without_order[j].get_insertion_cost() < minor_insertion_cost:
+                    minor_insertion_cost = list_without_order[j].get_insertion_cost()
+                    current_metric = list_without_order[j]
+                    current_pos = j
 
-            if currentPos != -1:
-                listWithOutOrder[referencePos] = currentMetric
-                listWithOutOrder[currentPos] = minorMetric
+            if current_pos != -1:
+                list_without_order[reference_pos] = current_metric
+                list_without_order[current_pos] = minor_metric
                 
-    def _ascendent_ordenate(self, list_distances, list_nn: List[Customer]):
+    def _ascendent_ordenate_list_distances(self, list_distances, list_nn: List[Customer]):
         for i in range(len(list_distances)):
             minor_distance = list_distances[i]
             customer_nn = list_nn[i]
@@ -386,7 +386,7 @@ class Heuristic(ABC):
         posMatrixDepot = -1
         rc = None
 
-        if first_customer_type == FirstCustomerType.OtherType:  # Replace with the actual condition
+        if first_customer_type == FirstCustomerType.RandomCustomer:  # Replace with the actual condition
             index = random.randint(0, len(customers_to_visit) - 1)
             firstCustomer = customers_to_visit[index]
         else:

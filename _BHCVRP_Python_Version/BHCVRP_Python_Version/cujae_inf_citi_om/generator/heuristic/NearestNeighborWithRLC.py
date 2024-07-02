@@ -19,7 +19,7 @@ class NearestNeighborWithRLC(Heuristic):
     def initialize_specifics(self):
         if NearestNeighborWithRLC.size_rlc == 0:
             NearestNeighborWithRLC.size_rlc = 1
-        elif NearestNeighborWithRLC.size_rlc > (Problem.get_problem().get_list_customers / 2):
+        elif NearestNeighborWithRLC.size_rlc > (len(Problem.get_problem().get_list_customers()) / 2):
             raise RLC_Exception("La lista de candidatos restringidos debe ser menor que la mitad del total de clientes")    
         
         self.customer = self._get_NN_customer(self.customers_to_visit, self.id_depot)
@@ -61,11 +61,11 @@ class NearestNeighborWithRLC(Heuristic):
         ref_distance = 0.0
 
         for i in range(len(list_customers)):
-            ref_distance = Problem.get_problem().get_cost_matrix().item(Problem.get_problem().getPosElement(reference), Problem.get_problem().getPosElement(list_customers[i].get_id_customer()))
+            ref_distance = Problem.get_problem().get_cost_matrix().item(Problem.get_problem().get_pos_element(reference), Problem.get_problem().get_pos_element(list_customers[i].get_id_customer()))
             list_distances.append(ref_distance)
             list_nn.append(list_customers[i])
 
-        self._ascendent_ordenate(list_distances, list_nn)
+        self._ascendent_ordenate_list_distances(list_distances, list_nn)
 
         return list_nn
 

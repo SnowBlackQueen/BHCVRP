@@ -22,6 +22,13 @@ class Location:
 
     # Método que devuelve para un punto su coordenada polar Theta 
     def get_polar_theta(self):
+        if self._axis_X == 0:
+            if self._axis_Y > 0:
+                return math.pi / 2
+            elif self._axis_Y < 0:
+                return -math.pi / 2
+            else:
+                return 0.0
         return math.atan(self._axis_Y / self._axis_X)
 
     # Método que devuelve para un punto su coordenada Rho

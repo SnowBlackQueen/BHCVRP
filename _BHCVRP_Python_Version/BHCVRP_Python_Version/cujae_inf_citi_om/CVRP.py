@@ -12,7 +12,7 @@ def main():
         file_output = open("D:\\Escuela\\BHCVRP\\ResultadosCVRP\\Instancia_CVRP_p14\\Resultado_MoleJameson20.txt", "w")
         sys.stdout = file_output
 
-        path_files = "D:\Escuela\BHCVRP\modified-cvrp\CVRP_p14"
+        path_files = "D:\Escuela\BHCVRP\modified-cvrp\CVRP_1"
         # total_instances = 5
         load_file = LoadFile()
 
@@ -39,7 +39,7 @@ def main():
 
         load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots, axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.RandomMethod
+        heuristic_type = HeuristicType.CMT
 
         if StrategyHeuristic.get_strategy_heuristic().load_cvrp(id_customers, request_customers, id_depots, count_vehicles[0], capacity_vehicles[0], list_distances, axis_x_customers, axis_y_customers, axis_x_depots, axis_y_depots, ProblemType.CVRP):
             StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
