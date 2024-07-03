@@ -1,13 +1,13 @@
-from heuristic.Save import Save
-from solution.Route import Route
-from solution.RouteTTRP import RouteTTRP
-from solution.RouteType import RouteType
-from solution.Solution import Solution
+from generator.heuristic.Save import Save
+from generator.solution.Route import Route
+from generator.solution.RouteTTRP import RouteTTRP
+from generator.solution.RouteType import RouteType
+from generator.solution.Solution import Solution
 from data.Problem import Problem
 from data.ProblemType import ProblemType
 from data.Customer import Customer
 from data.DepotMDVRP import DepotMDVRP
-from postoptimization.Operator_3opt import Operator_3opt
+from generator.postoptimization.Operator_3opt import Operator_3opt
 import numpy as np
 
 
@@ -17,6 +17,7 @@ class SaveParallel(Save):
         super().__init__()
 
     def initialize_specifics(self):
+        super().initialize_specifics()
         self.list_capacities = list(Problem.get_problem().fill_list_capacities(self.pos_depot))  
         
         self.inspect_routes(self.list_routes, self.list_capacities, self.solution, self.customers_to_visit)  
@@ -30,23 +31,25 @@ class SaveParallel(Save):
         self.pos_row = 0
         self.pos_col = 0
 
-        self.row_col = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+        # Encuentra el índice del valor máximo en save_matrix y desenrolla este índice a coordenadas (fila, columna)
+        self.row, self.col = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+
         self.route_row = Route()
         self.route_col = Route()
     
     def get_solution_inicial(self):
         
-        if self.type_problem == 0:
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP:
             while counter < iterations and len(list_routes) > 1 and not np.all(save_matrix == np.NINF):
-                save_value = save_matrix[row_col, row_col]
+                save_value = save_matrix[self.row, self.col]
 
                 if save_value > 0 or (save_value <= 0 and len(list_routes) > count_vehicles):
-                    row_customer = customers_to_visit[row_col].get_id_customer()
-                    col_customer = customers_to_visit[row_col].get_id_customer()
+                    row_customer = customers_to_visit[self.row].get_id_customer()
+                    col_customer = customers_to_visit[self.col].get_id_customer()
                     counter += 1
 
-                    save_matrix[row_col, row_col] = np.NINF
-                    save_matrix[row_col, row_col] = np.NINF
+                    save_matrix[self.row, self.col] = np.NINF
+                    save_matrix[self.col, self.row] = np.NINF
 
                     pos_row = self.get_position_route(list_routes, row_customer)
                     pos_col = self.get_position_route(list_routes, col_customer)
@@ -83,11 +86,11 @@ class SaveParallel(Save):
 
             for j in range(len(list_routes)):
                 if len(list_routes[j].get_list_id_customers()) >= 6:
-                    three_opt.to_optimize(list_routes[j])
+                    self.three_opt.to_optimize(list_routes[j])
 
-            solution.get_list_routes().extend(list_routes)
+            self.solution.get_list_routes().extend(list_routes)
 
-        elif type_problem == 1:
+        elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             is_first = True
             is_open = False
 
@@ -97,9 +100,9 @@ class SaveParallel(Save):
                     close_route.set_id_depot(id_depot)
 
                     if len(close_route.get_list_id_customers()) >= 6:
-                        three_opt.to_optimize(close_route)
+                        self.three_opt.to_optimize(close_route)
 
-                    solution.get_list_routes().add(close_route)
+                    self.solution.get_list_routes().add(close_route)
                     list_capacities.remove(0)
 
                     is_open = True
@@ -110,9 +113,9 @@ class SaveParallel(Save):
                         list_routes.get(0).set_id_depot(id_depot)
 
                         if len(list_routes.get(0).get_list_id_customers()) >= 6:
-                            three_opt.to_optimize(list_routes.get(0))
+                            self.three_opt.to_optimize(list_routes.get(0))
                         
-                        solution.get_list_routes().add(list_routes.get(0))
+                        self.solution.get_list_routes().add(list_routes.get(0))
                         list_routes.remove(0)         
                 
 
@@ -129,15 +132,15 @@ class SaveParallel(Save):
                 is_first = False
                 
                 while counter < iterations and len(list_routes) > 1 and not np.all(save_matrix == np.NINF) and list_capacities and (not is_open):
-                    save_value = save_matrix[row_col, row_col]
+                    save_value = save_matrix[self.row, self.col]
                     
                     if (save_value > 0) or ((save_value <= 0) and (len(list_routes) > count_vehicles)):
-                        row_customer = customers_to_visit[row_col].get_id_customer()
-                        col_customer = customers_to_visit[row_col].get_id_customer()
+                        row_customer = customers_to_visit[self.row].get_id_customer()
+                        col_customer = customers_to_visit[self.col].get_id_customer()
                         counter += 1
 
-                        save_matrix[row_col, row_col] = np.NINF
-                        save_matrix[row_col, row_col] = np.NINF
+                        save_matrix[self.row, self.col] = np.NINF
+                        save_matrix[self.col, self.row] = np.NINF
 
                         pos_row = self.get_position_route(list_routes, row_customer)
                         pos_col = self.get_position_route(list_routes, col_customer)
@@ -171,9 +174,9 @@ class SaveParallel(Save):
                                 route.set_id_depot(id_depot)
 
                                 if len(route.get_list_id_customers()) >= 6:
-                                    three_opt.to_optimize(route)
+                                    self.three_opt.to_optimize(route)
                                 
-                                solution.get_list_routes().append(route)
+                                self.solution.get_list_routes().append(route)
                                 list_capacities.pop(0)
 
                                 is_open = True
@@ -188,21 +191,21 @@ class SaveParallel(Save):
                         close_route.set_id_depot(id_depot)
 
                         if len(close_route.get_list_id_customers()) >= 6:
-                            three_opt.to_optimize(close_route)
+                            self.three_opt.to_optimize(close_route)
                         
-                        solution.get_list_routes().append(close_route)
+                        self.solution.get_list_routes().append(close_route)
                         list_capacities.pop(0)
 
                         is_open = True
                         self.update_customers_to_visit(close_route, customers_to_visit)
 
                     if len(list_routes) == 1:
-                        list_routes[0].setIdDepot(id_depot)
+                        list_routes[0].set_id_depot(id_depot)
 
                         if len(list_routes[0].get_list_id_customers()) >= 6:
-                            three_opt.to_optimize(list_routes[0])
+                            self.three_opt.to_optimize(list_routes[0])
                         
-                        solution.get_list_routes().append(list_routes[0])
+                        self.solution.get_list_routes().append(list_routes[0])
                         list_routes.pop(0)
 
                         is_open = True
@@ -220,13 +223,13 @@ class SaveParallel(Save):
                         list_routes.pop(0)
 
                     if len(route.get_list_id_customers()) >= 6:
-                        three_opt.to_optimize(route)
+                        self.three_opt.to_optimize(route)
                     
-                    solution.get_list_routes().append(route)
+                    self.solution.get_list_routes().append(route)
                     
-        elif type_problem == 2:
-            for j in range(pos_depot, len(Problem.get_problem().get_list_depots())):
-                if j != pos_depot:
+        elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
+            for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+                if j != self.pos_depot:
                     id_depot = Problem.get_problem().get_list_depots().get(j).get_id_depot()
                     customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(id_depot))
                     
@@ -237,7 +240,7 @@ class SaveParallel(Save):
                     
                     if customers_to_visit:
                         list_routes = self.create_initial_routes(customers_to_visit)
-                        self.inspect_routes(list_routes, list_capacities, solution, customers_to_visit)
+                        self.inspect_routes(list_routes, list_capacities, self.solution, customers_to_visit)
                         
                         cant_customers = len(customers_to_visit)
                         save_matrix = np.zeros(cant_customers, cant_customers)
@@ -248,15 +251,15 @@ class SaveParallel(Save):
                         counter = 0
                 
                 while counter < iterations and len(list_routes) > 1 and not np.all(save_matrix == np.NINF):
-                    save_value = save_matrix[row_col, row_col]
+                    save_value = save_matrix[self.row, self.col]
                     
                     if save_value > 0 or (save_value <= 0 and len(list_routes) > count_vehicles):
-                        row_customer = customers_to_visit[row_col].get_id_customer()
-                        col_customer = customers_to_visit[row_col].get_id_customer()
+                        row_customer = customers_to_visit[self.row].get_id_customer()
+                        col_customer = customers_to_visit[self.col].get_id_customer()
                         counter += 1
                         
-                        save_matrix[row_col, row_col] = np.NINF
-                        save_matrix[row_col, row_col] = np.NINF
+                        save_matrix[self.row, self.col] = np.NINF
+                        save_matrix[self.col, self.row] = np.NINF
                         
                         pos_row = self.get_position_route(list_routes, row_customer)
                         pos_col = self.get_position_route(list_routes, col_customer)
@@ -293,21 +296,21 @@ class SaveParallel(Save):
                         if save_value <= 0 and len(list_routes) <= count_vehicles:
                             save_matrix.fill(np.NINF)
                 
-                solution.get_list_routes().extend(list_routes)
+                self.solution.get_list_routes().extend(list_routes)
                 
-        elif type_problem == 4:
-            capacity_trailer = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_capacity_trailer()
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+            capacity_trailer = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_capacity_trailer()
 
             while counter < iterations and len(list_routes) > 1 and not np.all(save_matrix == np.NINF):
-                save_value = save_matrix[row_col, row_col]
+                save_value = save_matrix[self.row, self.col]
                 
                 if save_value > 0 or (save_value <= 0 and len(list_routes) > count_vehicles):
-                    row_customer = customers_to_visit[row_col].get_id_customer() 
-                    col_customer = customers_to_visit[row_col].get_id_customer()
+                    row_customer = customers_to_visit[self.row].get_id_customer() 
+                    col_customer = customers_to_visit[self.col].get_id_customer()
                     counter += 1
                     
-                    save_matrix[row_col, row_col] = np.NINF 
-                    save_matrix[row_col, row_col] = np.NINF
+                    save_matrix[self.row, self.col] = np.NINF 
+                    save_matrix[self.col, self.row] = np.NINF
                     
                     pos_row = self.get_position_route(list_routes, row_customer)
                     pos_col = self.get_position_route(list_routes, col_customer)
@@ -375,11 +378,11 @@ class SaveParallel(Save):
                 
             for j in range(len(list_routes)):
                 if len(list_routes[j].get_list_id_customers()) >= 6:
-                    three_opt.to_optimize(list_routes[j])
+                    self.three_opt.to_optimize(list_routes[j])
 
-            solution.get_list_routes().extend(list_routes)
+            self.solution.get_list_routes().extend(list_routes)
             
-        return solution
+        return self.solution
     
     # Método que revisa si alguna ruta cumple con la capacidad, la cierra y actualiza CustomersToVisit
     def inspect_routes(self, list_routes, list_capacities, solution, customers_to_visit):
@@ -400,12 +403,12 @@ class SaveParallel(Save):
     
     # Método que actualiza la lista de CustomersToVisit
     def update_customers_to_visit(self, close_route, customers_to_visit):
-        for i in range(len(close_route.list_id_customers)):
+        for i in range(len(close_route.get_list_id_customers())):
             j = 0
             found = False
             
             while j < len(customers_to_visit) and not found:
-                if customers_to_visit[j].id_customer == close_route.list_id_customers[i]:
+                if customers_to_visit[j].get_id_customer() == close_route.get_list_id_customers()[i]:
                     customers_to_visit.pop(j)
                     found = True
                 else:
@@ -415,12 +418,12 @@ class SaveParallel(Save):
     def route_to_close(self, list_routes):
         route = Route()
         
-        max_capacity = list_routes[0].request_route
+        max_capacity = list_routes[0].get_request_route()
         pos_max = 0
         
         for i in range(1, len(list_routes)):
-            if list_routes[i].request_route > max_capacity:
-                max_capacity = list_routes[i].request_route
+            if list_routes[i].get_request_route() > max_capacity:
+                max_capacity = list_routes[i].get_request_route()
                 pos_max = i
         
         route = list_routes[pos_max]
@@ -431,10 +434,10 @@ class SaveParallel(Save):
     # Método que indica si dos rutas pueden unirse
     def checking_join(self, route_ini, route_end, id_customer_ini, id_customer_end, total_capacity):
         join = False
-        size_route = len(route_ini.list_id_customers)
+        size_route = len(route_ini.get_list_id_customers())
         
-        if (route_ini.request_route + route_end.request_route) <= total_capacity:
-            if (route_ini.list_id_customers[size_route - 1] == id_customer_ini) and (route_end.list_id_customers[0] == id_customer_end):
+        if (route_ini.get_request_route() + route_end.get_request_route()) <= total_capacity:
+            if (route_ini.get_list_id_customers()[size_route - 1] == id_customer_ini) and (route_end.get_list_id_customers()[0] == id_customer_end):
                 join = True
         
         return join

@@ -1,19 +1,21 @@
-from heuristic.Heuristic import Heuristic
+from generator.heuristic.Heuristic import Heuristic
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from solution.RouteType import RouteType
-from solution.Solution import Solution
+from generator.solution.RouteType import RouteType
+from generator.solution.Solution import Solution
 import numpy as np
-from postoptimization.Operator_3opt import Operator_3opt
+from generator.postoptimization.Operator_3opt import Operator_3opt
+from generator.heuristic.Save import Save
 from random import Random
 
 
-class SaveSequential(Heuristic):
+class SaveSequential(Save):
     
     def __init__(self):
         super().__init__()
 
     def initialize_specifics(self):
+        super().initialize_specifics()
         self.random = Random()
         self.index = -1
 
@@ -25,9 +27,9 @@ class SaveSequential(Heuristic):
     # Método encargado de generar la solución
     def get_solution_inicial(self):
         
-        if self.type_problem in [0, 3]:
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
             while list_routes:
-                index = random.randint(0, len(list_routes) - 1)
+                index = self.random.randint(0, len(list_routes) - 1)
                 current_route = list_routes.pop(index)
                 exist_save = True
 
@@ -40,16 +42,16 @@ class SaveSequential(Heuristic):
                     max_save = None
                     position_save = False
 
-                    max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     
                     if ext_inic != ext_end:
-                        max_pos_end = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                        max_pos_end = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     else:
                         max_pos_end = max_save_inic
 
                     # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = save_matrix[max_save_inic]
-                    max_value_end = save_matrix[max_pos_end]
+                    max_value_inic = self.save_matrix[max_save_inic]
+                    max_value_end = self.save_matrix[max_pos_end]
 
                     # Comparar los valores y asignar el máximo
                     if max_value_inic > max_value_end:
@@ -58,19 +60,19 @@ class SaveSequential(Heuristic):
                         max_save = max_pos_end
                         position_save = True
 
-                    if current_route.get_request_route() == capacity_vehicle:
+                    if current_route.get_request_route() == self.capacity_vehicle:
                         # Llenar con infinito negativo para ext_inic
-                        save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                        save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                        self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
+                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
 
                         # Llenar con infinito negativo para ext_end
-                        save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                        save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                        self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
+                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
 
                         exist_save = False
                         continue
 
-                    save_value = save_matrix[max_save, max_save]
+                    save_value = self.save_matrix[max_save, max_save]
 
                     if save_value == np.NINF:
                         exist_save = False
@@ -96,27 +98,27 @@ class SaveSequential(Heuristic):
                             if len(current_route.get_get_list_id_customers()) > 2:
                                 no_extreme = max_save
                                 # Llenar con infinito negativo para no_extreme
-                                save_matrix[no_extreme, :] = np.NINF
-                                save_matrix[:, no_extreme] = np.NINF
+                                self.save_matrix[no_extreme, :] = np.NINF
+                                self.save_matrix[:, no_extreme] = np.NINF
                                 
                                 # Llenar con infinito negativo para ext_inic y ext_end
-                                save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                                self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                                self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
                                 
                             # Asignar infinito negativo a max_save
-                            save_matrix[max_save, max_save] = np.NINF
-                            save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
                             
                     if len(current_route.get_get_list_id_customers()) >= 6:
-                        three_opt.to_optimize(current_route)
+                        self.three_opt.to_optimize(current_route)
                     
-                    solution.get_list_routes().append(current_route)
+                    self.solution.get_list_routes().append(current_route)
                     
-        elif type_problem == 1:
+        elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             list_capacities = list(Problem.get_problem().get_list_capacities())
 
             while (len(list_routes) > 0 and len(list_capacities) > 0):
-                index = random.randint(0, len(list_routes) - 1)
+                index = self.random.randint(0, len(list_routes) - 1)
                 current_route = list_routes.pop(index)
                 exist_save = True
 
@@ -129,16 +131,16 @@ class SaveSequential(Heuristic):
                     max_save = None
                     position_save = False
 
-                    max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     
                     if ext_inic != ext_end:
-                        max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     else:
                         max_save_end = max_save_inic
 
                     # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = save_matrix[max_save_inic]
-                    max_value_end = save_matrix[max_pos_end]
+                    max_value_inic = self.save_matrix[max_save_inic]
+                    max_value_end = self.save_matrix[max_pos_end]
 
                     # Comparar los valores y asignar el máximo
                     if max_value_inic > max_value_end:
@@ -149,17 +151,17 @@ class SaveSequential(Heuristic):
 
                     if current_route.get_request_route() == list_capacities[0]:  # capacity_vehicle
                         # Llenar con infinito negativo para ext_inic
-                        save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                        save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                        self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
+                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
 
                         # Llenar con infinito negativo para ext_end
-                        save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                        save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                        self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
+                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
                         
                         exist_save = False
                         continue
 
-                    save_value = save_matrix[max_save, max_save]
+                    save_value = self.save_matrix[max_save, max_save]
 
                     if save_value == np.NINF:
                         exist_save = False
@@ -184,25 +186,25 @@ class SaveSequential(Heuristic):
 
                             if len(current_route.get_get_list_id_customers()) > 2:
                                 no_extreme = max_save
-                                save_matrix[no_extreme, :] = np.NINF
-                                save_matrix[:, no_extreme] = np.NINF
+                                self.save_matrix[no_extreme, :] = np.NINF
+                                self.save_matrix[:, no_extreme] = np.NINF
 
-                                save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                                self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                                self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
                                 
                             # Asignar infinito negativo a max_save
-                            save_matrix[max_save, max_save] = np.NINF
-                            save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
                             
                     if len(current_route.get_get_list_id_customers()) >= 6:
-                        three_opt.to_optimize(current_route)
+                        self.three_opt.to_optimize(current_route)
 
-                    solution.get_list_routes().append(current_route)
+                    self.solution.get_list_routes().append(current_route)
                     list_capacities.pop(0)  
                     
-        elif type_problem == 2:
-            for j in range(pos_depot, len(Problem.get_problem().get_list_depots())):
-                if j != pos_depot:
+        elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
+            for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+                if j != self.pos_depot:
                     id_depot = Problem.get_problem().get_list_depots().get(j).get_id_depot()
                     customers_to_visit = Problem.get_problem().get_customers_assigned_by_id_depot(id_depot)
 
@@ -211,11 +213,11 @@ class SaveSequential(Heuristic):
                     if customers_to_visit:
                         list_routes = self.create_initial_routes(customers_to_visit)
                         cant_customers = len(customers_to_visit)
-                        save_matrix = np.zeros(cant_customers, cant_customers)
-                        save_matrix = self.fill_save_matrix(id_depot, customers_to_visit)
+                        self.save_matrix = np.zeros(cant_customers, cant_customers)
+                        self.save_matrix = self.fill_save_matrix(id_depot, customers_to_visit)
 
                 while list_routes:
-                    index = random.randint(0, len(list_routes) - 1)
+                    index = self.random.randint(0, len(list_routes) - 1)
                     current_route = list_routes.pop(index)
                     exist_save = True
 
@@ -228,16 +230,16 @@ class SaveSequential(Heuristic):
                         max_save = None
                         position_save = False
 
-                        max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     
                         if ext_inic != ext_end:
-                            max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                            max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                         else:
                             max_save_end = max_save_inic
 
                         # Obtener los valores correspondientes a las posiciones máximas
-                        max_value_inic = save_matrix[max_save_inic]
-                        max_value_end = save_matrix[max_pos_end]
+                        max_value_inic = self.save_matrix[max_save_inic]
+                        max_value_end = self.save_matrix[max_pos_end]
 
                         # Comparar los valores y asignar el máximo
                         if max_value_inic > max_value_end:
@@ -248,17 +250,17 @@ class SaveSequential(Heuristic):
 
                         if current_route.get_request_route() == capacity_vehicle:
                             # Llenar con infinito negativo para ext_inic
-                            save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                            save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                            self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
+                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
 
                             # Llenar con infinito negativo para ext_end
-                            save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                            save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                            self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
+                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
                             
                             exist_save = False
                             continue
 
-                        save_value = save_matrix[max_save, max_save]
+                        save_value = self.save_matrix[max_save, max_save]
 
                         if save_value == np.NINF:
                             exist_save = False
@@ -283,26 +285,26 @@ class SaveSequential(Heuristic):
 
                                 if len(current_route.get_get_list_id_customers()) > 2:
                                     no_extreme = max_save
-                                    save_matrix[no_extreme, :] = np.NINF
-                                    save_matrix[:, no_extreme] = np.NINF
+                                    self.save_matrix[no_extreme, :] = np.NINF
+                                    self.save_matrix[:, no_extreme] = np.NINF
 
-                                    save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                    save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
                                     
                                 # Asignar infinito negativo a max_save
-                                save_matrix[max_save, max_save] = np.NINF
-                                save_matrix[max_save, max_save] = np.NINF
+                                self.save_matrix[max_save, max_save] = np.NINF
+                                self.save_matrix[max_save, max_save] = np.NINF
 
                             if len(current_route.get_get_list_id_customers()) >= 6:
-                                three_opt.to_optimize(current_route)
+                                self.three_opt.to_optimize(current_route)
 
-                            solution.get_list_routes().append(current_route)
+                            self.solution.get_list_routes().append(current_route)
                             
-        elif type_problem == 4:
-            capacity_trailer = Problem.get_problem().get_list_depots().get(pos_depot).get_list_fleets().get(0).get_capacity_trailer()
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+            capacity_trailer = Problem.get_problem().get_list_depots().get(self.pos_depot).get_list_fleets().get(0).get_capacity_trailer()
 
             while list_routes:
-                index = random.randint(len(list_routes))
+                index = self.random.randint(len(list_routes))
                 current_route = list_routes.remove(index)
 
                 exist_save = True
@@ -316,16 +318,16 @@ class SaveSequential(Heuristic):
                     max_save = None
                     position_save = False
 
-                    max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     
                     if ext_inic != ext_end:
-                        max_save_inic = np.unravel_index(np.argmax(save_matrix), save_matrix.shape)
+                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                     else:
                         max_save_end = max_save_inic
 
                     # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = save_matrix[max_save_inic]
-                    max_value_end = save_matrix[max_pos_end]
+                    max_value_inic = self.save_matrix[max_save_inic]
+                    max_value_end = self.save_matrix[max_pos_end]
 
                     # Comparar los valores y asignar el máximo
                     if max_value_inic > max_value_end:
@@ -336,17 +338,17 @@ class SaveSequential(Heuristic):
 
                     if ((current_route).get_type_route() == 0 and (current_route).getRequestRoute() == capacity_vehicle) or (((current_route).get_type_route() == 1 or (current_route).get_type_route() == 2) and (current_route).getRequestRoute() == (capacity_vehicle + capacity_trailer)):
                         # Llenar con infinito negativo para ext_inic
-                            save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                            save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                            self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
+                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
 
                             # Llenar con infinito negativo para ext_end
-                            save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                            save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                            self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
+                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
                             
                             exist_save = False
                             continue
 
-                    save_value = save_matrix[max_save, max_save]
+                    save_value = self.save_matrix[max_save, max_save]
 
                     if save_value == np.Infinity:
                         exist_save = False
@@ -390,22 +392,22 @@ class SaveSequential(Heuristic):
 
                                 if len(current_route.get_list_id_customers()) > 2:
                                     noExtreme = max_save.row
-                                    save_matrix[no_extreme, :] = np.NINF
-                                    save_matrix[:, no_extreme] = np.NINF
+                                    self.save_matrix[no_extreme, :] = np.NINF
+                                    self.save_matrix[:, no_extreme] = np.NINF
 
-                                    save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                    save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
+                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
                                     
                             # Asignar infinito negativo a max_save
-                            save_matrix[max_save, max_save] = np.NINF
-                            save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
+                            self.save_matrix[max_save, max_save] = np.NINF
 
                         # if len(currentRoute.list_id_customer) >= 6:
                         #     stepOptimization.stepOptimization(currentRoute)
 
-                        solution.get_list_routes().append(current_route)
+                        self.solution.get_list_routes().append(current_route)
             
-        return solution
+        return self.solution
     
     # Método que verifica si se pueden unir dos rutas
     def checking_merge(current_route, save_route, capacity_truck, capacity_trailer, pos_save):

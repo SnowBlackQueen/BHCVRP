@@ -169,19 +169,19 @@ class Problem:
         return pos_element
     
     # Método que devuelve el id del depósito correspondiente a un cliente dado
-    def get_id_depot_by_id_customer(self, id_customer, list_depots):
+    def get_id_depot_by_id_customer(self, id_customer):
         found = False
         id_depot = -1
-        count_depots = len(list_depots)
+        count_depots = len(self._list_depots)
         i = 0
         
         while i < count_depots and not found:
             j = 0
-            count_assigned_customers = len(list_depots[i].get_list_assigned_customers())
+            count_assigned_customers = len(self._list_depots[i].get_list_assigned_customers())
             
             while j < count_assigned_customers and not found:
-                if list_depots[i].get_list_assigned_customers()[j] == id_customer:
-                    id_depot = list_depots[i].get_id_depot()
+                if self._list_depots[i].get_list_assigned_customers()[j] == id_customer:
+                    id_depot = self._list_depots[i].get_id_depot()
                     found = True
                 else:
                     j += 1
@@ -271,12 +271,12 @@ class Problem:
         return list_customers_assigned
 
     # Método que llena la lista de capacidades de la flota de vehículos en HFVRP
-    def fill_list_capacities(self, pos_depot, list_depots):
+    def fill_list_capacities(self, pos_depot):
         list_capacities = []
 
-        for i in range(len(list_depots[pos_depot].get_list_fleets())):
-            for j in range(list_depots[pos_depot].get_list_fleets()[i].get_count_vehicles()):
-                list_capacities.append(list_depots[pos_depot].get_list_fleets()[i].get_capacity_vehicle())
+        for i in range(len(self._list_depots[pos_depot].get_list_fleets())):
+            for j in range(int(self._list_depots[pos_depot].get_list_fleets()[i].get_count_vehicles())):
+                list_capacities.append(self._list_depots[pos_depot].get_list_fleets()[i].get_capacity_vehicle())
         
         return list_capacities
 
