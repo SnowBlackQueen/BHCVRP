@@ -11,21 +11,22 @@ from generator.solution.Solution import Solution
 from exceptions.RLC_Exception import RLC_Exception
 
 class NearestNeighborWithRLC(Heuristic):
-    size_rlc = 3
+    size_rlc = 1
 
     def __init__(self):
         super().__init__()
 
     def initialize_specifics(self):
-        if NearestNeighborWithRLC.size_rlc == 0:
-            NearestNeighborWithRLC.size_rlc = 1
-        elif NearestNeighborWithRLC.size_rlc > (len(Problem.get_problem().get_list_customers()) / 2):
+        if self.size_rlc == 0:
+            self.size_rlc = 1
+        elif self.size_rlc > (len(Problem.get_problem().get_list_customers()) / 2):
             raise RLC_Exception("La lista de candidatos restringidos debe ser menor que la mitad del total de clientes")    
         
         self.customer = self._get_NN_customer(self.customers_to_visit, self.id_depot)
-        self.request_route = self.customer.get_request_customer()
-        self.route.get_list_id_customers().append(self.customer.get_id_customer())
-        self.customers_to_visit.remove(self.customer) 
+        if not self.initialized:
+            self.request_route = self.customer.get_request_customer()
+            self.route.get_list_id_customers().append(self.customer.get_id_customer())
+            self.customers_to_visit.remove(self.customer)
     
     def get_solution_inicial(self):
         self.execute()

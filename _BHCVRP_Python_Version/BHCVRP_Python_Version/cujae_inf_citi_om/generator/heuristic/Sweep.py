@@ -26,9 +26,10 @@ class Sweep(Heuristic):
             self.index = 0
             
         self.customer = self.customers_to_visit[self.index]
-        self.request_route = self.customer.get_request_customer()
-        self.route.get_list_id_customers().append(self.customer.get_id_customer())
-        self.customers_to_visit.remove(self.customer)
+        if not self.initialized:
+            self.request_route = self.customer.get_request_customer()
+            self.route.get_list_id_customers().append(self.customer.get_id_customer())
+            self.customers_to_visit.remove(self.customer)
 
     def get_solution_inicial(self):
         self.execute()

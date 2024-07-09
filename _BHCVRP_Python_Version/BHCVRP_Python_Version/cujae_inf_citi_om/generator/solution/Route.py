@@ -77,7 +77,7 @@ class Route:
         for i in range(1, len(self.list_id_customers)):
             customer_next = self.list_id_customers[i]
             pos_customer_next = Problem.get_problem().get_pos_element(customer_next)
-            # cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, pos_customer_next)
+            cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, pos_customer_next)
             customer_ini = customer_next
             pos_customer_ini = pos_customer_next
 

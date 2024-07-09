@@ -28,7 +28,7 @@ class LoadFile:
             return False
 
     def load_count_vehicles_for_depot(self, count_vehicles):
-        total_vehicles = self.instance_file[0].split(" ")[0]
+        total_vehicles = int(self.instance_file[0].split(" ")[0])
         total_depots = self.load_total_depots()
         count_fleet = [total_vehicles]
         count_vehicles.extend([count_fleet] * total_depots)

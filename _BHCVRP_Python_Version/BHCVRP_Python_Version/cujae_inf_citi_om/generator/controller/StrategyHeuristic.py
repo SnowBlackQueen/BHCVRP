@@ -391,12 +391,12 @@ class StrategyHeuristic:
     # Método encargado de ejecutar una heurística de construcción
     def execute_heuristic(self, count_execution, heuristic_type):
         if self.calculate_time:
-            time_execute = time.time()
+            self.time_execute = time.time()
 
         heuristic = self.new_heuristic(heuristic_type)
 
         for i in range(1, count_execution + 1):
-            current_solution = heuristic.template_method() # VERIFICAR !!!
+            current_solution = heuristic.template_method() # al kilo !!!
             current_solution.calculate_cost()
             self.list_solutions.append(current_solution)
 
@@ -407,7 +407,7 @@ class StrategyHeuristic:
                     self.best_solution = current_solution
 
         if self.calculate_time:
-            time_execute = abs(time.time() - time_execute)
+            self.time_execute = abs(time.time() - self.time_execute)
 
     # Método que devuelve el listado de los clientes de la mejor solución obtenida
     def get_orden_visit(self):
@@ -562,7 +562,6 @@ class StrategyHeuristic:
     # Método para verificar si se puede cargar HFVRP
     def load_hfvrp(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles, list_distances, axis_X_customers, axis_Y_customers, axis_X_depots, axis_Y_depots, type_problem, type_order):
         loaded = False
-        
         if (type_problem is not None) and (id_customers is not None and len(id_customers) > 0) and (request_customers is not None and len(request_customers) > 0) and (id_depots is not None and len(id_depots) > 0) and (count_vehicles is not None and len(count_vehicles) > 0) and (capacity_vehicles is not None and len(capacity_vehicles) > 0) and (list_distances is not None and len(list_distances) > 0) and (axis_X_customers is not None and len(axis_X_customers) > 0) and (axis_Y_customers is not None and len(axis_Y_customers) > 0) and (axis_X_depots is not None and len(axis_X_depots) > 0) and (axis_Y_depots is not None and len(axis_Y_depots) > 0):
             list_customers = []
             list_depots = []
@@ -607,7 +606,6 @@ class StrategyHeuristic:
             Problem.get_problem().set_list_customers(list_customers)
             Problem.get_problem().set_list_depots(list_depots)
             Problem.get_problem().set_type_problem(type_problem)
-
             if Problem.get_problem().get_total_capacity() >= Problem.get_problem().get_total_request():
                 loaded = True
                 Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
@@ -619,10 +617,11 @@ class StrategyHeuristic:
                     if type_order is None:
                         type_order = OrderType.Ascending
 
-                    Problem.get_problem().fill_list_capacities(0)
-                    Tools.OrdenateMethod(Problem.get_problem().get_list_capacities(), type_order)
+                    lc = Problem.get_problem().fill_list_capacities(0)
+                    Problem.get_problem().set_list_capacities(lc)
+                    Tools.ordinate_method(Problem.get_problem().get_list_capacities(), type_order)
                 else:
-                    Tools.OrdenateMethod(Problem.get_problem().get_list_capacities(), type_order)
+                    Tools.ordinate_method(Problem.get_problem().get_list_capacities(), type_order)
             else:
                 print("La demanda total excede a la capacidad total")
 
