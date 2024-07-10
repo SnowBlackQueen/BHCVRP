@@ -42,7 +42,7 @@ class CMT(Heuristic):
         self.request_route = 0.0
         self.pos_best_tau = -1
 
-        self.list_capacities = Problem.get_problem().get_list_capacities()
+        self.list_capacities = list(Problem.get_problem().get_list_capacities())
 
     def creating(self, route, request_route, list_tau_costs, list_metrics_cmt_by_customer):
         if self.type_problem in [0, 1, 2,
@@ -132,11 +132,10 @@ class CMT(Heuristic):
 
                 while list_tau_costs:
                     pos_best_tau = len(list_tau_costs) - 1
-                    customer_to_insert = self._get_customer_by_id(list_tau_costs[pos_best_tau].get_id_element(),
+                    self.customer_to_insert = self._get_customer_by_id(list_tau_costs[pos_best_tau].get_id_element(),
                                                                   customers_to_visit)
 
-                    route = self.creating(route, request_route, self.customer, self.capacity_vehicle, id_depot,
-                                          solution, customers_to_visit)
+                    route = self.creating(route, request_route, list_tau_costs, list_metrics_cmt_by_customer)
 
                 route.set_request_route(request_route)
                 solution.get_list_routes().append(route)
@@ -410,7 +409,10 @@ class CMT(Heuristic):
                         route.set_id_depot(Problem.get_problem().get_list_depots()[pos_depot].get_id_depot())
                         list_customers.remove(root_customer)
 
-                        capacity_vehicle = list_capacities[0]
+                        if not list_capacities:
+                            continue
+                        else:
+                            capacity_vehicle = list_capacities[0]
 
                         if not list_customers:
                             list_routes.append(route)

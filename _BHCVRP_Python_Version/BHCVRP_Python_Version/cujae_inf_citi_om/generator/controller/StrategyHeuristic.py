@@ -19,6 +19,7 @@ from factory.interfaces.DistanceType import DistanceType
 from generator.heuristic.Heuristic import Heuristic
 import numpy as np 
 import time
+from tqdm import tqdm
 
 class StrategyHeuristic:
     strategy_heuristic = None
@@ -395,7 +396,7 @@ class StrategyHeuristic:
 
         heuristic = self.new_heuristic(heuristic_type)
 
-        for i in range(1, count_execution + 1):
+        for i in tqdm(range(1, count_execution + 1)):
             current_solution = heuristic.template_method() # al kilo !!!
             current_solution.calculate_cost()
             self.list_solutions.append(current_solution)

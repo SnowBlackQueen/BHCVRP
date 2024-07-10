@@ -10,7 +10,7 @@ from random import Random
 
 
 class SaveSequential(Save):
-    
+
     def __init__(self):
         super().__init__()
 
@@ -23,192 +23,290 @@ class SaveSequential(Save):
         self.ext_end = -1
         self.no_extreme = -1
         self.exist_save = False
-    
-    # Método encargado de generar la solución
-    def get_solution_inicial(self):
-        
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
-            while list_routes:
-                index = self.random.randint(0, len(list_routes) - 1)
-                current_route = list_routes.pop(index)
-                exist_save = True
 
-                ext_inic = current_route.get_get_list_id_customers()[0]
-                ext_end = current_route.get_get_list_id_customers()[-1]
+    def creating(self, route=None, request_route=None, list_tau=None, list_metrics=None):
+        if self.type_problem in [0, 2,
+                                 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.MDVRP:
+            row_matrix = Problem.get_problem().get_pos_element(self.ext_inic)
+            submatrix = self.save_matrix[row_matrix, :self.cant_customers]
+            self.max_save_inic = (row_matrix, np.argmax(submatrix))
+            if self.ext_inic != self.ext_end:
+                row_matrix = Problem.get_problem().get_pos_element(self.ext_end)
+                submatrix = self.save_matrix[row_matrix, :self.cant_customers]
+                self.max_save_end = (row_matrix, np.argmax(submatrix))
+            else:
+                self.max_save_end = self.max_save_inic
 
-                while exist_save:
-                    max_save_inic = None
-                    max_save_end = None
-                    max_save = None
-                    position_save = False
+            # Comparar los valores y asignar el máximo
+            if self.save_matrix[self.max_save_inic[0], self.max_save_inic[1]] > self.save_matrix[
+                self.max_save_end[0], self.max_save_end[1]]:
+                self.max_save = self.max_save_inic
+            else:
+                self.max_save = self.max_save_end
+                self.position_save = True
 
-                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    
-                    if ext_inic != ext_end:
-                        max_pos_end = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    else:
-                        max_pos_end = max_save_inic
+            if self.current_route.get_request_route() == self.capacity_vehicle:
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_inic), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_inic)] = -np.inf
 
-                    # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = self.save_matrix[max_save_inic]
-                    max_value_end = self.save_matrix[max_pos_end]
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_end), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_end)] = -np.inf
 
-                    # Comparar los valores y asignar el máximo
-                    if max_value_inic > max_value_end:
-                        max_save = max_save_inic
-                    else:
-                        max_save = max_pos_end
-                        position_save = True
+                self.exist_save = False
+                return
 
-                    if current_route.get_request_route() == self.capacity_vehicle:
-                        # Llenar con infinito negativo para ext_inic
-                        self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+            self.save_value = self.save_matrix[self.max_save[0], self.max_save[1]]
 
-                        # Llenar con infinito negativo para ext_end
-                        self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-
-                        exist_save = False
-                        continue
-
-                    save_value = self.save_matrix[max_save, max_save]
-
-                    if save_value == np.NINF:
-                        exist_save = False
-                        continue
-                    else:
-                        pos_route = self.get_position_route(list_routes, customers_to_visit.get(max_save).get_id_customer())
-                        save_route = list_routes[pos_route]
-
-                        is_factible = self.checking_merge(current_route, save_route, capacity_vehicle, 0.0, position_save)
-
-                        if is_factible != -1:
-                            if position_save:
-                                current_route.get_get_list_id_customers().extend(save_route.get_get_list_id_customers())
-                                ext_end = customers_to_visit.get(max_save).get_id_customer()
-                            else:
-                                current_route.get_get_list_id_customers().insert(0, save_route.get_get_list_id_customers())
-                                ext_inic = customers_to_visit.get(max_save).get_id_customer()
-
-                            current_route.set_id_depot(id_depot)
-                            current_route.set_request_route((current_route.get_request_route() + save_route.get_request_route()))
-                            list_routes.remove(save_route)
-
-                            if len(current_route.get_get_list_id_customers()) > 2:
-                                no_extreme = max_save
-                                # Llenar con infinito negativo para no_extreme
-                                self.save_matrix[no_extreme, :] = np.NINF
-                                self.save_matrix[:, no_extreme] = np.NINF
-                                
-                                # Llenar con infinito negativo para ext_inic y ext_end
-                                self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-                                
-                            # Asignar infinito negativo a max_save
-                            self.save_matrix[max_save, max_save] = np.NINF
-                            self.save_matrix[max_save, max_save] = np.NINF
-                            
-                    if len(current_route.get_get_list_id_customers()) >= 6:
-                        self.three_opt.to_optimize(current_route)
-                    
-                    self.solution.get_list_routes().append(current_route)
-                    
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
-            list_capacities = list(Problem.get_problem().get_list_capacities())
 
-            while (len(list_routes) > 0 and len(list_capacities) > 0):
-                index = self.random.randint(0, len(list_routes) - 1)
-                current_route = list_routes.pop(index)
-                exist_save = True
+            row_matrix = Problem.get_problem().get_pos_element(self.ext_inic)
+            submatrix = self.save_matrix[row_matrix, :self.cant_customers]
+            self.max_save_inic = (row_matrix, np.argmax(submatrix))
 
-                ext_inic = current_route.get_get_list_id_customers()[0]
-                ext_end = current_route.get_get_list_id_customers()[-1]
+            if self.ext_inic != self.ext_end:
+                row_matrix = Problem.get_problem().get_pos_element(self.ext_end)
+                submatrix = self.save_matrix[row_matrix, :self.cant_customers]
+                self.max_save_end = (row_matrix, np.argmax(submatrix))
+            else:
+                self.max_save_end = self.max_save_inic
 
-                while exist_save:
-                    max_save_inic = None
-                    max_save_end = None
-                    max_save = None
-                    position_save = False
+            # Comparar los valores y asignar el máximo
+            if self.save_matrix[self.max_save_inic[0], self.max_save_inic[1]] > self.save_matrix[
+                self.max_save_end[0], self.max_save_end[1]]:
+                self.max_save = self.max_save_inic
+            else:
+                self.max_save = self.max_save_end
+                self.position_save = True
 
-                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    
-                    if ext_inic != ext_end:
-                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+            if self.current_route.get_request_route() == self.list_capacities[0]:  # capacity_vehicle
+                # Llenar con infinito negativo para ext_inic
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_inic), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_inic)] = -np.inf
+
+                # Llenar con infinito negativo para ext_end
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_end), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_end)] = -np.inf
+
+                self.exist_save = False
+                return
+
+            self.save_value = self.save_matrix[self.max_save[0], self.max_save[1]]
+
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+            max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+
+            if self.ext_inic != self.ext_end:
+                max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+            else:
+                max_save_end = max_save_inic
+
+            # Obtener los valores correspondientes a las posiciones máximas
+            max_value_inic = self.save_matrix[max_save_inic]
+            max_value_end = self.save_matrix[self.max_pos_end]
+
+            # Comparar los valores y asignar el máximo
+            if max_value_inic > max_value_end:
+                max_save = max_save_inic
+            else:
+                max_save = max_save_end
+                self.position_save = True
+
+            if ((self.current_route).get_type_route() == 0 and (
+                    self.current_route).getRequestRoute() == self.capacity_vehicle) or (
+                    ((self.current_route).get_type_route() == 1 or (self.current_route).get_type_route() == 2) and (
+                    self.current_route).getRequestRoute() == (self.capacity_vehicle + self.capacity_trailer)):
+                # Llenar con infinito negativo para ext_inic
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_inic), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_inic)] = -np.inf
+
+                # Llenar con infinito negativo para ext_end
+                self.save_matrix[Problem.get_problem().get_pos_element(self.ext_end), :] = -np.inf
+                self.save_matrix[:, Problem.get_problem().get_pos_element(self.ext_end)] = -np.inf
+
+                self.exist_save = False
+                #continue
+
+            self.save_value = self.save_matrix[self.max_save, self.max_save]
+
+    def processing(self, customers_to_visit=None, count_vehicles=None, request_route=None, route=None, id_depot=None,
+                   solution=None):
+        if self.type_problem in [0, 1, 2,
+                                 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.MDVRP or self.type_problem == ProblemType.HFVRP:
+            if self.save_value == -np.inf:
+                self.exist_save = False
+                return
+            else:
+                pos_route = self.get_position_route(self.list_routes,
+                                                    self.customers_to_visit[self.max_save[1]].get_id_customer())
+                save_route = self.list_routes[pos_route]
+
+                is_factible = None
+
+                if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.MDVRP:
+                    is_factible = self.checking_merge(self.current_route, save_route, self.capacity_vehicle, 0.0,
+                                                      self.position_save)
+                elif self.type_problem == ProblemType.HFVRP:
+                    is_factible = self.checking_merge(self.current_route, save_route, self.list_capacities[0], 0.0,
+                                                      self.position_save)
+
+                if is_factible != -1:
+                    if self.position_save:
+                        self.current_route.get_list_id_customers().extend(save_route.get_list_id_customers())
+                        self.ext_end = self.customers_to_visit[self.max_save[1]].get_id_customer()
                     else:
-                        max_save_end = max_save_inic
+                        self.current_route.list_id_customers = save_route.get_list_id_customers() + self.current_route.get_list_id_customers()
+                        self.ext_inic = self.customers_to_visit[self.max_save[1]].get_id_customer()
 
-                    # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = self.save_matrix[max_save_inic]
-                    max_value_end = self.save_matrix[max_pos_end]
+                    self.current_route.set_id_depot(id_depot)
+                    self.current_route.set_request_route(
+                        (self.current_route.get_request_route() + save_route.get_request_route()))
+                    self.list_routes.remove(save_route)
 
-                    # Comparar los valores y asignar el máximo
-                    if max_value_inic > max_value_end:
-                        max_save = max_save_inic
-                    else:
-                        max_save = max_save_end
-                        position_save = True
+                    if len(self.current_route.get_list_id_customers()) > 2:
+                        no_extreme = self.max_save[0]
+                        # Llenar con infinito negativo para no_extreme
+                        self.save_matrix[no_extreme, :] = -np.inf
+                        self.save_matrix[:, no_extreme] = -np.inf
 
-                    if current_route.get_request_route() == list_capacities[0]:  # capacity_vehicle
-                        # Llenar con infinito negativo para ext_inic
-                        self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
+                        # Llenar con infinito negativo para ext_inic y ext_end
+                        self.save_matrix[
+                            Problem.get_problem().get_pos_element(self.ext_inic), Problem.get_problem().get_pos_element(
+                                self.ext_end)] = -np.inf
+                        self.save_matrix[
+                            Problem.get_problem().get_pos_element(self.ext_end), Problem.get_problem().get_pos_element(
+                                self.ext_inic)] = -np.inf
 
-                        # Llenar con infinito negativo para ext_end
-                        self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                        self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                        
-                        exist_save = False
-                        continue
+                # Asignar infinito negativo a max_save
+                self.save_matrix[self.max_save[0], self.max_save[1]] = -np.inf
+                self.save_matrix[self.max_save[1], self.max_save[0]] = -np.inf
 
-                    save_value = self.save_matrix[max_save, max_save]
 
-                    if save_value == np.NINF:
-                        exist_save = False
-                        continue
-                    else:
-                        pos_route = self.get_position_route(list_routes, customers_to_visit[max_save].get_id_customer())
-                        save_route = list_routes[pos_route]
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+            if self.save_value == np.NINF:
+                self.exist_save = False
+                #continue
+            else:
+                pos_route = self.get_position_route(self.list_routes,
+                                                    self.customers_to_visit.get(self.max_save).get_id_customer())
+                save_route = self.list_routes.get(pos_route)
 
-                        is_factible = self.checking_merge(current_route, save_route, list_capacities[0], 0.0, position_save)
+                is_factible = self.checking_merge(self.current_route, save_route, self.capacity_vehicle,
+                                                  self.capacity_trailer, self.position_save)
 
-                        if is_factible != -1:
-                            if position_save:
-                                current_route.get_get_list_id_customers().extend(save_route.get_get_list_id_customers())
-                                ext_end = customers_to_visit[max_save.get_col()].get_id_customer()
+                if is_factible != -1:
+                    type_route = None
+
+                    if self.position_save:
+                        self.current_route.get_get_list_id_customers().addAll(save_route.get_get_list_id_customers())
+                        ext_end = self.customers_to_visit.get(self.max_save).get_id_customer()
+
+                        if (self.current_route).get_type_route().equals((save_route).get_type_route()):
+                            type_route = (self.current_route).get_type_route()
+                        else:
+                            if not (self.current_route).get_type_route().equals(RouteType.PTR):
+                                type_route = RouteType.CVR
                             else:
-                                current_route.get_get_list_id_customers().extend(0, save_route.get_get_list_id_customers())
-                                ext_inic = customers_to_visit[max_save].get_id_customer()
+                                type_route = (self.current_route).get_type_route()
+                    else:
+                        self.current_route.get_list_id_customers().extend(save_route.get_list_id_customers())
+                        ext_inic = self.customers_to_visit.get(self.max_save).get_id_customer()
 
-                            current_route.set_id_depot(id_depot)
-                            current_route.set_request_route(current_route.get_request_route() + save_route.get_request_route())
-                            list_routes.remove(save_route)
+                        if save_route.get_type_route() == self.current_route.get_type_route():
+                            type_route = save_route.get_type_route()
+                        else:
+                            if save_route.get_type_route() > 0:
+                                type_route = RouteType.CVR
+                            else:
+                                type_route = save_route.get_type_route()
 
-                            if len(current_route.get_get_list_id_customers()) > 2:
-                                no_extreme = max_save
-                                self.save_matrix[no_extreme, :] = np.NINF
-                                self.save_matrix[:, no_extreme] = np.NINF
+                        self.current_route.set_type_route(type_route)
+                        self.current_route.set_id_depot(self.id_depot)
+                        self.current_route.set_request_route(
+                            (self.current_route.get_request_route() + save_route.get_request_route()))
+                        self.list_routes.remove(save_route)
 
-                                self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-                                
-                            # Asignar infinito negativo a max_save
-                            self.save_matrix[max_save, max_save] = np.NINF
-                            self.save_matrix[max_save, max_save] = np.NINF
-                            
-                    if len(current_route.get_get_list_id_customers()) >= 6:
-                        self.three_opt.to_optimize(current_route)
+                        if len(self.current_route.get_list_id_customers()) > 2:
+                            no_extreme = self.max_save
+                            self.save_matrix[no_extreme, :] = np.NINF
+                            self.save_matrix[:, no_extreme] = np.NINF
 
-                    self.solution.get_list_routes().append(current_route)
-                    list_capacities.pop(0)  
-                    
+                            self.save_matrix[
+                                Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(
+                                    ext_end)] = np.NINF
+                            self.save_matrix[
+                                Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(
+                                    ext_inic)] = np.NINF
+
+                    # Asignar infinito negativo a max_save
+                    self.save_matrix[self.max_save, self.max_save] = np.NINF
+                    self.save_matrix[self.max_save, self.max_save] = np.NINF
+
+                # if len(currentRoute.list_id_customer) >= 6:
+                #     stepOptimization.stepOptimization(currentRoute)
+
+                self.solution.get_list_routes().append(self.current_route)
+
+    def execute(self):
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
+            while self.list_routes:
+                self.index = self.random.randint(0, len(self.list_routes) - 1)
+                self.current_route = self.list_routes.pop(self.index)
+                self.exist_save = True
+
+                self.ext_inic = self.current_route.get_list_id_customers()[0]
+                self.ext_end = self.current_route.get_list_id_customers()[-1]
+
+                while self.exist_save:
+                    self.max_save_inic = None
+                    self.max_save_end = None
+                    self.max_save = None
+                    self.position_save = False
+
+                    self.creating()
+                    if not self.exist_save:
+                        continue
+                    self.processing()
+
+                if len(self.current_route.get_list_id_customers()) >= 6:
+                    self.three_opt.to_optimize(self.current_route)
+
+                self.solution.get_list_routes().append(self.current_route)
+
+        elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
+            self.list_capacities = list(Problem.get_problem().get_list_capacities())
+
+            while (len(self.list_routes) > 0 and len(self.list_capacities) > 0):
+                self.index = self.random.randint(0, len(self.list_routes) - 1)
+                self.current_route = self.list_routes.pop(self.index)
+                self.exist_save = True
+
+                self.ext_inic = self.current_route.get_list_id_customers()[0]
+                self.ext_end = self.current_route.get_list_id_customers()[-1]
+
+                while self.exist_save:
+                    self.max_save_inic = None
+                    self.max_save_end = None
+                    self.max_save = None
+                    self.position_save = False
+
+                    self.creating()
+
+                    self.processing()
+
+                if len(self.current_route.get_list_id_customers()) >= 6:
+                    self.three_opt.to_optimize(self.current_route)
+
+                self.solution.get_list_routes().append(self.current_route)
+                self.list_capacities.pop(0)
+
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
                 if j != self.pos_depot:
                     id_depot = Problem.get_problem().get_list_depots().get(j).get_id_depot()
                     customers_to_visit = Problem.get_problem().get_customers_assigned_by_id_depot(id_depot)
 
-                    capacity_vehicle = Problem.get_problem().get_list_depots().get(j).get_list_fleets().get(0).get_capacity_vehicle()
+                    self.capacity_vehicle = Problem.get_problem().get_list_depots().get(j).get_list_fleets().get(
+                        0).get_capacity_vehicle()
 
                     if customers_to_visit:
                         list_routes = self.create_initial_routes(customers_to_visit)
@@ -217,211 +315,70 @@ class SaveSequential(Save):
                         self.save_matrix = self.fill_save_matrix(id_depot, customers_to_visit)
 
                 while list_routes:
-                    index = self.random.randint(0, len(list_routes) - 1)
-                    current_route = list_routes.pop(index)
-                    exist_save = True
+                    self.index = self.random.randint(0, len(list_routes) - 1)
+                    self.current_route = list_routes.pop(self.index)
+                    self.exist_save = True
 
-                    ext_inic = current_route.get_get_list_id_customers()[0]
-                    ext_end = current_route.get_get_list_id_customers()[len(current_route.get_get_list_id_customers()) - 1]
+                    self.ext_inic = self.current_route.get_get_list_id_customers()[0]
+                    self.ext_end = self.current_route.get_get_list_id_customers()[
+                        len(self.current_route.get_get_list_id_customers()) - 1]
 
-                    while exist_save:
-                        max_save_inic = None
-                        max_save_end = None
-                        max_save = None
-                        position_save = False
+                    while self.exist_save:
+                        self.max_save_inic = None
+                        self.max_save_end = None
+                        self.max_save = None
+                        self.position_save = False
 
-                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    
-                        if ext_inic != ext_end:
-                            max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                        else:
-                            max_save_end = max_save_inic
+                        self.creating()
 
-                        # Obtener los valores correspondientes a las posiciones máximas
-                        max_value_inic = self.save_matrix[max_save_inic]
-                        max_value_end = self.save_matrix[max_pos_end]
+                        self.processing()
 
-                        # Comparar los valores y asignar el máximo
-                        if max_value_inic > max_value_end:
-                            max_save = max_save_inic
-                        else:
-                            max_save = max_save_end
-                            position_save = True
-
-                        if current_route.get_request_route() == capacity_vehicle:
-                            # Llenar con infinito negativo para ext_inic
-                            self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-
-                            # Llenar con infinito negativo para ext_end
-                            self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                            
-                            exist_save = False
-                            continue
-
-                        save_value = self.save_matrix[max_save, max_save]
-
-                        if save_value == np.NINF:
-                            exist_save = False
-                            continue
-                        else:
-                            pos_route = self.get_position_route(list_routes, customers_to_visit.get(max_save).get_id_customer())
-                            save_route = list_routes[pos_route]
-
-                            is_factible = self.checking_merge(current_route, save_route, capacity_vehicle, 0.0, position_save)
-                            
-                            if is_factible != -1:
-                                if position_save:
-                                    current_route.get_get_list_id_customers().extend(save_route.get_get_list_id_customers())
-                                    ext_end = customers_to_visit.get(max_save).get_id_customer()
-                                else:
-                                    current_route.get_get_list_id_customers().insert(0, save_route.get_get_list_id_customers())
-                                    ext_inic = customers_to_visit.get(max_save).get_id_customer()
-
-                                current_route.set_id_depot(id_depot)
-                                current_route.set_request_route((current_route.get_request_route() + save_route.get_request_route()))
-                                list_routes.remove(save_route)
-
-                                if len(current_route.get_get_list_id_customers()) > 2:
-                                    no_extreme = max_save
-                                    self.save_matrix[no_extreme, :] = np.NINF
-                                    self.save_matrix[:, no_extreme] = np.NINF
-
-                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-                                    
-                                # Asignar infinito negativo a max_save
-                                self.save_matrix[max_save, max_save] = np.NINF
-                                self.save_matrix[max_save, max_save] = np.NINF
-
-                            if len(current_route.get_get_list_id_customers()) >= 6:
-                                self.three_opt.to_optimize(current_route)
-
-                            self.solution.get_list_routes().append(current_route)
-                            
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
-            capacity_trailer = Problem.get_problem().get_list_depots().get(self.pos_depot).get_list_fleets().get(0).get_capacity_trailer()
+            self.capacity_trailer = Problem.get_problem().get_list_depots().get(self.pos_depot).get_list_fleets().get(
+                0).get_capacity_trailer()
 
-            while list_routes:
-                index = self.random.randint(len(list_routes))
-                current_route = list_routes.remove(index)
+            while self.list_routes:
+                self.index = self.random.randint(len(self.list_routes))
+                self.current_route = self.list_routes.remove(self.index)
 
-                exist_save = True
+                self.exist_save = True
 
-                ext_inic = current_route.get_get_list_id_customers().get(0)
-                ext_end = current_route.get_get_list_id_customers().get(len(current_route.get_get_list_id_customers()) - 1)
+                self.ext_inic = self.current_route.get_get_list_id_customers().get(0)
+                self.ext_end = self.current_route.get_get_list_id_customers().get(
+                    len(self.current_route.get_get_list_id_customers()) - 1)
 
-                while exist_save:
-                    max_save_inic = None
-                    max_save_end = None
-                    max_save = None
-                    position_save = False
+                while self.exist_save:
+                    self.max_save_inic = None
+                    self.max_save_end = None
+                    self.max_save = None
+                    self.position_save = False
 
-                    max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    
-                    if ext_inic != ext_end:
-                        max_save_inic = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
-                    else:
-                        max_save_end = max_save_inic
+                    self.creating()
 
-                    # Obtener los valores correspondientes a las posiciones máximas
-                    max_value_inic = self.save_matrix[max_save_inic]
-                    max_value_end = self.save_matrix[max_pos_end]
+                    self.processing()
 
-                    # Comparar los valores y asignar el máximo
-                    if max_value_inic > max_value_end:
-                        max_save = max_save_inic
-                    else:
-                        max_save = max_save_end
-                        position_save = True
-
-                    if ((current_route).get_type_route() == 0 and (current_route).getRequestRoute() == capacity_vehicle) or (((current_route).get_type_route() == 1 or (current_route).get_type_route() == 2) and (current_route).getRequestRoute() == (capacity_vehicle + capacity_trailer)):
-                        # Llenar con infinito negativo para ext_inic
-                            self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), :] = np.NINF
-                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-
-                            # Llenar con infinito negativo para ext_end
-                            self.save_matrix[Problem.get_problem().get_pos_element(ext_end), :] = np.NINF
-                            self.save_matrix[:, Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                            
-                            exist_save = False
-                            continue
-
-                    save_value = self.save_matrix[max_save, max_save]
-
-                    if save_value == np.Infinity:
-                        exist_save = False
-                        continue
-                    else:
-                        pos_route = self.get_position_route(list_routes, customers_to_visit.get(max_save).get_id_customer())
-                        save_route = list_routes.get(pos_route)
-
-                        is_factible = self.checking_merge(current_route, save_route, capacity_vehicle, capacity_trailer, position_save)
-
-                        if is_factible != -1:
-                            type_route = None
-
-                            if position_save:
-                                current_route.get_get_list_id_customers().addAll(save_route.get_get_list_id_customers())
-                                ext_end = customers_to_visit.get(max_save).get_id_customer()
-
-                                if (current_route).get_type_route().equals((save_route).get_type_route()):
-                                    type_route = (current_route).get_type_route()
-                                else:
-                                    if not (current_route).get_type_route().equals(RouteType.PTR):
-                                        type_route = RouteType.CVR
-                                    else:
-                                        type_route = (current_route).get_type_route()
-                            else:
-                                current_route.get_list_id_customers().extend(save_route.get_list_id_customers())
-                                ext_inic = customers_to_visit.get(max_save).get_id_customer()
-
-                                if save_route.get_type_route() == current_route.get_type_route():
-                                    type_route = save_route.get_type_route()
-                                else:
-                                    if save_route.get_type_route() > 0:
-                                        type_route = RouteType.CVR
-                                    else:
-                                        type_route = save_route.get_type_route()
-
-                                current_route.set_type_route(type_route)
-                                current_route.set_id_depot(id_depot)
-                                current_route.set_request_route((current_route.get_request_route() + save_route.get_request_route()))
-                                list_routes.remove(save_route)
-
-                                if len(current_route.get_list_id_customers()) > 2:
-                                    noExtreme = max_save.row
-                                    self.save_matrix[no_extreme, :] = np.NINF
-                                    self.save_matrix[:, no_extreme] = np.NINF
-
-                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_inic), Problem.get_problem().get_pos_element(ext_end)] = np.NINF
-                                    self.save_matrix[Problem.get_problem().get_pos_element(ext_end), Problem.get_problem().get_pos_element(ext_inic)] = np.NINF
-                                    
-                            # Asignar infinito negativo a max_save
-                            self.save_matrix[max_save, max_save] = np.NINF
-                            self.save_matrix[max_save, max_save] = np.NINF
-
-                        # if len(currentRoute.list_id_customer) >= 6:
-                        #     stepOptimization.stepOptimization(currentRoute)
-
-                        self.solution.get_list_routes().append(current_route)
-            
         return self.solution
-    
+
+    # Método encargado de generar la solución
+    def get_solution_inicial(self):
+
+        self.execute()
+
+        return self.solution
+
     # Método que verifica si se pueden unir dos rutas
-    def checking_merge(current_route, save_route, capacity_truck, capacity_trailer, pos_save):
+    def checking_merge(self, current_route, save_route, capacity_truck, capacity_trailer, pos_save):
         join = 0
         request_total = current_route.get_request_route() + save_route.get_request_route()
-        
+
         if Problem.get_problem().get_type_problem() == ProblemType.TTRP:
             type_route_ini = None
-            
-            if pos_save: # fin
+
+            if pos_save:  # fin
                 type_route_ini = current_route.get_type_route()
             else:
                 type_route_ini = save_route.get_type_route()
-            
+
             if type_route_ini == RouteType.PTR:
                 if request_total > capacity_truck:
                     join = -1
@@ -432,5 +389,5 @@ class SaveSequential(Save):
         else:
             if request_total > capacity_truck:
                 join = -1
-        
+
         return join

@@ -82,28 +82,28 @@ class Problem:
 
     # Método que busca un cliente dado su identificador
     def get_customer_by_id_customer(self, id_customer):
-        for customer in self.list_customers:
-            if customer.id_customer == id_customer:
+        for customer in self._list_customers:
+            if customer.get_id_customer() == id_customer:
                 return customer
         return None
 
     # Método que devuelve el tipo de un cliente dado su identificador
     def get_type_by_id_customer(self, id_customer):
-        for customer in self.list_customers:
+        for customer in self._list_customers:
             if isinstance(customer, CustomerTTRP) and customer.id_customer == id_customer:
-                return customer.getTypeCustomer()
+                return customer.get_type_customer()
         return None
 
     # Método que devuelve la demanda de un cliente dado su identificador
-    def get_request_by_id_customer(self, id_customer, list_customers):
+    def get_request_by_id_customer(self, id_customer):
         request_customer = 0.0
         i = 0
         found = False
-        count_customers = len(list_customers)
+        count_customers = len(self._list_customers)
         
         while i < count_customers and not found:
-            if list_customers[i].get_id_customer() == id_customer:
-                request_customer = list_customers[i].get_request_customer()
+            if self._list_customers[i].get_id_customer() == id_customer:
+                request_customer = self._list_customers[i].get_request_customer()
                 found = True
             else:
                 i += 1

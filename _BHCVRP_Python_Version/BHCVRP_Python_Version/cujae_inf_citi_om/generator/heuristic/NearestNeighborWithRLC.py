@@ -11,7 +11,7 @@ from generator.solution.Solution import Solution
 from exceptions.RLC_Exception import RLC_Exception
 
 class NearestNeighborWithRLC(Heuristic):
-    size_rlc = 1
+    size_rlc = 3
 
     def __init__(self):
         super().__init__()

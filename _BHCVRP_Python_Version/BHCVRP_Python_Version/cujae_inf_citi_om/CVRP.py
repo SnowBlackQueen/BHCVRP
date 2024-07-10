@@ -9,10 +9,10 @@ from generator.controller.StrategyHeuristic import StrategyHeuristic
 
 def main():
     try:
-        file_output = open("../Resultado_CVRP_4_Sweep20.txt", "w")
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\Instancia_CVRP_1\\Resultado_CVRP1_K5.txt", "w")
         sys.stdout = file_output
 
-        path_files = "../CVRP_4"
+        path_files = "D:\\Escuela\\BHCVRP\\ResultadosCVRP\\CVRP_4"
         # total_instances = 5
         load_file = LoadFile()
 
@@ -40,7 +40,7 @@ def main():
         load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots,
                                       axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.Sweep
+        heuristic_type = HeuristicType.KilbyAlgorithm
 
         if StrategyHeuristic.get_strategy_heuristic().load_cvrp(id_customers, request_customers, id_depots,
                                                                 count_vehicles[0], capacity_vehicles[0], list_distances,

@@ -8,7 +8,7 @@ from exceptions.CostException import CostException
 class RouteTTRP(Route):
     def __init__(self, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None, type_route=None):
         super().__init__(list_id_customers, request_route, cost_route, id_depot, list_access_vc, maximum_distance)
-        self.type_route = type_route
+        self._type_route = type_route
         self.list_access_vc = list_access_vc if list_access_vc else []
 
     @property

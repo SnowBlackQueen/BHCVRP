@@ -1,3 +1,5 @@
+import numpy as np
+
 from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.Problem import Problem
@@ -90,14 +92,14 @@ class Heuristic(ABC):
                 while self.customers_to_visit:
                     j = 0
                     found = False
-                    new_request_route = self.processing(self.customers_to_visit, self.count_vehicles,
-                                                        self.request_route, self.route, self.id_depot, self.solution)
+                    self.processing(self.customers_to_visit, self.count_vehicles,
+                                    self.request_route, self.route, self.id_depot, self.solution)
 
                     while True:
                         try:
-                            if next(iterator_cap_vehicle) >= (new_request_route + self.customer.get_request_customer()):
-                                self.solution.get_list_routes()[j].set_request_customer()(
-                                    new_request_route + self.customer.get_request_customer())
+                            if next(iterator_cap_vehicle) >= (self.request_route + self.customer.get_request_customer()):
+                                self.solution.get_list_routes()[j].set_request_route(
+                                    self.request_route + self.customer.get_request_customer())
                                 self.solution.get_list_routes()[j].get_list_id_customers().append(
                                     self.customer.get_id_customer())
                                 self.customers_to_visit.remove(self.customer)
@@ -106,7 +108,7 @@ class Heuristic(ABC):
                                 break
                             else:
                                 j += 1
-                                new_request_route = self.solution.get_list_routes()[j].get_request_route()
+                                self.request_route = self.solution.get_list_routes()[j].get_request_route()
                         except StopIteration:
                             break
 
@@ -253,12 +255,13 @@ class Heuristic(ABC):
                     cv -= 1
 
         elif self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
-            list_capacities = Problem.get_problem().get_list_capacities()
+            list_capacities = list(Problem.get_problem().get_list_capacities())
             capacity_vehicle = list_capacities[0]
             is_open = True
             route = None
 
             while customers_to_visit and list_capacities:
+
                 if not route:
                     route = Route()
 
@@ -283,6 +286,7 @@ class Heuristic(ABC):
                     route.set_request_route(request_route)
                     route.set_id_depot(id_depot)
                     self.solution.get_list_routes().append(route)
+
 
         elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
             while self.customers_to_visit:
@@ -417,15 +421,14 @@ class Heuristic(ABC):
                                                                       pos_matrix_depot)
             else:
                 if first_customer_type == FirstCustomerType.NearestCustomer:
-                    rc = Problem.get_problem().get_cost_matrix().index_lower_value(pos_matrix_depot, 0,
-                                                                                   pos_matrix_depot,
-                                                                                   len(customers_to_visit) - 1)
+                    cm = Problem.get_problem().get_cost_matrix()
+                    submatrix = cm[pos_matrix_depot, :len(self.customers_to_visit)]
+                    index = np.argmin(submatrix)
                 elif first_customer_type == FirstCustomerType.FurthestCustomer:
-                    rc = Problem.get_problem().get_cost_matrix().index_bigger_value(pos_matrix_depot, 0,
-                                                                                    pos_matrix_depot,
-                                                                                    len(customers_to_visit) - 1)
+                    cm = Problem.get_problem().get_cost_matrix()
+                    submatrix = cm[pos_matrix_depot, :len(self.customers_to_visit)]
+                    index = np.argmax(submatrix)
 
-                index = rc.get_col()
                 first_customer = customers_to_visit[index]
 
         return first_customer
