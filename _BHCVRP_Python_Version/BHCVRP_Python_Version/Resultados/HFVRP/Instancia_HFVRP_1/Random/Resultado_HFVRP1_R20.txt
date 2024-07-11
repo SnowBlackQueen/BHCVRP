@@ -1,0 +1,12 @@
+ 
+------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
+HEURÍSTICA DE CONSTRUCCIÓN: HeuristicType.RandomMethod
+COSTO TOTAL: 1123.36
+TOTAL DE RUTAS: 3
+TIEMPO DE EJECUCIÓN: 0.03664398193359375 milisegundos
+ 
+R1[35, 36, 27, 47, 14, 6, 5, 18, 37, 45, 50]
+R2[30, 19, 24, 48, 33, 9, 41, 4, 13, 29, 39, 3, 46, 15]
+R3[12, 25, 2, 8, 34, 17, 32, 23, 49, 43]
+------------------------------------------

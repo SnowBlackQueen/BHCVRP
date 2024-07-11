@@ -1,0 +1,12 @@
+ 
+------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
+HEURÍSTICA DE CONSTRUCCIÓN: HeuristicType.NearestNeighborWithRLC
+COSTO TOTAL: 893.8
+TOTAL DE RUTAS: 3
+TIEMPO DE EJECUCIÓN: 0.15957045555114746 milisegundos
+ 
+R1[50, 48, 1, 47, 38, 46, 37, 27, 32, 22, 12, 18]
+R2[11, 17, 49, 45, 6, 44, 5, 42, 41, 4, 25, 24]
+R3[23, 14, 34, 16, 31, 2, 8, 9, 26, 7, 30]
+------------------------------------------

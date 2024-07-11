@@ -1,0 +1,12 @@
+ 
+------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
+HEURÍSTICA DE CONSTRUCCIÓN: HeuristicType.Sweep
+COSTO TOTAL: 1007.43
+TOTAL DE RUTAS: 3
+TIEMPO DE EJECUCIÓN: 0.2845175266265869 milisegundos
+ 
+R1[32, 42, 27, 6, 40, 44, 39, 15, 17, 14, 1, 2, 20]
+R2[50, 16, 11, 31, 29, 26, 36, 24, 18, 4, 37, 12, 30]
+R3[49, 33, 22, 7, 23, 5, 48, 38, 8, 43, 25]
+------------------------------------------
