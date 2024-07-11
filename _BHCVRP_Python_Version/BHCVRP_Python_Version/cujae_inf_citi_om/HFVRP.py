@@ -10,10 +10,10 @@ from data.Problem import Problem
 
 def main():
     try:
-        file_output = open("../Resultado_HFVRP1.txt", "w")
-        # sys.stdout = file_output
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\Instancia_HFVRP_C1_6_1\\Resultado_C1_6_1_K1.txt", "w")
+        sys.stdout = file_output
 
-        path_files = "../HFVRP_1"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\C1_6_1.txt"
 
         load_file = LoadFile()
 
@@ -42,7 +42,7 @@ def main():
 
         type_problem = ProblemType.HFVRP
         order_type = OrderType.Descending
-        heuristic_type = HeuristicType.RandomMethod
+        heuristic_type = HeuristicType.KilbyAlgorithm
 
         if StrategyHeuristic.get_strategy_heuristic().load_hfvrp(id_customers, request_customers, id_depots,
                                                                  count_vehicles[0], capacity_vehicles[0],
@@ -50,7 +50,7 @@ def main():
                                                                  axis_x_customers, axis_y_customers, axis_x_depots,
                                                                  axis_y_depots, type_problem, order_type):
 
-            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
+            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(1, heuristic_type)
             result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
             cost = StrategyHeuristic.get_strategy_heuristic().get_total_cost_solution()
             request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())

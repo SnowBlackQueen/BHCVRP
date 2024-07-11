@@ -7,12 +7,12 @@ from factory.interfaces.HeuristicType import HeuristicType
 from generator.controller.StrategyHeuristic import StrategyHeuristic
 from factory.interfaces.DistanceType import DistanceType
 
-def main(self):
+def main():
     try:
-        file_output_stream = open("/D:/Escuela/BHCVRP/ResultadosTTRP/Instancia_TTRP_20/Resultado_MoleJameson20.txt", "w")
+        file_output_stream = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\Instancia_TTRP_1\\Resultado_TTRP_1_K1.txt", "w")
         sys.stdout = file_output_stream
 
-        path_files = "instances-ttrp//TTRP_20.txt"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\TTRP_1.txt"
         load_file = LoadFile()
 
         load_file.load_file(path_files)
@@ -45,7 +45,7 @@ def main(self):
         id_assigned_customers = []
         id_assigned_customers.append(id_customers)
 
-        heuristic_type = HeuristicType.MoleJameson
+        heuristic_type = HeuristicType.KilbyAlgorithm
         count_execution = 100
 
         if heuristic_type == HeuristicType.Sweep:

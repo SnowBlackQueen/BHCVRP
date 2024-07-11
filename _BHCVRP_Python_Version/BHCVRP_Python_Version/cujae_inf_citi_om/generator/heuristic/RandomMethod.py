@@ -36,5 +36,6 @@ class RandomMethod(Heuristic):
 
         index = random.randint(0, len(list_customers) - 1)
         customer = list_customers[index]
+        # customer = list_customers[13]
 
         return customer
