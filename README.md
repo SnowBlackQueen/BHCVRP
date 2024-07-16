@@ -22,8 +22,8 @@
 
 
 - Construction heuristics:
-- [ ] Kilby insertion.
-- [ ] Matching-based Saving Algorithm.
+- [X] Kilby insertion.
+- [X] Matching-based Saving Algorithm.
 
 
 - Variants of VRP:
