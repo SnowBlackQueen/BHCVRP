@@ -1,0 +1,75 @@
+\documentclass[a4paper,10pt]{article}
+\title{Wilcoxon Signed Ranks test.}
+\usepackage{rotating}
+\usepackage{textcomp}
+\date{\today}
+\author{KEEL non-parametric statistical module}
+\begin{document}
+
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+
+
+\begin{sidewaystable}[!htp]
+\centering\scriptsize
+\resizebox{\textwidth}{!}{\begin{tabular}{
+|c|r|r|}
+\hline
+&(1) &(2) \\
+\hline
+BHCVRP-act (1)& -& 14.0\\
+\hline
+BHCVRP (2)& 14.0& -\\
+\hline
+
+\end{tabular}}
+\caption{Ranks computed by the Wilcoxon test}
+
+\end{sidewaystable}
+
+ \clearpage 
+
+
+\begin{sidewaystable}[!htp]
+\centering\scriptsize
+\resizebox{\textwidth}{!}{\begin{tabular}{
+|c|c|c|}
+\hline
+&(1) &(2) \\
+\hline
+BHCVRP-act (1)& -&  \\
+\hline
+BHCVRP (2)&  & -\\
+\hline
+
+\end{tabular}}
+\caption{Summary of the Wilcoxon test. \textbullet = the method in the row improves the method of the column. \textopenbullet = the method in the column improves the method of the row. Upper diagonal of level significance $\alpha=0.9$,Lower diagonal level of significance $\alpha=0.95$}
+
+\end{sidewaystable}
+
+ \clearpage 
+
+
+\begin{table}[!htp]
+\centering\scriptsize
+\begin{tabular}{
+|c|c|c|c|c|}
+\hline
+&\multicolumn{2}{c|}{$\alpha=0.9$} & \multicolumn{2}{c|}{$\alpha=0.95$}\\\hline
+Method & + & $\pm$ & + & $\pm$ \\
+\hline
+BHCVRP-act & 0 & 1 & 0 & 1\\
+\hline
+BHCVRP & 0 & 1 & 0 & 1\\
+\hline
+
+\end{tabular}
+\caption{Wilcoxon test summary results}
+
+\end{table}
+
+ \clearpage 
+
+
+\end{document}

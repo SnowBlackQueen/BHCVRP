@@ -7,14 +7,14 @@ from data.ProblemType import ProblemType
 from generator.controller.StrategyHeuristic import StrategyHeuristic
 from enum import Enum
 
-def main():
+def main(self):
     try:
-        file_output_stream = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p1\\Resultado_p1_K1.txt", "w")
-        #printStream = io.TextIOWrapper(fileOutputStream)
+        fileOutputStream = open("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_MoleJameson20.txt", "w")
+        printStream = io.TextIOWrapper(fileOutputStream)
 
-        sys.stdout = file_output_stream
+        sys.stdout = printStream
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\p1"
+        path_files = "C-mdvrp//p18"
         load_file = LoadFile()
 
         # for i in range(1, total_instances):
@@ -34,13 +34,13 @@ def main():
         list_distances = []
 
         load_file.load_count_vehicles_for_depot(count_vehicles)
-        load_file.is_load_capacity_vehicles(capacity_vehicles)
-        load_file.is_load_customers(id_customers, axis_x_customers, axis_y_customers, request_customers)
-        load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
+        load_file.load_capacity_vehicles(capacity_vehicles)
+        load_file.load_customers(id_customers, axis_x_customers, axis_y_customers, request_customers)
+        load_file.load_depots(id_depots, axis_x_depots, axis_y_depots)
 
         load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots, axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.KilbyAlgorithm
+        heuristic_type = HeuristicType.MoleJameson
 
         if StrategyHeuristic.get_strategy_heuristic().load_problem(id_customers, request_customers, id_depots, count_vehicles[0], capacity_vehicles[0], list_distances, axis_x_customers, axis_y_customers, axis_x_depots, axis_y_depots, ProblemType.MDVRP, AssignmentType.Sweep):
             StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
@@ -61,7 +61,9 @@ def main():
             
             print("------------------------------------------")
 
-        file_output_stream.close()
+        printStream.close()
+        fileOutputStream.close()
+
         sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)

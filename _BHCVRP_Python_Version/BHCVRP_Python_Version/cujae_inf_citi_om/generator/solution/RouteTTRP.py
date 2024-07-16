@@ -6,17 +6,36 @@ from typing import List, Tuple
 from exceptions.CostException import CostException
 
 class RouteTTRP(Route):
-    def __init__(self, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None, type_route=None):
+    def __init__(self, type_route=None, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
         super().__init__(list_id_customers, request_route, cost_route, id_depot, list_access_vc, maximum_distance)
         self._type_route = type_route
         self.list_access_vc = list_access_vc if list_access_vc else []
+        
+    def __init__(self, type_route=None, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
+        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None and list_access_vc is not None and maximum_distance is not None and type_route is not None:
+            super().__init__(list_id_customers, request_route, cost_route, id_depot, list_access_vc, maximum_distance)
+            self._type_route = type_route
+            self.list_access_vc = list_access_vc 
+            self.list_id_customers = list_id_customers 
+            self.request_route = request_route
+            self.cost_route = 0.0
+            self.id_depot = id_depot
+            self.list_access_vc = []
+            self.maximum_distance = maximum_distance
+        else:
+            self.list_id_customers = []
+            self.request_route = 0.0
+            self.cost_route = 0.0
+            self.id_depot = -1
+            self.maximum_distance = 0.0
+            self.list_access_vc = []
+            self._type_route = 0
 
     @property
-    def type_route(self):
+    def get_type_route(self):
         return self._type_route
 
-    @type_route.setter
-    def type_route(self, value):
+    def set_type_route(self, value):
         if value == 0:
             self._type_route = RouteType.PTR
         elif value == 1:
@@ -27,11 +46,10 @@ class RouteTTRP(Route):
             raise ValueError("Invalid route type")
 
     @property
-    def list_access_vc(self):
+    def get_list_access_vc(self):
         return self._list_access_vc
 
-    @list_access_vc.setter
-    def list_access_vc(self, value):
+    def set_list_access_vc(self, value):
         self._list_access_vc = value
         
     def get_cost_route_with_sub_tour(self, list_id_customers: List[int]) -> float:

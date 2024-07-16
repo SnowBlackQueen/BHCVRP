@@ -13,12 +13,12 @@ class Customer:
             self._location_customer = location_customer
         else:
             # Constructor sin argumentos (o con argumentos predeterminados)
-            self.id_customer = 0
-            self.request_customer = 0.0
-            self.location_customer = None  # O crea una nueva instancia de Location con valores predeterminados si es necesario
+            self._id_customer = 0
+            self._request_customer = 0.0
+            self._location_customer = None  # O crea una nueva instancia de Location con valores predeterminados si es necesario
 
     def __str__(self):
-        return f"ID: {self.id_customer}, Request: {self.request_customer}, Location: {self.location_customer}"
+        return f"ID: {self._id_customer}, Request: {self._request_customer}, Location: {self._location_customer}"
 
     def get_id_customer(self):
         return self._id_customer

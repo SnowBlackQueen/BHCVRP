@@ -84,8 +84,8 @@ class StrategyHeuristic:
         
         for i in range(len(id_customers)):
             customer = Customer()
-            customer.id_customer = id_customers[i]
-            customer.request_customer = request_customers[i]
+            customer._id_customer = id_customers[i]
+            customer._request_customer = request_customers[i]
             
             list_customers.append(customer)
         
@@ -107,7 +107,7 @@ class StrategyHeuristic:
         for i in range(len(list_customers)):
             c = list_customers[i]
 
-            customer_ttrp = CustomerTTRP(c.get_id_customer(), c.get_request_customer(), c.get_location_customer(), int(type_customers[i]))
+            customer_ttrp = CustomerTTRP(int(type_customers[i]), c.get_id_customer(), c.get_request_customer(), c.get_location_customer())
 
             list_customers[i] = customer_ttrp
 
@@ -313,19 +313,20 @@ class StrategyHeuristic:
     def load_problem(self, id_customers, request_customers, type_customers, id_depots, id_assigned_customers, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers, list_distances, problem_type):
         loaded = False
 
-        if (id_customers is not None and len(id_customers) > 0) and (request_customers is not None and len(request_customers) > 0) and (id_depots is not None and len(id_depots) > 0) and (id_assigned_customers is not None and len(id_assigned_customers) > 0) and (count_vehicles is not None and len(count_vehicles) > 0) and (capacity_vehicles is not None and len(capacity_vehicles) > 0) and (list_distances is not None and len(list_distances) > 0) and (0 <= problem_type <= 5):
-            Problem.set_type_problem(problem_type)
+        if problem_type in [0,1,2,3,4] or problem_type == ProblemType.CVRP or problem_type==ProblemType.HFVRP or problem_type==ProblemType.MDVRP or problem_type==ProblemType.TTRP:
+            if (id_customers is not None and len(id_customers) > 0) and (request_customers is not None and len(request_customers) > 0) and (id_depots is not None and len(id_depots) > 0) and (id_assigned_customers is not None and len(id_assigned_customers) > 0) and (count_vehicles is not None and len(count_vehicles) > 0) and (capacity_vehicles is not None and len(capacity_vehicles) > 0) and (list_distances is not None and len(list_distances) > 0):
+                Problem.get_problem().set_type_problem(problem_type)
 
-            if (type_customers is not None and len(type_customers) > 0) and (count_trailers is not None and len(count_trailers) > 0) and (capacity_trailers is not None and len(capacity_trailers) > 0):
-                Problem.set_list_customers(self.load_customer_ttrp(id_customers, request_customers, type_customers))
-                Problem.set_list_depots(self.load_depot_ttrp(id_depots, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers))
-                loaded = True
-            else:
-                Problem.set_list_customers(self.load_customer(id_customers, request_customers))
-                Problem.set_list_depots(self.load_depot(id_depots, id_assigned_customers, count_vehicles, capacity_vehicles))
-                loaded = True
+                if (type_customers is not None and len(type_customers) > 0) and (count_trailers is not None and len(count_trailers) > 0) and (capacity_trailers is not None and len(capacity_trailers) > 0):
+                    Problem.get_problem().set_list_customers(self.load_customer_ttrp(id_customers, request_customers, type_customers))
+                    Problem.get_problem().set_list_depots(self.load_depot_ttrp(id_depots, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers))
+                    loaded = True
+                else:
+                    Problem.get_problem().set_list_customers(self.load_customer(id_customers, request_customers))
+                    Problem.get_problem().set_list_depots(self.load_depot(id_depots, id_assigned_customers, count_vehicles, capacity_vehicles))
+                    loaded = True
 
-            Problem.set_cost_matrix(self.fill_cost_matrix(list_distances))
+                Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
 
         return loaded
     

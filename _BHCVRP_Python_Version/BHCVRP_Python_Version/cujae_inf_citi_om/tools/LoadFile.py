@@ -34,9 +34,10 @@ class LoadFile:
         count_vehicles.extend([count_fleet] * total_depots)
 
     def load_count_vehicles_for_depot_ttrp(self, count_vehicles):
-        _, _, _, total_vehicles = self.instance_file[0].split(" ", 3)
+        total_vehicles = int(self.instance_file[0].split(" ")[3])
         total_depots = 1
-        count_vehicles.extend([int(total_vehicles)] * total_depots)
+        count_fleet = [total_vehicles]
+        count_vehicles.extend(count_fleet * total_depots)
 
     def load_count_trailers_for_depot_ttrp(self, count_trailers):
         _, _, _, _, total_trailers = self.instance_file[0].split(" ", 4)
@@ -85,16 +86,16 @@ class LoadFile:
             axis_y_customers.append(float(tokens[2]))
             request_customers.append(float(tokens[3]))
 
-    def load_customers_ttrp(self, id_customers, axis_x_customers, axis_y_customers, request_customers, type_customers):
+    def is_load_customers_ttrp(self, id_customers, axis_x_customers, axis_y_customers, request_customers, type_customers):
         total_customers = self.load_total_customers_ttrp()
         total_depots = 1
         for i in range(total_depots + 1, total_customers + total_depots + 1):
-            id_customer, axis_x, axis_y, request, type_customer = self.instance_file[i].split(" ", 4)
-            id_customers.append(int(id_customer))
-            axis_x_customers.append(float(axis_x))
-            axis_y_customers.append(float(axis_y))
-            request_customers.append(float(request))
-            type_customers.append(int(type_customer))
+            tokens = re.split(r'\s+', self.instance_file[i])
+            id_customers.append(int(tokens[0]))
+            axis_x_customers.append(float(tokens[1]))
+            axis_y_customers.append(float(tokens[2]))
+            request_customers.append(float(tokens[3]))
+            type_customers.append(int(tokens[4]))
 
     def is_load_depots(self, id_depots, axis_x_depots, axis_y_depots):
         total_customers = self.load_total_customers()
@@ -105,11 +106,11 @@ class LoadFile:
             axis_x_depots.append(float(tokens[1]))
             axis_y_depots.append(float(tokens[2]))
 
-    def load_depots_ttrp(self, id_depots, axis_x_depots, axis_y_depots):
-        id_depot, axis_x, axis_y, *_ = self.instance_file[1].split(" ", 3)
-        id_depots.append(int(id_depot))
-        axis_x_depots.append(float(axis_x))
-        axis_y_depots.append(float(axis_y))
+    def is_load_depots_ttrp(self, id_depots, axis_x_depots, axis_y_depots):
+        tokens = re.split(r'\s+', self.instance_file[1])
+        id_depots.append(int(tokens[0]))
+        axis_x_depots.append(float(tokens[1]))
+        axis_y_depots.append(float(tokens[2]))
 
     def calculate_distance(self, axis_x_start, axis_y_start, axis_x_end, axis_y_end):
         axis_x = (axis_x_start - axis_x_end) ** 2

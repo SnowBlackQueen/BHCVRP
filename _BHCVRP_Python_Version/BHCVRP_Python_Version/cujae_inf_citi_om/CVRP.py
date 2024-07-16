@@ -9,10 +9,10 @@ from generator.controller.StrategyHeuristic import StrategyHeuristic
 
 def main():
     try:
-        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\Instancia_CVRP_p5\\Resultado_CVRP_p5_MJ20.txt", "w")
-        sys.stdout = file_output
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\Resultado_CVRP_p14_MJ1.txt", "w")
+        #sys.stdout = file_output
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\CVRP_p5"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\CVRP_1"
         # total_instances = 5
         load_file = LoadFile()
 
@@ -40,13 +40,13 @@ def main():
         load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots,
                                       axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.MoleJameson
+        heuristic_type = HeuristicType.RandomMethod
 
         if StrategyHeuristic.get_strategy_heuristic().load_cvrp(id_customers, request_customers, id_depots,
                                                                 count_vehicles[0], capacity_vehicles[0], list_distances,
                                                                 axis_x_customers, axis_y_customers, axis_x_depots,
                                                                 axis_y_depots, ProblemType.CVRP):
-            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
+            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(1, heuristic_type)
             result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
             cost = StrategyHeuristic.get_strategy_heuristic().get_total_cost_solution()
             request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
@@ -66,7 +66,7 @@ def main():
             print("------------------------------------------")
 
         file_output.close()
-        sys.stdout = sys.__stdout__  # Restore standard output
+        #sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)
 

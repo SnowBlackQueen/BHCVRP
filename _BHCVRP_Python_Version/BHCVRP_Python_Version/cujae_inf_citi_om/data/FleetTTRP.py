@@ -9,6 +9,13 @@ class FleetTTRP(Fleet):
         super().__init__()
         self._count_trailers = count_trailers
         self._capacity_trailer = capacity_trailer
+        
+    def __init__(self, count_vehicles=None, capacity_vehicle=None, count_trailers=None, capacity_trailer=None):
+        super().__init__()
+        self._count_vehicles = count_vehicles
+        self._capacity_vehicle = capacity_vehicle
+        self._count_trailers = count_trailers
+        self._capacity_trailer = capacity_trailer
 
     def get_count_trailers(self):
         return self._count_trailers

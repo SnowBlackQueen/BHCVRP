@@ -42,7 +42,8 @@ class CMT(Heuristic):
         self.request_route = 0.0
         self.pos_best_tau = -1
 
-        self.list_capacities = list(Problem.get_problem().get_list_capacities())
+        if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
+            self.list_capacities = list(Problem.get_problem().get_list_capacities())
 
     def creating(self, route, request_route, list_tau_costs, list_metrics_cmt_by_customer):
         if self.type_problem in [0, 1, 2,
