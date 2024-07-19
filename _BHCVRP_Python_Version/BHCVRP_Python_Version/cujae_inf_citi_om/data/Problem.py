@@ -90,7 +90,7 @@ class Problem:
     # Método que devuelve el tipo de un cliente dado su identificador
     def get_type_by_id_customer(self, id_customer):
         for customer in self._list_customers:
-            if isinstance(customer, CustomerTTRP) and customer.id_customer == id_customer:
+            if isinstance(customer, CustomerTTRP) and customer._id_customer == id_customer:
                 return customer.get_type_customer()
         return None
 

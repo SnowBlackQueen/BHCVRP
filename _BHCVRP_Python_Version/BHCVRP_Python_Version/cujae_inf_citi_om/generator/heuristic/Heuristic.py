@@ -75,7 +75,7 @@ class Heuristic(ABC):
         self.type_problem = Problem.get_problem().get_type_problem()
         
         if self.type_problem == ProblemType.TTRP or self.type_problem == 4:
-            self.route == RouteTTRP()
+            self.route = RouteTTRP()
 
     @abstractmethod  # Método para ejecutar la variante específica del problema para cierta heurística
     def get_solution_inicial(self) -> Solution:
@@ -156,7 +156,7 @@ class Heuristic(ABC):
                     self.route.set_type_route(RouteType.PVR.value)
 
             self.route.set_id_depot(self.id_depot)
-            self.solution.get_list_routes().append(self.route)
+            # self.solution.get_list_routes().append(self.route)
 
         return self.solution
 
@@ -234,7 +234,7 @@ class Heuristic(ABC):
                 self.customers_to_visit.remove(self.customer)
             else:
                 self.route.set_request_route(self.request_route)
-                self.route.set_type_route(RouteType.PTR)
+                self.route.set_type_route(RouteType.PTR.value)
                 self.route.set_id_depot(self.id_depot)
                 self.solution.get_list_routes().append(self.route)
 
@@ -294,10 +294,10 @@ class Heuristic(ABC):
             while self.customers_to_visit:
                 self.initialize_specifics()
                 found = False
-                if self.type_customer == CustomerType.TC:
+                if self.type_customer == CustomerType.TC.value:
                     found, new_route = self.creating()
                 if not found:
-                    if self.customer.get_type_customer() == CustomerType.TC:
+                    if self.customer.get_type_customer() == CustomerType.TC.value:
                         self.is_TC = True
 
                     if (self.capacity_vehicle + self.capacity_trailer) >= (

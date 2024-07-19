@@ -334,11 +334,10 @@ class SaveSequential(Save):
                         self.processing()
 
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
-            self.capacity_trailer = Problem.get_problem().get_list_depots().get(self.pos_depot).get_list_fleets().get(
-                0).get_capacity_trailer()
+            self.capacity_trailer = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_capacity_trailer()
 
             while self.list_routes:
-                self.index = self.random.randint(len(self.list_routes))
+                self.index = self.random.randint(0, len(self.list_routes) - 1)
                 self.current_route = self.list_routes.remove(self.index)
 
                 self.exist_save = True

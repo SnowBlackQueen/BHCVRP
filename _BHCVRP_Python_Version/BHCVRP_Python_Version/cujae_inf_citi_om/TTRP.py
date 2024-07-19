@@ -9,10 +9,10 @@ from factory.interfaces.DistanceType import DistanceType
 
 def main():
     try:
-        file_output_stream = open("D:\\Escuela\\BHCVRP\\ResultadosTTRP\\Instancia_TTRP_1\\Resultado_R1.txt", "w")
-        #sys.stdout = file_output_stream
+        file_output_stream = open("../Resultado_TTRP1.txt", "w")
+        #sys.stdout = file_output
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\TTRP_1.txt"
+        path_files = "../TTRP_1.txt"
         load_file = LoadFile()
 
         load_file.load_file(path_files)
@@ -45,11 +45,11 @@ def main():
         id_assigned_customers = []
         id_assigned_customers.extend(id_customers)
 
-        heuristic_type = HeuristicType.RandomMethod
+        heuristic_type = HeuristicType.MoleJameson
         count_execution = 100
 
         if heuristic_type == HeuristicType.Sweep:
-            if StrategyHeuristic.get_strategy_heuristic().load_problem(id_customers, request_customers, axis_x_customers, axis_y_customers,
+            if StrategyHeuristic.get_strategy_heuristic().load_problem_(id_customers, request_customers, axis_x_customers, axis_y_customers,
                     type_customers, id_depots, axis_x_depots, axis_y_depots, id_assigned_customers, count_vehicles, capacity_vehicles, 
                     count_trailers, capacity_trailers, ProblemType.TTRP, DistanceType.Euclidean):
                 

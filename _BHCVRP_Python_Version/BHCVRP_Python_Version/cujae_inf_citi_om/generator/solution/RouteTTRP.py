@@ -12,7 +12,7 @@ class RouteTTRP(Route):
         self.list_access_vc = list_access_vc if list_access_vc else []
         
     def __init__(self, type_route=None, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
-        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None and list_access_vc is not None and maximum_distance is not None and type_route is not None:
+        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None and list_access_vc is not None and type_route is not None:
             super().__init__(list_id_customers, request_route, cost_route, id_depot, list_access_vc, maximum_distance)
             self._type_route = type_route
             self.list_access_vc = list_access_vc 

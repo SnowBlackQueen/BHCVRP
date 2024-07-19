@@ -64,7 +64,7 @@ class StrategyHeuristic:
         return distance
 
     # Método encargado de cargar los datos de los clientes con coordenadas
-    def load_customer(self, id_customers, request_customers, axis_X_customers=None, axis_Y_customers=None) -> List[Customer]:
+    def load_customer_(self, id_customers, request_customers, axis_X_customers=None, axis_Y_customers=None) -> List[Customer]:
         list_customers = []
         for i in range(len(id_customers)):
             customer = Customer()
@@ -93,10 +93,10 @@ class StrategyHeuristic:
     
     # Método encargado de cargar los datos de los clientes TTRP con coordenadas
     def load_customer_TTRP(self, id_customers, request_customers, axis_X_customers=None, axis_Y_customers=None, type_customers=None) -> List[Customer]:
-        list_customers = self.load_customer(id_customers, request_customers, axis_X_customers, axis_Y_customers)
+        list_customers = self.load_customer_(id_customers, request_customers, axis_X_customers, axis_Y_customers)
         for i in range(len(list_customers)):
             c = list_customers[i]
-            customerTTRP = CustomerTTRP(c.id_customer, c.request_customer, c.location_customer, type_customers[i])
+            customerTTRP = CustomerTTRP(c._id_customer, c._request_customer, c._location_customer, type_customers[i])
             list_customers[i] = customerTTRP
         return list_customers
 
@@ -114,7 +114,7 @@ class StrategyHeuristic:
         return list_customers
     
     # Método encargado de cargar los datos de los depósitos y las flotas con coordenadas y asignación predeterminada
-    def load_depot(self, id_depots, axis_X_depots=None, axis_Y_depots=None, id_assigned_customers=None, count_vehicles=None, capacity_vehicles=None) -> List[Depot]:
+    def load_depot_(self, id_depots, axis_X_depots=None, axis_Y_depots=None, id_assigned_customers=None, count_vehicles=None, capacity_vehicles=None) -> List[Depot]:
         list_depots = []
         for i in range(len(id_depots)):
             depot = DepotMDVRP()
@@ -123,7 +123,7 @@ class StrategyHeuristic:
                 location = Location()
                 location._axis_X = axis_X_depots[i]
                 location._axis_Y = axis_Y_depots[i]
-                depot.location_depot = location
+                depot._location_depot = location
             if id_assigned_customers:
                 depot._list_assigned_customers = id_assigned_customers[i]
             listFleets = []
@@ -218,11 +218,11 @@ class StrategyHeuristic:
     
     # Método encargado de cargar los datos de los depósitos y las flotas TTRP con coordenadas
     def load_depot_TTRP(self, id_depots, axis_X_depots=None, axis_Y_depots=None, count_vehicles=None, capacity_vehicles=None, count_trailers=None, capacity_trailers=None) -> List[Depot]:
-        list_depots = self.load_depot(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
+        list_depots = self.load_depot_(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
         for i in range(len(list_depots)):
-            f = list_depots[i].list_fleets[0]
-            fleetTTRP = FleetTTRP(f.count_vehicles, f.capacity_vehicle, count_trailers[i], capacity_trailers[i])
-            list_depots[i].list_fleets[0] = fleetTTRP
+            f = list_depots[i]._list_fleets[0]
+            fleetTTRP = FleetTTRP(f._count_vehicles, f._capacity_vehicle, count_trailers[i], capacity_trailers[i])
+            list_depots[i]._list_fleets[0] = fleetTTRP
         return list_depots
 
     # Método encargado de cargar los datos de los depósitos y las flotas TTRP sin coordenadas
@@ -242,15 +242,15 @@ class StrategyHeuristic:
     # Método encargado de cargar los datos del problema usando listas de distancias y las coordenadas
     def load_problem(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles, list_distances, axis_X_customers=None, axis_Y_customers=None, axis_X_depots=None, axis_Y_depots=None, type_problem=None, type_assignment=None) -> bool:
         loaded = False
-        Problem.get_problem().type_problem = type_problem
+        Problem.get_problem().set_type_problem(type_problem)
         if id_customers and request_customers and id_depots and count_vehicles and capacity_vehicles and list_distances and axis_X_customers and axis_Y_customers and axis_X_depots and axis_Y_depots:
             list_customers = self.load_customer(id_customers, request_customers, axis_X_customers, axis_Y_customers)
             list_depots = self.load_depot(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
-            Problem.get_problem().list_customers = list_customers
-            Problem.get_problem().list_depots = list_depots
-            if Problem.get_problem().total_capacity >= Problem.get_problem().total_request:
+            Problem.get_problem().set_list_customers(list_customers)
+            Problem.get_problem().set_list_depots(list_depots)
+            if Problem.get_problem().get_total_capacity() >= Problem.get_problem().get_total_request():
                 loaded = True
-                Problem.get_problem().costMatrix = self.fill_cost_matrix(list_distances)
+                Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
                 listCountV = [count_vehicles] * len(id_depots)
                 listCapV = [capacity_vehicles] * len(id_depots)
                 # Este Controller es de BHAVRP
@@ -287,7 +287,7 @@ class StrategyHeuristic:
         return loaded
     
     # Método encargado de cargar los datos del problema con coordenadas y asignación predeterminada
-    def load_problem(self, id_customers: List[int], request_customers: List[float], axis_X_customers: List[float], axis_Y_customers: List[float], type_customers: List[int], id_depots: List[int], axis_X_depots: List[float], axis_Y_depots: List[float], id_assigned_customers: List[List[int]], count_vehicles: List[int], capacity_vehicles: List[float], count_trailers: List[int], capacity_trailers: List[float], type_problem, distance_type) -> bool:
+    def load_problem_(self, id_customers: List[int], request_customers: List[float], axis_X_customers: List[float], axis_Y_customers: List[float], type_customers: List[int], id_depots: List[int], axis_X_depots: List[float], axis_Y_depots: List[float], id_assigned_customers: List[List[int]], count_vehicles: List[int], capacity_vehicles: List[float], count_trailers: List[int], capacity_trailers: List[float], type_problem, distance_type) -> bool:
         loaded = False
 
         if (id_customers and request_customers and axis_X_customers and axis_Y_customers and id_depots and axis_X_depots and axis_Y_depots and id_assigned_customers and count_vehicles and capacity_vehicles and type_problem.value >= 0 and type_problem.value <= 5):
@@ -295,10 +295,10 @@ class StrategyHeuristic:
             problem.set_type_problem(type_problem)
 
             if type_customers and count_trailers and capacity_trailers:
-                problem.set_list_customers(self.load_customer_ttrp(id_customers, request_customers, axis_X_customers, axis_Y_customers, type_customers))
-                problem.set_list_depots(self.load_depot_ttrp(id_depots, axis_X_depots, axis_Y_depots, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers))
+                problem.set_list_customers(self.load_customer_TTRP(id_customers, request_customers, axis_X_customers, axis_Y_customers, type_customers))
+                problem.set_list_depots(self.load_depot_TTRP(id_depots, axis_X_depots, axis_Y_depots, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers))
             else:
-                problem.set_list_customers(self.load_customer(id_customers, request_customers, axis_X_customers, axis_Y_customers))
+                problem.set_list_customers(self.load_customer_(id_customers, request_customers, axis_X_customers, axis_Y_customers))
                 problem.set_list_depots(self.load_depot(id_depots, axis_X_depots, axis_Y_depots, id_assigned_customers, count_vehicles, capacity_vehicles))
 
             if distance_type is None:

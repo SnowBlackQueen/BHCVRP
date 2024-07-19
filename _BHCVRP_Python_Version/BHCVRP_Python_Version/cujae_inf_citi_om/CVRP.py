@@ -9,7 +9,7 @@ from generator.controller.StrategyHeuristic import StrategyHeuristic
 
 def main():
     try:
-        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\Resultado_CVRP_p14_MJ1.txt", "w")
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\Instancia_CVRP_1\\Resultado_xd.txt", "w")
         #sys.stdout = file_output
 
         path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\CVRP_1"
