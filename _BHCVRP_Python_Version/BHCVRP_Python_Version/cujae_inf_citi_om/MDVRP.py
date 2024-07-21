@@ -9,12 +9,12 @@ from enum import Enum
 
 def main():
     try:
-        fileOutputStream = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p1\\Resultado_R1.txt", "w")
-        printStream = io.TextIOWrapper(fileOutputStream)
-
-        sys.stdout = printStream
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p1\\Resultado_xd.txt",
+                           "w")
+        # sys.stdout = file_output
 
         path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\p1"
+        # total_instances = 5
         load_file = LoadFile()
 
         # for i in range(1, total_instances):
@@ -61,10 +61,8 @@ def main():
             
             print("------------------------------------------")
 
-        printStream.close()
-        fileOutputStream.close()
-
-        sys.stdout = sys.__stdout__  # Restore standard output
+        file_output.close()
+        # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)
 
@@ -73,23 +71,8 @@ if __name__ == "__main__":
     main()
     
 class AssignmentType(Enum):
-    BestCyclicAssignment = 0
-    BestNearest = 1
-    CoefficientPropagation = 2
-    CyclicAssignment = 3
-    K_Means = 4
-    NearestByCustomer = 5
-    NearestByDepot = 6
-    PAM = 7
-    Parallel = 8
-    RandomByElement = 9
-    RandomNearestByCustomer = 10
-    RandomNearestByDepot = 11
-    RandomSequentialCyclic = 12
-    RandomSequentialNearestByDepot = 13
-    SequentialCyclic = 14
-    SequentialNearestByDepot = 15
-    Simplified = 16
-    Sweep = 17
-    ThreeCriteriaClustering = 18
-    UPGMC = 19
+    BestNearest = 0
+    NearestByCustomer = 1
+    TrajectoryInParallel = 2
+    TrajectoryInSequential = 3
+    RandomByCustomer = 4

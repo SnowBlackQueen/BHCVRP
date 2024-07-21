@@ -91,7 +91,8 @@ class SaveParallel(Save):
                             
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             if self.compatible_routes(self.route_row, self.route_col) or self.compatible_routes(self.route_col, self.route_row):
-                if self.route_row.get_type_route() != 0:
+                type_route = self.route_row.get_type_route() # Verificar!!
+                if type_route != 0:
                     self.total_capacity += self.capacity_trailer
                     
                 if self.checking_join(self.route_row, self.route_col, self.row_customer, self.col_customer, self.total_capacity):
@@ -158,7 +159,11 @@ class SaveParallel(Save):
                 self.route_row = self.list_routes[self.pos_row]
                 self.route_col = self.list_routes[self.pos_col]
 
-                self.route = Route()
+                if self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+                    self.route = RouteTTRP()
+                else:
+                    self.route = Route()
+
                 self.join = False
             
                 self.creating()
@@ -409,7 +414,7 @@ class SaveParallel(Save):
     def compatible_routes(self, route_ini, route_end):
         is_compatible = True
         
-        if isinstance(route_ini, RouteTTRP) and route_ini.type_route == RouteType.PTR and not isinstance(route_end, RouteTTRP):
+        if isinstance(route_ini, RouteTTRP) and route_ini._type_route == RouteType.PTR and not isinstance(route_end, RouteTTRP):
             is_compatible = False
         
         return is_compatible

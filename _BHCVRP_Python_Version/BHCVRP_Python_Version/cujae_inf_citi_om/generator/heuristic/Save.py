@@ -81,9 +81,9 @@ class Save(Heuristic):
             route.list_id_customers.append(customer.get_id_customer())
 
             if Problem.get_problem().get_type_problem() == ProblemType.TTRP:
-                route = RouteTTRP(route.list_id_customers, route.request_route, 
-                                  route.cost_route, route.id_depot, list_access_vc, 
-                                  RouteType.PVR if customer.get_type_customer() == CustomerType.VC else RouteType.PTR)
+                route = RouteTTRP(list_id_customers=route.list_id_customers, request_route=route.request_route,
+                                  cost_route=route.cost_route, id_depot=route.id_depot, list_access_vc=list_access_vc,
+                                  type_route=RouteType.PVR if customer.get_type_customer() == CustomerType.VC.value else RouteType.PTR)
 
             list_routes.append(route)
 

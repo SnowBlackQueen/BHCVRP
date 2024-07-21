@@ -102,7 +102,7 @@ class SaveSequential(Save):
 
             # Obtener los valores correspondientes a las posiciones máximas
             max_value_inic = self.save_matrix[max_save_inic]
-            max_value_end = self.save_matrix[self.max_pos_end]
+            max_value_end = self.save_matrix[self.max_save_end]
 
             # Comparar los valores y asignar el máximo
             if max_value_inic > max_value_end:
@@ -338,13 +338,13 @@ class SaveSequential(Save):
 
             while self.list_routes:
                 self.index = self.random.randint(0, len(self.list_routes) - 1)
-                self.current_route = self.list_routes.remove(self.index)
+                self.current_route = self.list_routes.pop(self.index)
 
                 self.exist_save = True
 
-                self.ext_inic = self.current_route.get_get_list_id_customers().get(0)
-                self.ext_end = self.current_route.get_get_list_id_customers().get(
-                    len(self.current_route.get_get_list_id_customers()) - 1)
+                self.ext_inic = self.current_route.get_list_id_customers()[0]
+                self.ext_end = self.current_route.get_list_id_customers()[len(self.current_route.get_list_id_customers()) - 1]
+
 
                 while self.exist_save:
                     self.max_save_inic = None

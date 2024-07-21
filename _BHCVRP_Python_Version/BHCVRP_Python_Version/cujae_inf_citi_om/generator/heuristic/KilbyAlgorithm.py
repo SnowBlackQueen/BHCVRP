@@ -84,7 +84,7 @@ class KilbyAlgorithm(Heuristic):
         
     
     def processing(self, customers_to_visit=None, count_vehicles=None, request_route=None, route=None, id_depot=None, solution=None):
-        if self.type_problem in [0, 1, 2, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.MDVRP or self.type_problem == ProblemType.TTRP:
+        if self.type_problem in [0, 1, 2, 3, 4] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.MDVRP or self.type_problem == ProblemType.TTRP:
             while self.list_candidate_routes and self.customers_to_visit:
                 self.metric_kilby = Metric()
                 self.metric_kilby = self.get_best_customer(self.id_depot, self.customers_to_visit, self.list_candidate_routes, self.capacity_vehicle, self.count_trailers)
@@ -234,7 +234,7 @@ class KilbyAlgorithm(Heuristic):
                     
                 self.solution.set_list_routes(self.list_route_opt)
                 
-        elif self.type_problem == 4:
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             self.list_access_vc = []
             if self.customers_to_visit:
                 self.is_TC = False
@@ -278,14 +278,14 @@ class KilbyAlgorithm(Heuristic):
             cost_kilby = self.calculate_cost_of_kilby(id_depot, id_depot, list_customer[i].get_id_customer())
 
             if len(list_kilby_costs) < count_vehicles:
-                if ((type_customer == CustomerType.VC and count_routes_pvr != 0) or
-                    (type_customer == CustomerType.TC and count_routes_ptr != 0)):
+                if (((type_customer == CustomerType.VC or type_customer == CustomerType.VC.value) and count_routes_pvr != 0) or
+                    ((type_customer == CustomerType.TC or type_customer == CustomerType.TC.value) and count_routes_ptr != 0)):
                     metric_kilby.set_id_element(list_customer[i].get_id_customer())
                     metric_kilby.set_insertion_cost(cost_kilby)
 
                     list_kilby_costs.append(metric_kilby)
 
-                    if type_customer == CustomerType.VC:
+                    if type_customer == CustomerType.VC or type_customer == CustomerType.VC.value:
                         count_routes_pvr -= 1
                     else:
                         count_routes_ptr -= 1
