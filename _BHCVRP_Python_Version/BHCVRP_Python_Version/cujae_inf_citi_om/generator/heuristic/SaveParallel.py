@@ -91,7 +91,7 @@ class SaveParallel(Save):
                             
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             if self.compatible_routes(self.route_row, self.route_col) or self.compatible_routes(self.route_col, self.route_row):
-                type_route = self.route_row.get_type_route() # Verificar!!
+                type_route = self.route_row._type_route.value # Verificar!!
                 if type_route != 0:
                     self.total_capacity += self.capacity_trailer
                     
@@ -100,17 +100,17 @@ class SaveParallel(Save):
                     self.route.get_list_id_customers().extend(self.route_col.get_list_id_customers())
                     self.join = True
                     
-                    if self.route_row.get_type_route() == self.route_col.get_type_route():
-                        self.type_route = self.route_row.get_type_route()
+                    if self.route_row._type_route == self.route_col._type_route:
+                        self.type_route = self.route_row._type_route
                     else:
-                        if not self.route_row.get_type_route() == RouteType.PTR:
+                        if not self.route_row._type_route == RouteType.PTR:
                             self.type_route = RouteType.CVR
                         else:
                             self.type_route = RouteType.PTR
                 else:
                     self.total_capacity = self.capacity_vehicle
                             
-                    if not self.route_col.get_type_route() == RouteType.PTR:
+                    if not self.route_col._type_route == RouteType.PTR:
                         self.total_capacity += self.capacity_trailer
                     
                     if self.checking_join(self.route_col, self.route_row, self.col_customer, self.row_customer, self.total_capacity):
@@ -118,10 +118,10 @@ class SaveParallel(Save):
                         self.route.get_list_id_customers().extend(self.route_row.get_list_id_customers())
                         self.join = True
                     
-                        if self.route_col.get_type_route() == self.route_row.get_type_route():
-                            self.type_route = self.route_col.get_type_route()
+                        if self.route_col._type_route == self.route_row._type_route:
+                            self.type_route = self.route_col._type_route
                         else:
-                            if not self.route_col.get_type_route() == RouteType.PTR:
+                            if not self.route_col._type_route == RouteType.PTR:
                                 self.type_route = RouteType.CVR
                             else:
                                 self.type_route = RouteType.PTR
@@ -131,8 +131,8 @@ class SaveParallel(Save):
                 #route.setTypeRoute(type_route)
                 self.route.set_id_depot(self.id_depot)
                 list_access_VC = []
-                route = RouteTTRP(self.route.get_list_id_customers(), self.route.get_request_route(), self.route.get_cost_route(),
-                                        route.get_id_depot(), list_access_VC, self.type_route)
+                self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(),
+                                        id_depot=self.route.get_id_depot(), list_access_vc=list_access_VC, type_route=self.type_route)
                         
                 self.list_routes.remove(self.route_row)
                 self.list_routes.remove(self.route_col)
@@ -337,6 +337,7 @@ class SaveParallel(Save):
                 self.save_value = self.save_matrix[self.row, self.col]
                 
                 self.processing()
+                self.row, self.col = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
                 
             for j in range(len(self.list_routes)):
                 if len(self.list_routes[j].get_list_id_customers()) >= 6:

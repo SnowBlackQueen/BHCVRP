@@ -220,9 +220,9 @@ class StrategyHeuristic:
     def load_depot_TTRP(self, id_depots, axis_X_depots=None, axis_Y_depots=None, count_vehicles=None, capacity_vehicles=None, count_trailers=None, capacity_trailers=None) -> List[Depot]:
         list_depots = self.load_depot_(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
         for i in range(len(list_depots)):
-            f = list_depots[i]._list_fleets[0]
+            f = list_depots[i].list_fleets[0]
             fleetTTRP = FleetTTRP(f._count_vehicles, f._capacity_vehicle, count_trailers[i], capacity_trailers[i])
-            list_depots[i]._list_fleets[0] = fleetTTRP
+            list_depots[i].list_fleets[0] = fleetTTRP
         return list_depots
 
     # Método encargado de cargar los datos de los depósitos y las flotas TTRP sin coordenadas
@@ -304,7 +304,7 @@ class StrategyHeuristic:
             if distance_type is None:
                 distance_type = DistanceType.Euclidean
 
-            problem.set_cost_matrix(self.fill_cost_matrix(id_customers, axis_X_customers, axis_Y_customers, id_depots, axis_X_depots, axis_Y_depots, distance_type))
+            problem.set_cost_matrix(self.fillCostMatrix(id_customers, axis_X_customers, axis_Y_customers, id_depots, axis_X_depots, axis_Y_depots, distance_type))
             loaded = True
 
         return loaded
@@ -333,8 +333,8 @@ class StrategyHeuristic:
     # Método encargado de llenar la matriz de costo
     def fillCostMatrix(self, id_customers, axis_X_customers, axis_Y_customers, id_depots, axis_X_depots, axis_Y_depots, distance_type):
         size = len(id_customers) + len(id_depots)
-        cost_matrix = np.zeros(size, size)
-        distance = Distance(distance_type)
+        cost_matrix = np.zeros((size, size))
+        distance = self.new_distance(distance_type)
 
         for i in range(size):
             if i < len(id_customers):

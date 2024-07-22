@@ -7,7 +7,7 @@ import traceback
 
 class FactoryDistance(IFactoryDistance):
     def create_distance(self, type_distance: DistanceType) -> Distance:
-        class_name = f"cujae_inf_citi_om.distance.{type_distance}"
+        class_name = f"distance.{type_distance.name}.{type_distance.name}"
         distance = None
         try:
             distance = FactoryLoader.get_instance(class_name)
