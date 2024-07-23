@@ -9,10 +9,10 @@ from factory.interfaces.DistanceType import DistanceType
 
 def main():
     try:
-        file_output_stream = open("../Resultado_TTRP1.txt", "w")
+        file_output_stream = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\Instancia_TTRP_1\\Resultado_TTRP1.txt", "w")
         #sys.stdout = file_output
 
-        path_files = "../TTRP_1.txt"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\TTRP_1.txt"
         load_file = LoadFile()
 
         load_file.load_file(path_files)
@@ -56,18 +56,18 @@ def main():
                 StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
                 result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
                 cost = StrategyHeuristic.get_strategy_heuristic().get_total_cost_solution()
-                request_by_route = StrategyHeuristic.get_strategy_heuristic().get_request_by_route().size()
+                request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
                 time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
                 print(" ")
                 print("------------------------------------------")
-                print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type)
-                print("COSTO TOTAL: " + cost)
-                print("TOTAL DE RUTAS: " + request_by_route)
+                print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
+                print("COSTO TOTAL: " + str(cost))
+                print("TOTAL DE RUTAS: " + str(request_by_route))
                 print(" ")
 
                 for j in range(request_by_route):
-                    print("R" + str(j+1) + result.get_list_routes()[j].get_list_id_customers())
+                    print("R" + str(j+1) + str(result.get_list_routes()[j].get_list_id_customers()))
                 
                 print("------------------------------------------")
                 

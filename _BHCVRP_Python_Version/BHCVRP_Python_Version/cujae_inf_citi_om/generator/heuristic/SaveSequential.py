@@ -208,7 +208,7 @@ class SaveSequential(Save):
                             else:
                                 self.type_route = self.current_route._type_route
                     else:
-                        self.current_route.list_id_customers = self.save_route.get_list_id_customers() + self.current_route.get_list_id_customers()
+                        self.current_route.get_list_id_customers().insert(0, self.save_route.get_list_id_customers())
                         self.ext_inic = self.customers_to_visit[self.max_save[1]].get_id_customer()
 
                         if self.save_route._type_route == self.current_route._type_route:
@@ -219,31 +219,31 @@ class SaveSequential(Save):
                             else:
                                 self.type_route = self.save_route._type_route
 
-                    self.current_route.set_type_route(self.type_route.value)
-                    self.current_route.set_id_depot(self.id_depot)
-                    self.current_route.set_request_route(self.current_route.get_request_route() + self.save_route.get_request_route())
-                    self.list_routes.remove(self.save_route)
+                        self.current_route.set_type_route(self.type_route.value)
+                        self.current_route.set_id_depot(self.id_depot)
+                        self.current_route.set_request_route(self.current_route.get_request_route() + self.save_route.get_request_route())
+                        self.list_routes.remove(self.save_route)
 
-                    if len(self.current_route.get_list_id_customers()) > 2:
-                        self.no_extreme = self.max_save
-                        self.save_matrix[self.no_extreme, :] = -np.inf
-                        self.save_matrix[:, self.no_extreme] = -np.inf
+                        if len(self.current_route.get_list_id_customers()) > 2:
+                            self.no_extreme = self.max_save
+                            self.save_matrix[self.no_extreme, :] = -np.inf
+                            self.save_matrix[:, self.no_extreme] = -np.inf
 
-                        self.save_matrix[
-                            Problem.get_problem().get_pos_element(self.ext_inic), Problem.get_problem().get_pos_element(
-                                self.ext_end)] = -np.inf
-                        self.save_matrix[
-                            Problem.get_problem().get_pos_element(self.ext_end), Problem.get_problem().get_pos_element(
-                                self.ext_inic)] = -np.inf
+                            self.save_matrix[
+                                Problem.get_problem().get_pos_element(self.ext_inic), Problem.get_problem().get_pos_element(
+                                    self.ext_end)] = -np.inf
+                            self.save_matrix[
+                                Problem.get_problem().get_pos_element(self.ext_end), Problem.get_problem().get_pos_element(
+                                    self.ext_inic)] = -np.inf
 
-                # Asignar infinito negativo a max_save
-                self.save_matrix[self.max_save[0], self.max_save[1]] = -np.inf
-                self.save_matrix[self.max_save[1], self.max_save[0]] = -np.inf
+                    # Asignar infinito negativo a max_save
+                    self.save_matrix[self.max_save[0], self.max_save[1]] = -np.inf
+                    self.save_matrix[self.max_save[1], self.max_save[0]] = -np.inf
 
-            #if len(self.current_route.get_list_id_customers()) >= 6:
-            #   self.three_opt.to_optimize(self.current_route)
+                #if len(self.current_route.get_list_id_customers()) >= 6:
+                 #   self.three_opt.to_optimize(self.current_route)
 
-            #self.solution.get_list_routes().append(self.current_route)
+                self.solution.get_list_routes().append(self.current_route)
 
     def execute(self):
         if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
@@ -342,7 +342,7 @@ class SaveSequential(Save):
                 self.exist_save = True
 
                 self.ext_inic = self.current_route.get_list_id_customers()[0]
-                self.ext_end = self.current_route.get_list_id_customers()[-1]
+                self.ext_end = self.current_route.get_list_id_customers()[len(self.current_route.get_list_id_customers()) - 1]
 
 
                 while self.exist_save:
@@ -352,14 +352,8 @@ class SaveSequential(Save):
                     self.position_save = False
 
                     self.creating()
-                    if not self.exist_save:
-                        continue
+
                     self.processing()
-
-                if len(self.current_route.get_list_id_customers()) >= 6:
-                    self.three_opt.to_optimize(self.current_route)
-
-                self.solution.get_list_routes().append(self.current_route)
 
         return self.solution
 

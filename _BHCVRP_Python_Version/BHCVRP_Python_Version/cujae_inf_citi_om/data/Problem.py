@@ -68,7 +68,7 @@ class Problem:
 
     # Método para obtener la lista de id de los clientes
     def get_list_id_customers(self):
-        return [customer.id_customer for customer in self._list_customers]
+        return [customer._id_customer for customer in self._list_customers]
 
     # Método que devuelve la demanda total
     def get_total_request(self):
@@ -254,15 +254,18 @@ class Problem:
     def get_customers_assigned_by_id_depot(self, id_depot, list_customers, list_depots):
         list_customers_assigned = []
         count_customers = len(list_customers)
-        pos_depot = self.get_pos_element(id_depot, list_customers, list_depots) - count_customers
+        pos_element = self.get_pos_element(id_depot)
+        pos_depot = pos_element - count_customers
         count_assigned_customers = len(list_depots[pos_depot].get_list_assigned_customers())
 
         for i in range(count_assigned_customers):
             j = 0
             found = False
 
+            assigned_customers = list_depots[pos_depot].get_list_assigned_customers()
+
             while j < count_customers and not found:
-                if list_depots[pos_depot].get_list_assigned_customers()[i] == list_customers[j].get_id_customer():
+                if assigned_customers[i] == list_customers[j].get_id_customer():
                     list_customers_assigned.append(list_customers[j])
                     found = True
                 else:

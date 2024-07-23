@@ -5,7 +5,8 @@ from tools.LoadFile import LoadFile
 from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
 from generator.controller.StrategyHeuristic import StrategyHeuristic
-from enum import Enum
+from generator.controller.StrategyHeuristic import AssignmentTypePython
+
 
 def main():
     try:
@@ -34,16 +35,21 @@ def main():
         list_distances = []
 
         load_file.load_count_vehicles_for_depot(count_vehicles)
-        load_file.load_capacity_vehicles(capacity_vehicles)
+        load_file.is_load_capacity_vehicles(capacity_vehicles)
         load_file.is_load_customers(id_customers, axis_x_customers, axis_y_customers, request_customers)
         load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
 
-        load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots, axis_y_depots, list_distances)
+        load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots,
+                                      axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.RandomMethod
+        heuristic_type = HeuristicType.Sweep
 
-        if StrategyHeuristic.get_strategy_heuristic().load_problem(id_customers, request_customers, id_depots, count_vehicles[0], capacity_vehicles[0], list_distances, axis_x_customers, axis_y_customers, axis_x_depots, axis_y_depots, ProblemType.MDVRP, AssignmentType.BestNearest):
-            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
+        if StrategyHeuristic.get_strategy_heuristic().load_problem_with_assign(id_customers, request_customers, id_depots,
+                                                                               count_vehicles[0], capacity_vehicles[0],
+                                                                               list_distances, axis_x_customers, axis_y_customers,
+                                                                               axis_x_depots, axis_y_depots, ProblemType.MDVRP,
+                                                                               AssignmentTypePython.BestNearest):
+            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(1, heuristic_type)
             result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
             cost = StrategyHeuristic.get_strategy_heuristic().get_total_cost_solution()
             request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
@@ -51,14 +57,15 @@ def main():
 
             print(" ")
             print("------------------------------------------")
-            print("HEURÍSTICA DE CONSTRUCCIÓN: " + str(heuristic_type))
+            # print("INSTANCIA: P" + (i + 1))
+            print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
             print("COSTO TOTAL: " + str(cost))
             print("TOTAL DE RUTAS: " + str(request_by_route))
+            print("TIEMPO DE EJECUCIÓN: " + str(time))
             print(" ")
-
             for j in range(request_by_route):
-                print("R" + str(j+1) + result.get_list_routes()[j].get_list_id_customers())
-            
+                print("R" + str(j + 1) + str(result.get_list_routes()[j].get_list_id_customers()))
+                # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
             print("------------------------------------------")
 
         file_output.close()
@@ -69,10 +76,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-class AssignmentType(Enum):
-    BestNearest = 0
-    NearestByCustomer = 1
-    TrajectoryInParallel = 2
-    TrajectoryInSequential = 3
-    RandomByCustomer = 4
+

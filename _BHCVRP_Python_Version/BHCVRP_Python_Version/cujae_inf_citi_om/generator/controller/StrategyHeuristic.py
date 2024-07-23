@@ -17,9 +17,14 @@ from data.Depot import Depot
 from distance.Distance import Distance
 from factory.interfaces.DistanceType import DistanceType
 from generator.heuristic.Heuristic import Heuristic
-import numpy as np 
+import numpy as np
 import time
 from tqdm import tqdm
+from enum import Enum
+import jpype
+import jpype.imports
+from jpype.types import *
+from jpype import java
 
 class StrategyHeuristic:
     strategy_heuristic = None
@@ -81,22 +86,22 @@ class StrategyHeuristic:
     # Método encargado de cargar los datos de los clientes sin coordenadas
     def load_customer(self, id_customers, request_customers):
         list_customers = []
-        
+
         for i in range(len(id_customers)):
             customer = Customer()
             customer._id_customer = id_customers[i]
             customer._request_customer = request_customers[i]
-            
+
             list_customers.append(customer)
-        
+
         return list_customers
-    
+
     # Método encargado de cargar los datos de los clientes TTRP con coordenadas
     def load_customer_TTRP(self, id_customers, request_customers, axis_X_customers=None, axis_Y_customers=None, type_customers=None) -> List[Customer]:
         list_customers = self.load_customer_(id_customers, request_customers, axis_X_customers, axis_Y_customers)
         for i in range(len(list_customers)):
             c = list_customers[i]
-            customerTTRP = CustomerTTRP(c._id_customer, c._request_customer, c._location_customer, type_customers[i])
+            customerTTRP = CustomerTTRP(id_customer=c._id_customer, request_customer=c._request_customer, location_customer=c._location_customer, type_customer=type_customers[i])
             list_customers[i] = customerTTRP
         return list_customers
 
@@ -112,13 +117,13 @@ class StrategyHeuristic:
             list_customers[i] = customer_ttrp
 
         return list_customers
-    
+
     # Método encargado de cargar los datos de los depósitos y las flotas con coordenadas y asignación predeterminada
     def load_depot_(self, id_depots, axis_X_depots=None, axis_Y_depots=None, id_assigned_customers=None, count_vehicles=None, capacity_vehicles=None) -> List[Depot]:
         list_depots = []
         for i in range(len(id_depots)):
             depot = DepotMDVRP()
-            depot.id_depot = id_depots[i]
+            depot._id_depot = id_depots[i] #VERIFICAR !!
             if axis_X_depots and axis_Y_depots:
                 location = Location()
                 location._axis_X = axis_X_depots[i]
@@ -132,7 +137,7 @@ class StrategyHeuristic:
                 fleet._count_vehicles = count_vehicles[j]
                 fleet._capacity_vehicle = capacity_vehicles[j]
                 listFleets.append(fleet)
-            depot.list_fleets = listFleets
+            depot._list_fleets = listFleets
             list_depots.append(depot)
         return list_depots
 
@@ -165,7 +170,7 @@ class StrategyHeuristic:
             list_depots.append(depot)
 
         return list_depots
-    
+
     # Método encargado de cargar los datos de los depósitos y las flotas sin coordenadas y asignación de clientes predeterminada
     def load_depot(self, id_depots, id_assigned_customers, count_vehicles, capacity_vehicles):
         list_depots = []
@@ -190,7 +195,7 @@ class StrategyHeuristic:
             list_depots.append(depot)
 
         return list_depots
-    
+
     # Método encargado de cargar los datos de los depósitos y las flotas sin coordenadas
     def load_depot(self, id_depots, count_vehicles, capacity_vehicles):
         list_depots = []
@@ -215,14 +220,14 @@ class StrategyHeuristic:
             list_depots.append(depot)
 
         return list_depots
-    
+
     # Método encargado de cargar los datos de los depósitos y las flotas TTRP con coordenadas
     def load_depot_TTRP(self, id_depots, axis_X_depots=None, axis_Y_depots=None, count_vehicles=None, capacity_vehicles=None, count_trailers=None, capacity_trailers=None) -> List[Depot]:
         list_depots = self.load_depot_(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
         for i in range(len(list_depots)):
-            f = list_depots[i].list_fleets[0]
+            f = list_depots[i]._list_fleets[0]
             fleetTTRP = FleetTTRP(f._count_vehicles, f._capacity_vehicle, count_trailers[i], capacity_trailers[i])
-            list_depots[i].list_fleets[0] = fleetTTRP
+            list_depots[i]._list_fleets[0] = fleetTTRP
         return list_depots
 
     # Método encargado de cargar los datos de los depósitos y las flotas TTRP sin coordenadas
@@ -234,29 +239,121 @@ class StrategyHeuristic:
         for i in range(len(list_depots)):
             f = list_depots[i].get_list_fleets()[0]
             fleet_ttrp = FleetTTRP(f.get_count_vehicles(), f.get_capacity_vehicle(), count_trailers[i], capacity_trailers[i])
-            
+
             list_depots[i].get_list_fleets()[0] = fleet_ttrp
 
         return list_depots
-    
+
     # Método encargado de cargar los datos del problema usando listas de distancias y las coordenadas
-    def load_problem(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles, list_distances, axis_X_customers=None, axis_Y_customers=None, axis_X_depots=None, axis_Y_depots=None, type_problem=None, type_assignment=None) -> bool:
+    def load_problem_with_assign(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles, list_distances, axis_X_customers=None, axis_Y_customers=None, axis_X_depots=None, axis_Y_depots=None, type_problem=None, type_assignment=None) -> bool:
         loaded = False
         Problem.get_problem().set_type_problem(type_problem)
         if id_customers and request_customers and id_depots and count_vehicles and capacity_vehicles and list_distances and axis_X_customers and axis_Y_customers and axis_X_depots and axis_Y_depots:
-            list_customers = self.load_customer(id_customers, request_customers, axis_X_customers, axis_Y_customers)
-            list_depots = self.load_depot(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
+            list_customers = self.load_customer_(id_customers, request_customers, axis_X_customers, axis_Y_customers)
+            list_depots = self.load_depot_(id_depots, axis_X_depots, axis_Y_depots, None, count_vehicles, capacity_vehicles)
             Problem.get_problem().set_list_customers(list_customers)
             Problem.get_problem().set_list_depots(list_depots)
+
             if Problem.get_problem().get_total_capacity() >= Problem.get_problem().get_total_request():
                 loaded = True
                 Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
-                listCountV = [count_vehicles] * len(id_depots)
-                listCapV = [capacity_vehicles] * len(id_depots)
-                # Este Controller es de BHAVRP
-            """ if Controller.getController().load_problem(id_customers, request_customers, axis_X_customers, axis_Y_customers, id_depots, axis_X_depots, axis_Y_depots, listCountV, listCapV, list_distances):
+                list_countV = []
+                list_capV = []
+                for j in range(len(id_depots)):
+                    list_countV.append(count_vehicles)
+                    list_capV.append(capacity_vehicles)
+
+                print("Antes de iniciar JVM")
+                classpath = ['D:\\Escuela\\BHCVRP\\lib\\BHAVRP.jar', 'D:\\Escuela\\BHCVRP\\lib\\libmatrix.jar']
+                jpype.startJVM(classpath=classpath)
+                #jpype.startJVM(classpath='D:\\Escuela\\BHCVRP\\lib\\libmatrix.jar')
+                #jpype.addClassPath('D:\\Escuela\\BHCVRP\\lib\\libmatrix.jar\\libmatrix.cujae.inf.citi.om.matrix.NumericMatrix')
+
+                # Modificar el classpath de la JVM existente para incluir la ruta a la biblioteca adicional
+                #jpype.attachThreadToJVM()
+                #current_jvm = jpype.getDefaultJVMPath()
+                #current_jvm.__add__('D:\\Escuela\\BHCVRP\\lib\\libmatrix.jar')
+
+                #print(jpype.getDefaultJVMPath())
+
+                #nm = jpype.JClass('libmatrix.cujae.inf.citi.om.matrix.NumericMatrix')
+                print("Antes de llamar a Controller")
+                Controller = jpype.JClass('cujae.inf.citi.om.heuristic.controller.Controller')
+
+                java_list_customers = java.util.ArrayList()
+                for customer in id_customers:
+                    java_list_customers.add(java.lang.Integer(customer))
+
+                java_request_customers = java.util.ArrayList()
+                for request in request_customers:
+                    java_request_customers.add(java.lang.Double(request))
+
+                java_axis_X_customers = java.util.ArrayList()
+                for x in axis_X_customers:
+                    java_axis_X_customers.add(java.lang.Double(x))
+
+                java_axis_Y_customers = java.util.ArrayList()
+                for y in axis_Y_customers:
+                    java_axis_Y_customers.add(java.lang.Double(y))
+
+                java_id_depots = java.util.ArrayList()
+                for depot in id_depots:
+                    java_id_depots.add(java.lang.Integer(depot))
+
+                java_axis_X_depots = java.util.ArrayList()
+                for depot_x in axis_X_depots:
+                    java_axis_X_depots.add(java.lang.Double(depot_x))
+
+                java_axis_Y_depots = java.util.ArrayList()
+                for depot_y in axis_Y_depots:
+                    java_axis_Y_depots.add(java.lang.Double(depot_y))
+
+                java_list_countV = java.util.ArrayList()
+                for c in list_countV:
+                    java_sublist = java.util.ArrayList()
+                    for item in c:
+                        java_sublist.add(java.lang.Integer(item))
+                    java_list_countV.add(java_sublist)
+
+                java_list_capV = java.util.ArrayList()
+                for c in list_capV:
+                    java_sublist = java.util.ArrayList()
+                    for item in c:
+                        java_sublist.add(java.lang.Double(item))
+                    java_list_capV.add(java_sublist)
+
+                java_list_distances = java.util.ArrayList()
+                for ld in list_distances:
+                    # Cada 'ld' aquí es una lista, así que la convertimos a ArrayList antes de agregarla al ArrayList principal
+                    java_sublist = java.util.ArrayList()
+                    for item in ld:
+                        java_sublist.add(java.lang.Double(item))
+                    java_list_distances.add(java_sublist)
+
+                # Asumiendo que AssignmentType se crea con un String como argumento
+                assignment_type_instance = jpype.JClass('cujae.inf.citi.om.factory.interfaces.AssignmentType')
+                type_assignment = assignment_type_instance.BestNearest
+
+
+                if Controller.getController().loadProblem(java_list_customers, java_request_customers, java_axis_X_customers, java_axis_Y_customers, java_id_depots, java_axis_X_depots, java_axis_Y_depots, java_list_countV, java_list_capV, java_list_distances):
                     Controller.getController().executeAssignment(type_assignment)
-                    self.adapt(Controller.getController().solution.clusters)"""
+                    list_clusters = Controller.getController().getSolution().getClusters()
+                    depots = Problem.get_problem().get_list_depots()
+                    for i in range(len(list_clusters)):
+                        found = False
+                        for j in range(len(depots)):
+                            if list_clusters[i].getIDCluster() == depots[j].get_id_depot():
+                                found = True
+                                list_id_assigned_customers = []
+                                clusters = list_clusters[i].getItemsOfCluster()
+                                for k in range(len(clusters)):
+                                    element_of_cluster = clusters.get(k)
+                                    value = int(element_of_cluster)
+                                    list_id_assigned_customers.append(value)
+                                depots[j].set_list_assigned_customers(list_id_assigned_customers)
+                print("Antes de apagar la JVM")
+                jpype.shutdownJVM()
+                print("FIN")
         return loaded
 
     # Método encargado de cargar los datos del problema usando listas de distancias
@@ -276,16 +373,16 @@ class StrategyHeuristic:
                 loaded = True
 
             Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
-            
+
         if type_problem == ProblemType.HFVRP:
             if type_order is None:
                 type_order = OrderType.Ascending
-                
+
             Problem.get_problem().fill_list_capacities(0)
             Tools.ordinate_method(Problem.get_problem().get_list_capacities(), type_order)
 
         return loaded
-    
+
     # Método encargado de cargar los datos del problema con coordenadas y asignación predeterminada
     def load_problem_(self, id_customers: List[int], request_customers: List[float], axis_X_customers: List[float], axis_Y_customers: List[float], type_customers: List[int], id_depots: List[int], axis_X_depots: List[float], axis_Y_depots: List[float], id_assigned_customers: List[List[int]], count_vehicles: List[int], capacity_vehicles: List[float], count_trailers: List[int], capacity_trailers: List[float], type_problem, distance_type) -> bool:
         loaded = False
@@ -308,7 +405,7 @@ class StrategyHeuristic:
             loaded = True
 
         return loaded
-    
+
     # Método encargado de cargar los datos del problema usando listas de distancias con asignación predeterminada
     def load_problem(self, id_customers, request_customers, type_customers, id_depots, id_assigned_customers, count_vehicles, capacity_vehicles, count_trailers, capacity_trailers, list_distances, problem_type):
         loaded = False
@@ -329,7 +426,7 @@ class StrategyHeuristic:
                 Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
 
         return loaded
-    
+
     # Método encargado de llenar la matriz de costo
     def fillCostMatrix(self, id_customers, axis_X_customers, axis_Y_customers, id_depots, axis_X_depots, axis_Y_depots, distance_type):
         size = len(id_customers) + len(id_depots)
@@ -368,7 +465,7 @@ class StrategyHeuristic:
     def fill_cost_matrix(self, list_distances):
         size = len(list_distances)
         cost_matrix = np.array(list_distances).reshape(size, size)
-        
+
         for i in range(size):
             for j in range(len(list_distances[i])):
                 cost_in_distance = list_distances[i][j]
@@ -389,7 +486,7 @@ class StrategyHeuristic:
                         listIdCustomers.append(listClusters[i].itemsOfCluster[k])
                     # ((DepotMDVRP)Problem.get_problem().listDepots[j]).listAssignedCustomers = listIdCustomers
             depots.append(depot)"""
-            
+
     # Método encargado de ejecutar una heurística de construcción
     def execute_heuristic(self, count_execution, heuristic_type):
         if self.calculate_time:
@@ -497,70 +594,70 @@ class StrategyHeuristic:
     @staticmethod # Método que destruye la instancia de la controladora
     def destroy_strategy(self):
         self.strategy_heuristic = None
-        
+
     # Método para verificar si se puede cargar CVRP
     def load_cvrp(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles,
               list_distances, axis_X_customers, axis_Y_customers, axis_X_depots, axis_Y_depots, type_problem):
-              
+
         loaded = False
-        
+
         Problem.get_problem().set_type_problem(type_problem)
-        
+
         if (id_customers is not None and id_customers) and (request_customers is not None and request_customers) and \
         (id_depots is not None and id_depots) and (count_vehicles is not None and count_vehicles) and \
         (capacity_vehicles is not None and capacity_vehicles) and (list_distances is not None and list_distances) and \
         (axis_X_customers is not None and axis_X_customers) and (axis_Y_customers is not None and axis_Y_customers) and \
         (axis_X_depots is not None and axis_X_depots) and (axis_Y_depots is not None and axis_Y_depots):
-        
+
             list_customers = []
             list_depots = []
-            
+
             for i in range(len(id_customers)):
                 customer = Customer()
                 customer.set_id_customer(id_customers[i])
                 customer.set_request_customer(request_customers[i])
-                
+
                 location_customer = Location()
                 location_customer.set_axis_x(axis_X_customers[i])
                 location_customer.set_axis_y(axis_Y_customers[i])
                 customer.set_location_customer(location_customer)
-                
+
                 list_customers.append(customer)
-                
+
             depot = DepotMDVRP()
             depot.set_id_depot(id_depots[0])
             location_depot = Location()
             location_depot.set_axis_x(axis_X_depots[0])
             location_depot.set_axis_y(axis_Y_depots[0])
             depot.set_location_depot(location_depot)
-            
+
             fleet = Fleet()
             fleet.set_count_vehicles(count_vehicles[0])
             fleet.set_capacity_vehicle(capacity_vehicles[0])
-            
+
             list_fleets = []
             list_fleets.append(fleet)
             depot.set_list_fleets(list_fleets)
-            
+
             list_depots.append(depot)
-            
+
             Problem.get_problem().set_list_customers(list_customers)
             Problem.get_problem().set_list_depots(list_depots)
-            
+
             if Problem.get_problem().get_total_capacity() >= Problem.get_problem().get_total_request():
                 loaded = True
                 Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
-                
+
                 list_count_v = []
                 list_cap_v = []
-                
+
                 list_count_v.append(count_vehicles)
                 list_cap_v.append(capacity_vehicles)
             else:
                 print("Total demand exceeds total capacity")
-                
+
         return loaded
-    
+
     # Método para verificar si se puede cargar HFVRP
     def load_hfvrp(self, id_customers, request_customers, id_depots, count_vehicles, capacity_vehicles, list_distances, axis_X_customers, axis_Y_customers, axis_X_depots, axis_Y_depots, type_problem, type_order):
         loaded = False
@@ -628,6 +725,66 @@ class StrategyHeuristic:
                 print("La demanda total excede a la capacidad total")
 
         return loaded
+
+    def to_clustering(self, type_assignment):
+        if type_assignment == AssignmentTypePython.BestNearest:
+            for i in range(len(Problem.get_problem().get_list_depots())):
+                Problem.get_problem().get_list_depots()[i].get_list_assigned_customers().clear()
+
+            count_customers = len(Problem.get_problem().get_list_customers())
+            count_depots = len(Problem.get_problem().get_list_depots())
+
+            matrix_cost = Problem.get_problem().get_cost_matrix()
+
+            j = 0
+
+            row1 = 0
+            row2 = count_customers - 1
+            col1 = count_customers
+            col2 = count_customers + count_depots - 1
+
+            while j < count_customers and not np.all(matrix_cost == np.inf):
+                # Extraer la submatriz de interés
+                submatrix = matrix_cost[row1:row2 + 1, col1:col2 + 1]
+
+                # Encontrar el índice del valor mínimo
+                min_value = np.min(submatrix)
+                min_indices = np.argmin(submatrix)
+
+                # Convertir el índice de la submatriz a índices globales de la matriz original
+                global_row, global_col = row1 + min_indices // submatrix.shape[1], col1 + min_indices % submatrix.shape[
+                    1]
+
+                best_all = [global_row, global_col]
+                pos_customer = best_all[0]
+                pos_depot_matrix = best_all[1]
+                pos_depot = pos_depot_matrix - count_customers
+
+                total_capacity = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_capacity_vehicle() * \
+                                 Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_count_vehicles()
+                current_request = Problem.get_problem().current_request_by_depot(pos_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots())
+                request_customer = Problem.get_problem().get_list_customers()[pos_customer].get_request_customer()
+
+                if total_capacity >= current_request + request_customer:
+                    Problem.get_problem().get_list_depots()[pos_depot].get_list_assigned_customers().append(Problem.get_problem().get_list_customers()[pos_customer].get_id_customer())
+
+                    matrix_cost[best_all[0], :] = np.inf
+                    matrix_cost[:, best_all[0]] = np.inf
+                    j += 1
+                else:
+                    matrix_cost[best_all[0], best_all[1]] = np.inf
+
+        pass
+
+    def adapt(self, list_clusters):
+        pass
+
+class AssignmentTypePython(Enum):
+    BestNearest = 0
+    NearestByCustomer = 1
+    TrajectoryInParallel = 2
+    TrajectoryInSequential = 3
+    RandomByCustomer = 4
 
 
 
