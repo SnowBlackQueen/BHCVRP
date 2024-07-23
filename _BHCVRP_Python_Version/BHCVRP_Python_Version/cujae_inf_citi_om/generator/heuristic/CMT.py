@@ -250,21 +250,21 @@ class CMT(Heuristic):
         elif self.type_problem == ProblemType.MDVRP or self.type_problem == 2:
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
                 if j != self.pos_depot:
-                    id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
-                    customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(id_depot))
+                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
 
-                    capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
+                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
                         0].get_capacity_vehicle()
-                    count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
+                    self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
                         0].get_count_vehicles()
 
-                while customers_to_visit:
-                    self.list_candidate_routes = self._do_first_phase(customers_to_visit, id_depot, j, capacity_vehicle,
-                                                                      count_vehicles)
+                while self.customers_to_visit:
+                    self.list_candidate_routes = self._do_first_phase(self.customers_to_visit, self.id_depot, j, self.capacity_vehicle,
+                                                                      self.count_vehicles)
                     self.list_root_customers = self._update_customers_to_visit(self.list_candidate_routes,
-                                                                               customers_to_visit)
-                    self.solution = self.processing(customers_to_visit, count_vehicles, self.request_route, self.route,
-                                                    id_depot, self.solution)
+                                                                               self.customers_to_visit)
+                    self.solution = self.processing(self.customers_to_visit, self.count_vehicles, self.request_route, self.route,
+                                                    self.id_depot, self.solution)
 
         elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
             while self.customers_to_visit:

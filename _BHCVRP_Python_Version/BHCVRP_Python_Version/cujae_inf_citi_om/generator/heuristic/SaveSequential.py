@@ -301,26 +301,25 @@ class SaveSequential(Save):
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
                 if j != self.pos_depot:
-                    id_depot = Problem.get_problem().get_list_depots().get(j).get_id_depot()
-                    customers_to_visit = Problem.get_problem().get_customers_assigned_by_id_depot(id_depot)
+                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    self.customers_to_visit = Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots())
 
-                    self.capacity_vehicle = Problem.get_problem().get_list_depots().get(j).get_list_fleets().get(
-                        0).get_capacity_vehicle()
+                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_capacity_vehicle()
 
-                    if customers_to_visit:
-                        list_routes = self.create_initial_routes(customers_to_visit)
-                        cant_customers = len(customers_to_visit)
-                        self.save_matrix = np.zeros(cant_customers, cant_customers)
-                        self.save_matrix = self.fill_save_matrix(id_depot, customers_to_visit)
+                    if self.customers_to_visit:
+                        self.list_routes = self.create_initial_routes(self.customers_to_visit)
+                        self.cant_customers = len(self.customers_to_visit)
+                        self.save_matrix = np.zeros(self.cant_customers, self.cant_customers)
+                        self.save_matrix = self.fill_save_matrix(self.id_depot, self.customers_to_visit)
 
-                while list_routes:
-                    self.index = self.random.randint(0, len(list_routes) - 1)
-                    self.current_route = list_routes.pop(self.index)
+                while self.list_routes:
+                    self.index = self.random.randint(0, len(self.list_routes) - 1)
+                    self.current_route = self.list_routes.pop(self.index)
                     self.exist_save = True
 
-                    self.ext_inic = self.current_route.get_get_list_id_customers()[0]
-                    self.ext_end = self.current_route.get_get_list_id_customers()[
-                        len(self.current_route.get_get_list_id_customers()) - 1]
+                    self.ext_inic = self.current_route.get_list_id_customers()[0]
+                    self.ext_end = self.current_route.get_list_id_customers()[
+                        len(self.current_route.get_list_id_customers()) - 1]
 
                     while self.exist_save:
                         self.max_save_inic = None

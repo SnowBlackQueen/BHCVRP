@@ -42,7 +42,7 @@ def main():
         load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots,
                                       axis_y_depots, list_distances)
 
-        heuristic_type = HeuristicType.Sweep
+        heuristic_type = HeuristicType.SaveSequential
 
         if StrategyHeuristic.get_strategy_heuristic().load_problem_with_assign(id_customers, request_customers, id_depots,
                                                                                count_vehicles[0], capacity_vehicles[0],

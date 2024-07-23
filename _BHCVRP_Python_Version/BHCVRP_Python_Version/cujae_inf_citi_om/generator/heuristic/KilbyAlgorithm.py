@@ -219,7 +219,7 @@ class KilbyAlgorithm(Heuristic):
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
                 if j != self.pos_depot:
                     self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
-                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot))
+                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
                     
                     self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_capacity_vehicle()
                     self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_count_vehicles()
