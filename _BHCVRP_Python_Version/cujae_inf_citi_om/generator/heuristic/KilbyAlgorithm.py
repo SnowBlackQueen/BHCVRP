@@ -1,122 +1,131 @@
-from heuristic.Heuristic import Heuristic
+from generator.heuristic.Heuristic import Heuristic
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from heuristic.Metric import Metric
+from generator.heuristic.Metric import Metric
 from data.CustomerType import CustomerType
-from solution.Solution import Solution
-from solution.Route import Route
-from solution.RouteType import RouteType
-from solution.RouteTTRP import RouteTTRP
+from generator.solution.Solution import Solution
+from generator.solution.Route import Route
+from generator.solution.RouteType import RouteType
+from generator.solution.RouteTTRP import RouteTTRP
 from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.CustomerTTRP import CustomerTTRP
+from generator.postoptimization.Operator_3opt import Operator_3opt
 
 class KilbyAlgorithm(Heuristic):
     
     def __init__(self):
         super().__init__()
 
-    def get_solution_inicial(self):
-        solution = Solution()
-        customers_to_visit = None
+    def initialize_specifics(self):
+        self.list_candidate_routes = []
+        self.list_kilby_costs = None
 
-        pos_depot = -1
-        list_candidate_routes = []
-        list_kilby_costs = None
-
-        if Problem.get_problem().get_type_problem() == ProblemType.CVRP or Problem.get_problem().get_type_problem() == ProblemType.HFVRP or Problem.get_problem().get_type_problem() == ProblemType.OVRP or Problem.get_problem().get_type_problem() == ProblemType.TTRP:
-            customers_to_visit = list(Problem.get_problem().get_list_customers())
-            pos_depot = 0
-        else: 
-            i = 0
-            found = False
-            
-            while i < len(Problem.get_problem().get_list_depots()) and not found:
-                if not Problem.get_problem().get_list_depots()[i].get_list_assigned_customers():
-                    customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(Problem.get_problem().get_list_depots()[i].get_id_depot()))
-                    found = True
-                    pos_depot = i
-                else:
-                    i += 1
+        self.count_trailers = 0
+        self.type_customer = CustomerType.TC
+        self.list_access_vc = []
         
-        count_vehicles = 0
-        count_trailers = 0
-        capacity_vehicle = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_capacity_vehicle()
+        if Problem.get_problem().get_type_problem() == ProblemType.TTRP:
+            self.count_trailers = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_count_trailers()
         
-        if Problem.get_problem().get_type_problem() == ProblemType.CVRP:
-            count_trailers = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_count_trailers()
-        
-        if Problem.get_problem().get_type_problem() == ProblemType.HFVRP:
-            count_vehicles = len(Problem.get_problem().fill_list_capacities())
+        elif Problem.get_problem().get_type_problem() == ProblemType.HFVRP:
+            self.count_vehicles = len(Problem.get_problem().fill_list_capacities(self.pos_depot))
         else:
-            count_vehicles = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[0].get_count_vehicles()
+            self.count_vehicles = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_count_vehicles()
         
+        self.three_opt = Operator_3opt()
         #Operator_2opt stepOptimizacion1 = new Operator_2opt();
         #Operator_Relocate stepOptimizacion2 = new Operator_Relocate();
         #Operator_Exchange stepOptimizacion3 = new Operator_Exchange();
 
-        customer = None
-        metric_kilby = None
-        request = 0.0
-        pos_route = -1
-        is_route_full = True
-        routes_with_customers = 0
+        self.metric_kilby = None
+        self.pos_route = -1
+        self.is_route_full = True
+        self.routes_with_customers = 0
 
-        for i in range(count_vehicles):
-            route = Route()
-            list_candidate_routes.append(route)
+        for i in range(self.count_vehicles):
+            self.route = Route()
+            self.list_candidate_routes.append(self.route)
             
-        type_problem = Problem.get_problem().get_type_problem()
-        list_route_opt = []
+        self.list_route_opt = []
+    
+    def creating(self, route=None, request_route=None, list_tau=None, list_metrics=None):
+        if self.type_problem in [0, 1, 2, 3, 4] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.MDVRP or self.type_problem == ProblemType.TTRP:
+            while self.list_kilby_costs:
+                i = 0
+                while i < len(self.list_candidate_routes) and self.list_kilby_costs:
+                    self.customer = Customer()
+                    self.customer = self._get_customer_by_id(self.list_kilby_costs[0].get_id_element(), self.customers_to_visit)
+                    self.request_route = self.customer.get_request_customer()
+
+                    self.list_candidate_routes[i].get_list_id_customers().append(self.customer.get_id_customer())
+                    self.list_candidate_routes[i].set_request_route(self.request_route)
+                    self.list_candidate_routes[i].set_id_depot(self.id_depot)
+                    self.list_kilby_costs.pop(0)
+                    self.customers_to_visit.remove(self.customer)
+                    self.routes_with_customers += 1
+
+                    if self.type_problem == ProblemType.TTRP:
+                        if self.type_customer == CustomerType.TC:
+                            self.capacity_total = self.capacity_vehicle
+                        else:
+                            self.capacity_total = self.capacity_vehicle + self.capacity_trailer
+
+                    i += 1
+                    
+                    if self.type_problem == ProblemType.HFVRP:
+                        self.is_open = True
+
+            j = self.routes_with_customers
+
+            while self.routes_with_customers < len(self.list_candidate_routes):
+                self.list_candidate_routes.pop(j)
+                
         
-        if type_problem in [0, 3]:
-            if customers_to_visit:
-                list_kilby_costs = []
-                list_kilby_costs = self.select_best_cost(count_vehicles, count_trailers, Problem.get_problem().get_list_depots().get(pos_depot).get_id_depot(), customers_to_visit)
+    
+    def processing(self, customers_to_visit=None, count_vehicles=None, request_route=None, route=None, id_depot=None, solution=None):
+        if self.type_problem in [0, 1, 2, 3, 4] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.MDVRP or self.type_problem == ProblemType.TTRP:
+            while self.list_candidate_routes and self.customers_to_visit:
+                self.metric_kilby = Metric()
+                self.metric_kilby = self.get_best_customer(self.id_depot, self.customers_to_visit, self.list_candidate_routes, self.capacity_vehicle, self.count_trailers)
 
-                while list_kilby_costs:
-                    i = 0
-                    while i < len(list_candidate_routes) and list_kilby_costs:
-                        customer = Customer()
-                        customer = self._get_customer_by_id(list_kilby_costs[0].get_id_element(), customers_to_visit)
-                        request = customer.get_request_customer()
+                if self.metric_kilby is None:
+                    self.pos_route = self.close_route(self.list_candidate_routes)
+                    self.is_route_full = False
+                else:
+                    customer_insert = Customer()
+                    customer_insert = self._get_customer_by_id(self.metric_kilby.get_id_element(), self.customers_to_visit)
 
-                        list_candidate_routes[i].get_list_id_customers().append(customer.get_id_customer())
-                        list_candidate_routes[i].set_request_route(request)
-                        list_candidate_routes[i].set_id_depot(Problem.get_problem().get_list_depots().get(pos_depot).get_id_depot())
-                        list_kilby_costs.pop(0)
-                        customers_to_visit.remove(customer)
-                        routes_with_customers += 1
+                    self.pos_route = self.metric_kilby.get_index()
+                    self.request_route = self.list_candidate_routes[self.metric_kilby.get_index()].get_request_route() + customer_insert.get_request_customer()
 
-                        i += 1
+                    self.list_candidate_routes[self.pos_route].get_list_id_customers().append(customer_insert.get_id_customer())
+                    self.list_candidate_routes[self.pos_route].set_request_route(self.request_route)
+                    self.list_candidate_routes[self.pos_route].set_id_depot(self.id_depot)
+                    self.customers_to_visit.remove(customer_insert)
 
-                j = routes_with_customers
+                    self.is_route_full = self.request_perfect(self.customers_to_visit, self.capacity_vehicle, self.request_route)
 
-                while routes_with_customers < len(list_candidate_routes):
-                    list_candidate_routes.remove(j)
+                    # Verificar si va aquí
+                    if self.type_customer == CustomerType.VC and customer_insert.get_type_customer() == CustomerType.TC:
+                        is_TC = True
 
-                while list_candidate_routes and customers_to_visit:
-                    metric_kilby = Metric()
-                    metric_kilby = self.get_best_customer(Problem.get_problem().get_list_depots().get(pos_depot).get_id_depot(), customers_to_visit, list_candidate_routes, capacity_vehicle, count_trailers)
-
-                    if metric_kilby is None:
-                        posRoute = self.close_route(list_candidate_routes)
-                        is_route_full = False
+                # Verificar si va aquí
+                if self.type_customer == CustomerType.TC:
+                    self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.PTR)
+                else:
+                    if is_TC:
+                        self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.CVR)
                     else:
-                        customer_insert = Customer()
-                        customer_insert = self._get_customer_by_id(metric_kilby.get_id_element(), customers_to_visit)
-
-                        posRoute = metric_kilby.get_index()
-                        request = list_candidate_routes[metric_kilby.get_index()].get_request_route() + customer_insert.get_request_customer()
-
-                        list_candidate_routes[posRoute].get_list_id_customers().append(customer_insert.get_id_customer())
-                        list_candidate_routes[posRoute].set_request_route(request)
-                        list_candidate_routes[posRoute].set_id_depot(Problem.get_problem().get_list_depots().get(pos_depot).get_id_depot())
-                        customers_to_visit.remove(customer_insert)
-
-                        is_route_full = self.request_perfect(customers_to_visit, capacity_vehicle, request)
-
-                    if not is_route_full:
+                        self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.PVR)
+                    
+                
+                if not self.is_route_full:
+                    if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                        self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                    self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
+                    self.list_candidate_routes.pop(self.pos_route)
+                        
                         # if listCandidateRoutes[posRoute].getListIdCustomers().size() >= 4:
                         #     stepOptimizacion1.stepOptimizacion(listCandidateRoutes[posRoute], variant)
                         #
@@ -126,11 +135,15 @@ class KilbyAlgorithm(Heuristic):
                         #
                         # listRouteOpt.append(listCandidateRoutes[posRoute])
                         # routesCandidates.remove(posRoute)
-                        pass
+                        
 
-                while list_candidate_routes:
-                    posRoute = 0
-
+            while self.list_candidate_routes:
+                self.pos_route = 0
+                if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                    self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
+                self.list_candidate_routes.pop(self.pos_route)
+                        
                     # if listCandidateRoutes[posRoute].getListIdCustomers().size() >= 4:
                     #     stepOptimizacion1.stepOptimizacion(listCandidateRoutes[posRoute], variant)
                     #
@@ -140,19 +153,109 @@ class KilbyAlgorithm(Heuristic):
                     #
                     # listRouteOpt.append(listCandidateRoutes[posRoute])
                     # listCandidateRoutes.remove(posRoute)
+                    
+                    
+    def execute(self):
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
+            if self.customers_to_visit:
+                self.list_kilby_costs = []
+                self.list_kilby_costs = self.select_best_cost(self.count_vehicles, self.count_trailers, self.id_depot, self.customers_to_visit)
 
-            solution.set_list_routes(list_route_opt)
+                self.creating()
+                
+                self.processing(self.customers_to_visit, self.count_vehicles, self.request_route, self.route, self.id_depot, self.solution)
 
-        elif type_problem == 1:
-            pass
+            self.solution.set_list_routes(self.list_route_opt)
+            
+        elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
+            list_capacities = list(Problem.get_problem().get_list_capacities())
+            self.capacity_vehicle = list_capacities[0]
+            is_open = True
+            
+            if self.customers_to_visit:
+                self.list_kilby_costs = []
+                self.list_kilby_costs = self.select_best_cost(self.count_vehicles, self.count_trailers, self.id_depot, self.customers_to_visit)
 
-        elif type_problem == 2:
-            pass
+                self.creating()
 
-        elif type_problem == 4:
-            pass
+                self.processing()
 
-        return solution
+                while self.list_candidate_routes:
+                    self.pos_route = 0
+                    if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                        self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                    self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
+                    self.list_candidate_routes.remove(self.pos_route)
+
+            self.solution.set_list_routes(self.list_route_opt)
+            # Verificar
+            list_capacities.pop(0)
+            is_open = False
+            
+            if is_open and self.customers_to_visit:
+                self.route.set_request_route(self.request_route)
+                self.route.set_id_depot(self.id_depot)
+                self.solution.get_list_routes().append(self.route)
+
+            if self.customers_to_visit:
+                self.route = Route()
+                new_request = 0.0
+                self.route.set_id_depot(self.id_depot)
+
+                while self.customers_to_visit:
+                    new_request += self.customers_to_visit[0].get_request_customer()
+                    self.route.set_request_route(new_request)
+                    self.route.get_list_id_customers().append(self.customers_to_visit[0].get_id_customer())
+                    self.customers_to_visit.pop(0)
+
+                self.solution.get_list_routes().append(self.route)
+
+            if is_open:
+                self.route.set_request_route(self.request_route)
+                self.route.set_id_depot(self.id_depot)
+                self.solution.get_list_routes().append(self.route)
+                
+        elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
+            for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+                if j != self.pos_depot:
+                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
+                    
+                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_capacity_vehicle()
+                    self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_count_vehicles()
+                
+                if self.customers_to_visit:
+                    self.list_kilby_costs = []
+                    self.list_kilby_costs = self.select_best_cost(self.count_vehicles, self.count_trailers, self.id_depot, self.customers_to_visit)
+
+                    self.creating()
+
+                    self.processing()
+                    
+                self.solution.set_list_routes(self.list_route_opt)
+                
+        elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+            self.list_access_vc = []
+            if self.customers_to_visit:
+                self.is_TC = False
+                self.capacity_trailer = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_capacity_trailer()
+                self.capacity_total = 0.0
+                self.type_customer = CustomerType.TC
+                
+                self.list_kilby_costs = []
+                self.list_kilby_costs = self.select_best_cost(self.count_vehicles, self.count_trailers, self.id_depot, self.customers_to_visit)
+
+                self.creating()
+                
+                self.processing()
+
+            self.solution.set_list_routes(self.list_route_opt)
+    
+    def get_solution_inicial(self):
+        
+        self.execute()
+
+        return self.solution
     
     # Método que devuelve una lista de los n mejores para las n rutas
     def select_best_cost(self, count_vehicles, count_trailers, id_depot, list_customer):
@@ -167,18 +270,22 @@ class KilbyAlgorithm(Heuristic):
         for i in range(len(list_customer)):
             metric_kilby = Metric()
 
-            type_customer = list_customer[i].get_type_customer()
+            if isinstance(list_customer[i], CustomerTTRP):
+                type_customer = list_customer[i].get_type_customer()
+            else:
+                type_customer = CustomerType.TC
+
             cost_kilby = self.calculate_cost_of_kilby(id_depot, id_depot, list_customer[i].get_id_customer())
 
             if len(list_kilby_costs) < count_vehicles:
-                if ((type_customer == CustomerType.VC and count_routes_pvr != 0) or 
-                    (type_customer == CustomerType.TC and count_routes_ptr != 0)):
+                if (((type_customer == CustomerType.VC or type_customer == CustomerType.VC.value) and count_routes_pvr != 0) or
+                    ((type_customer == CustomerType.TC or type_customer == CustomerType.TC.value) and count_routes_ptr != 0)):
                     metric_kilby.set_id_element(list_customer[i].get_id_customer())
                     metric_kilby.set_insertion_cost(cost_kilby)
 
                     list_kilby_costs.append(metric_kilby)
 
-                    if type_customer == CustomerType.VC:
+                    if type_customer == CustomerType.VC or type_customer == CustomerType.VC.value:
                         count_routes_pvr -= 1
                     else:
                         count_routes_ptr -= 1
@@ -238,7 +345,7 @@ class KilbyAlgorithm(Heuristic):
         return pos_max_cost
 
 
-    # Método que devuelve la pocisi�n del primer cliente con un acceso dado
+    # Método que devuelve la posición del primer cliente con un acceso dado
     def find_first_customer_equals_access(self, type_customer, list_kilby_costs, list_customers):
         i = 0
         found = False

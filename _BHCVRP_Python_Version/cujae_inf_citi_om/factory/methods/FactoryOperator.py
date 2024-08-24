@@ -1,7 +1,7 @@
 from typing import Type
-from cujae_inf_citi_om.factory.interfaces import OperatorType, IFactoryOperator
-from cujae_inf_citi_om.generator.postoptimization import StepOptimization
-from cujae_inf_citi_om.factory.methods import FactoryLoader
+from factory.interfaces import OperatorType, IFactoryOperator
+from generator.postoptimization import StepOptimization
+from factory.methods import FactoryLoader
 import traceback
 
 class FactoryDistance(IFactoryOperator):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from solution.Route import Route
+from generator.solution.Route import Route
 
 class StepOptimization(ABC):
     

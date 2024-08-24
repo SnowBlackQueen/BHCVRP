@@ -1,11 +1,11 @@
-from cujae_inf_citi_om.distance import Distance
+from distance import Distance
 import math
 
 # Clase que modela como calcular la distancia mediante la fórmula de Chebyshev
 
 class Chebyshev(Distance):
     
-    def __init__(self, axis_X_start, axis_Y_start, axis_X_end, axis_Y_end):
+    def __init__(self, axis_X_start=None, axis_Y_start=None, axis_X_end=None, axis_Y_end=None):
         super().__init__(axis_X_start, axis_Y_start, axis_X_end, axis_Y_end)
     
     def calculateDistance(self, axis_X_start, axis_Y_start, axis_X_end, axis_Y_end):

@@ -5,10 +5,20 @@ from exceptions.RequestException import RequestException
 
 class Customer:
     
-    def __init__(self, id_customer, request_customer, location_customer: Location):
-        self._id_customer = id_customer
-        self._request_customer = request_customer
-        self._location_customer = location_customer
+    def __init__(self, id_customer=None, request_customer=None, location_customer: Location = None):
+        if id_customer is not None and request_customer is not None and location_customer is not None:
+            # Constructor con tres argumentos
+            self._id_customer = id_customer
+            self._request_customer = request_customer
+            self._location_customer = location_customer
+        else:
+            # Constructor sin argumentos (o con argumentos predeterminados)
+            self._id_customer = 0
+            self._request_customer = 0.0
+            self._location_customer = None  # O crea una nueva instancia de Location con valores predeterminados si es necesario
+
+    def __str__(self):
+        return f"ID: {self._id_customer}, Request: {self._request_customer}, Location: {self._location_customer}"
 
     def get_id_customer(self):
         return self._id_customer

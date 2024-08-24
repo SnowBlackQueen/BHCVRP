@@ -1,0 +1,4520 @@
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+Fila150
+49.92995093127971
+Indice64
+Id cliente65
+asd
+Fila150
+49.92995093127971
+Indice64
+Id cliente75
+Fila150
+49.92995093127971
+Indice64
+Id cliente90
+Fila150
+49.92995093127971
+Indice64
+Id cliente99
+Fila150
+49.92995093127971
+Indice64
+Id cliente115
+Fila150
+49.92995093127971
+Indice64
+Id cliente130
+Fila150
+49.92995093127971
+Indice64
+Id cliente149
+Fila150
+42.42640687119285
+Indice37
+Id cliente114
+Fila150
+36.05551275463989
+Indice22
+Id cliente106
+Fila150
+33.54101966249684
+Indice10
+Id cliente97
+Fila150
+18.0
+Indice1
+Id cliente112
+ 
+------------------------------------------
+CANTIDAD DE EJECUCIONES: 100
+HEURÍSTICA DE CONSTRUCCIÓN: MoleJameson
+COSTO TOTAL: 1581.39
+TOTAL DE RUTAS: 11
+TIEMPO DE EJECUCIÓN: 3613 milisegundos
+ 
+R1[33, 81, 78, 34, 135, 35, 136, 65, 71, 66, 131, 128, 20, 103, 9, 120, 51, 46]
+R2[92, 145, 41, 22, 133, 75, 23, 67, 39, 25, 55, 4, 139, 56, 74, 72, 73]
+R3[60, 10, 108, 107, 11, 126, 63, 90, 32, 30, 122, 70]
+R4[117, 59, 98, 37, 100, 14, 140, 119, 44, 141, 16, 17, 91, 85, 93, 104, 99]
+R5[2, 115, 57, 15, 43, 38, 86, 142, 42, 144, 87]
+R6[54, 130, 24, 29, 121, 134, 150, 80, 68, 116]
+R7[105, 26, 149, 21, 110, 109, 12, 77, 3, 129, 79, 102, 50, 76, 138, 28, 146]
+R8[6, 83, 125, 45, 114, 8, 124, 36, 143, 49, 64, 19, 47, 48, 82]
+R9[27, 127, 69, 132, 1, 101, 31, 88, 148, 62, 123, 7, 106, 18, 84, 118, 52]
+R10[89, 147, 94, 96, 5, 113, 61, 95, 97, 13, 137, 58, 40, 53]
+R11[111, 112]
+------------------------------------------

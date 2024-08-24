@@ -1,0 +1,24 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: RandomMethod
+COSTO TOTAL: 1093.0
+TOTAL DE RUTAS: 12
+TIEMPO DE EJECUCIÓN: 0.09632587432861328
+ 
+R1[25, 18, 45]
+R2[15, 37, 40, 17, 42, 4, 44]
+R3[41, 13, 19]
+R4[7, 8, 43]
+R5[12, 24, 31, 32]
+R6[14, 23, 27, 26, 11]
+R7[46, 6, 48, 1, 47]
+R8[9, 50, 38, 34, 49]
+R9[33, 5, 30, 39]
+R10[10, 16]
+R11[36, 29, 20, 3, 35]
+R12[21, 28, 2, 22]
+------------------------------------------

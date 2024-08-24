@@ -4,24 +4,31 @@ import math
 
 class Location:
     
-    def __init__(self, axis_X, axis_Y):
+    def __init__(self, axis_X=None, axis_Y=None):
         self._axis_X = axis_X
         self._axis_Y = axis_Y
 
-    def get_axisX(self):
+    def get_axis_x(self):
         return self._axis_X
 
-    def set_axisX(self, axis_X):
+    def set_axis_x(self, axis_X):
         self._axis_X = axis_X
 
-    def get_axisY(self):
+    def get_axis_y(self):
         return self._axis_Y
 
-    def set_axisY(self, axis_Y):
+    def set_axis_y(self, axis_Y):
         self._axis_Y = axis_Y
 
     # Método que devuelve para un punto su coordenada polar Theta 
     def get_polar_theta(self):
+        if self._axis_X == 0:
+            if self._axis_Y > 0:
+                return math.pi / 2
+            elif self._axis_Y < 0:
+                return -math.pi / 2
+            else:
+                return 0.0
         return math.atan(self._axis_Y / self._axis_X)
 
     # Método que devuelve para un punto su coordenada Rho

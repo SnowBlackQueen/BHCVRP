@@ -1,12 +1,13 @@
 from typing import Type
-from cujae_inf_citi_om.factory.interfaces import DistanceType, IFactoryDistance
-from cujae_inf_citi_om.distance import Distance
-from cujae_inf_citi_om.factory.methods import FactoryLoader
+from factory.interfaces.DistanceType import DistanceType
+from factory.interfaces.IFactoryDistance import IFactoryDistance
+from distance.Distance import Distance
+from factory.methods.FactoryLoader import FactoryLoader
 import traceback
 
 class FactoryDistance(IFactoryDistance):
-    def createDistance(self, type_distance: DistanceType) -> Distance:
-        class_name = f"cujae_inf_citi_om.distance.{type_distance}"
+    def create_distance(self, type_distance: DistanceType) -> Distance:
+        class_name = f"distance.{type_distance.name}.{type_distance.name}"
         distance = None
         try:
             distance = FactoryLoader.get_instance(class_name)

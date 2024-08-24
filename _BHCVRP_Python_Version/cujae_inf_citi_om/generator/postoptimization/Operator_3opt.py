@@ -1,8 +1,8 @@
 import random
-from postoptimization import StepOptimization
-from solution import Route
+from generator.postoptimization.StepOptimization import StepOptimization
+from generator.solution.Route import Route
 
-class Operator3Opt(StepOptimization):
+class Operator_3opt(StepOptimization):
 
     def to_optimize(self, route: Route):
         list_opt = route.get_list_id_customers().copy()

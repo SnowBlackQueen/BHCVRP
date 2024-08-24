@@ -1,6 +1,6 @@
 import random
 from decimal import Decimal, ROUND_UP
-import OrderType
+from tools.OrderType import OrderType
 
 class Tools:
     @staticmethod
