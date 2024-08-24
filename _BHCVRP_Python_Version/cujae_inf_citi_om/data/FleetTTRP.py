@@ -1,12 +1,19 @@
-from data import Fleet
+from data.Fleet import Fleet
 from exceptions.WithoutCapacityException import WithoutCapacityException
 
 # Clase que modela los datos de una flota en el TTRP
 
 class FleetTTRP(Fleet):
     
-    def __init__(self, count_trailers, capacity_trailer):
+    def __init__(self, count_trailers=None, capacity_trailer=None):
         super().__init__()
+        self._count_trailers = count_trailers
+        self._capacity_trailer = capacity_trailer
+        
+    def __init__(self, count_vehicles=None, capacity_vehicle=None, count_trailers=None, capacity_trailer=None):
+        super().__init__()
+        self._count_vehicles = count_vehicles
+        self._capacity_vehicle = capacity_vehicle
         self._count_trailers = count_trailers
         self._capacity_trailer = capacity_trailer
 

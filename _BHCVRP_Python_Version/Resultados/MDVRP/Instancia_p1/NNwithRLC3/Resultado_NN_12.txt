@@ -1,0 +1,24 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: NearestNeighborWithRLC
+COSTO TOTAL: 1008.0
+TOTAL DE RUTAS: 12
+TIEMPO DE EJECUCIÓN: 0.18796133995056152
+ 
+R1[19, 42, 4, 44, 41]
+R2[18, 13, 37, 40]
+R3[45, 17, 25, 15]
+R4[27, 47, 12, 46]
+R5[11, 1, 32, 48, 14]
+R6[23, 8, 24, 26, 6]
+R7[31, 7, 43]
+R8[9, 38, 30, 49, 10]
+R9[16, 50, 5, 34]
+R10[39, 33]
+R11[21, 29, 35, 20, 3]
+R12[22, 28, 36, 2]
+------------------------------------------

@@ -1,4 +1,4 @@
-from data import Depot
+from data.Depot import Depot
 
 # Clase que modela los datos de un depósito en el MDVRP
 

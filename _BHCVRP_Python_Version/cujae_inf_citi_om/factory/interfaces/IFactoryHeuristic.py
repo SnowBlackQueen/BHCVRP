@@ -1,5 +1,5 @@
-from generator.heuristic import Heuristic
-from factory.interfaces import HeuristicType
+from generator.heuristic.Heuristic import Heuristic
+from factory.interfaces.HeuristicType import HeuristicType
 
 # Interfaz que define como crear un objeto Heuristic
 

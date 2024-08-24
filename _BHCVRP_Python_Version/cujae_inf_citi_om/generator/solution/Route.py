@@ -1,24 +1,25 @@
 import numpy as np
-from cujae_inf_citi_om.data import Problem
+from data.Problem import Problem
 from exceptions.RequestException import RequestException
 from exceptions.CostException import CostException
 from exceptions.DistanceNotAccessibleException import DistanceNotAccessibleException
 
 class Route:
-    def __init__(self):
-        self.list_id_customers = []
-        self.request_route = 0.0
-        self.cost_route = 0.0
-        self.id_depot = -1
-        self.maximum_distance = 0.0
-
-    def __init__(self, list_id_customers, request_route, cost_route, id_depot, list_access_vc, maximum_distance):
-        self.list_id_customers = list(list_id_customers)
-        self.request_route = request_route
-        self.cost_route = 0.0
-        self.id_depot = id_depot
-        self.list_access_vc = []
-        self.maximum_distance = maximum_distance
+    
+    def __init__(self, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
+        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None and list_access_vc is not None and maximum_distance is not None:
+            self.list_id_customers = list(list_id_customers)
+            self.request_route = request_route
+            self.cost_route = 0.0
+            self.id_depot = id_depot
+            self.list_access_vc = []
+            self.maximum_distance = maximum_distance
+        else:
+            self.list_id_customers = []
+            self.request_route = 0.0
+            self.cost_route = 0.0
+            self.id_depot = -1
+            self.maximum_distance = 0.0
 
     def get_list_id_customers(self):
         return self.list_id_customers
@@ -64,16 +65,24 @@ class Route:
         customer_ini = self.list_id_customers[0]
         pos_customer_ini = Problem.get_problem().get_pos_element(customer_ini)
 
-        # cost_route += Problem.get_problem().get_cost_matrix().item(Problem.get_problem().get_pos_element(self.id_depot), pos_customer_ini)
+        cost_matrix = Problem.get_problem().get_cost_matrix()
 
+        # Obtener los índices de self.id_depot y pos_customer_ini
+        depot_index = Problem.get_problem().get_pos_element(self.id_depot)
+        customer_ini_index = Problem.get_problem().get_pos_element(pos_customer_ini)
+
+        # Calcular el costo y sumarlo a cost_route
+        cost_route += cost_matrix[depot_index][customer_ini_index]
+        
         for i in range(1, len(self.list_id_customers)):
             customer_next = self.list_id_customers[i]
             pos_customer_next = Problem.get_problem().get_pos_element(customer_next)
-            # cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, pos_customer_next)
+            cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, pos_customer_next)
             customer_ini = customer_next
             pos_customer_ini = pos_customer_next
 
-        # cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, Problem.get_problem().get_pos_element(self.id_depot))
+        cost_route += cost_matrix[pos_customer_ini][depot_index]
+        
         self.set_cost_route(cost_route)
         return cost_route
 

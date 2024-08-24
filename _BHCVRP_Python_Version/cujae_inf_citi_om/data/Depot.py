@@ -4,7 +4,7 @@ from data import Location
 
 class Depot:
     
-    def __init__(self, id_depot, location_depot: Location, list_fleets=None):
+    def __init__(self, id_depot=None, location_depot: Location=None, list_fleets=None):
         self._id_depot = id_depot
         self._location_depot = location_depot
         self._list_fleets = list_fleets if list_fleets is not None else []

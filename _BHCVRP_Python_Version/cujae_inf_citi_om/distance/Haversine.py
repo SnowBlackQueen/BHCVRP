@@ -1,4 +1,4 @@
-from cujae_inf_citi_om.distance import Distance
+from distance import Distance
 import math 
 
 class Haversine(Distance):

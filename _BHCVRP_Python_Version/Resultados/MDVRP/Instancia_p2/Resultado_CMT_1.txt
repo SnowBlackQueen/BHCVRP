@@ -1,0 +1,19 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: CMT
+COSTO TOTAL: 649.56
+TOTAL DE RUTAS: 7
+TIEMPO DE EJECUCIÓN: 0.37867164611816406
+ 
+R1[45, 15, 44, 42, 37]
+R2[18, 25, 40, 13, 19, 41, 17, 4]
+R3[47, 12, 46, 11, 14]
+R4[7, 24, 23, 43, 26, 31, 48, 8, 1, 32, 6, 27]
+R5[39, 34, 30, 50, 9, 10, 9, 9, 38]
+R6[33, 5]
+R7[21, 22, 28, 3, 35, 36, 35, 20, 29]
+------------------------------------------

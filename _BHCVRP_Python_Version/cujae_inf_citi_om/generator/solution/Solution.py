@@ -1,4 +1,5 @@
-from cujae_inf_citi_om.data import Problem, ProblemType
+from data.Problem import Problem
+from data.ProblemType import ProblemType
 from generator.solution import RouteType
 from exceptions.CostException import CostException
 
@@ -15,8 +16,8 @@ class Solution:
     def calculate_cost(self):
         total_cost = 0.0
 
-        for route in self._list_routes:
-            if not Problem.get_problem().get_type_problem() == ProblemType.TTRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP and (isinstance(route, RouteType.PTR) or isinstance(route, RouteType.PVR))):
+        for route in self._list_routes: #and (isinstance(route, RouteType.PTR) or isinstance(route, RouteType.PVR))
+            if not Problem.get_problem().get_type_problem() == ProblemType.TTRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP ):
                 total_cost += route.get_cost_single_route()
             else:
                 total_cost = route.get_cost_route_with_sub_tour()

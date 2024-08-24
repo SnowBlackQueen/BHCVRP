@@ -1,9 +1,9 @@
 from typing import List
 import numpy as np
-from cujae_inf_citi_om.data.Customer import Customer
-from cujae_inf_citi_om.data.CustomerTTRP import CustomerTTRP
-from cujae_inf_citi_om.data.Depot import Depot
-from cujae_inf_citi_om.data import ProblemType
+from data.Customer import Customer
+from data.CustomerTTRP import CustomerTTRP
+from data.Depot import Depot
+from data.ProblemType import ProblemType
 from exceptions.RequestException import RequestException
 from exceptions.WithoutCapacityException import WithoutCapacityException
 
@@ -15,7 +15,7 @@ class Problem:
         self._list_customers: List[Customer] = []
         self._list_depots: List[Depot] = []
         self._type_problem: ProblemType = None
-        self._cost_matrix = np.empty(0,0)
+        self.set_cost_matrix(cost_matrix=None)
         self._list_capacities: List[float] = None
 
     @staticmethod # Método que implementa el Patrón Singleton
@@ -36,6 +36,9 @@ class Problem:
     def get_list_depots(self) -> List[Depot]:
         return self._list_depots
 
+    def get_type_problem(self):
+        return self._type_problem
+    
     def set_type_problem(self, type_problem: ProblemType):
         self._type_problem = type_problem
 
@@ -51,11 +54,11 @@ class Problem:
         elif type_problem == 4:
             self._type_problem = ProblemType.TTRP
             
-    def getCostMatrix(self):
-      return self.cost_matrix
+    def get_cost_matrix(self):
+        return self._cost_matrix
 
-    def setCostMatrix(self, cost_matrix):
-      self.cost_matrix = cost_matrix
+    def set_cost_matrix(self, cost_matrix):
+        self._cost_matrix = cost_matrix
 
     def get_list_capacities(self):
         return self._list_capacities
@@ -65,11 +68,13 @@ class Problem:
 
     # Método para obtener la lista de id de los clientes
     def get_list_id_customers(self):
-        return [customer.id_customer for customer in self.list_customers]
+        return [customer._id_customer for customer in self._list_customers]
 
     # Método que devuelve la demanda total
     def get_total_request(self):
-        total_request = sum(customer.request_customer for customer in self.list_customers) 
+        total_request = 0.0
+        for customer in self._list_customers:
+            total_request += customer.get_request_customer() 
         if total_request > 0:
             return total_request
         else:
@@ -77,28 +82,28 @@ class Problem:
 
     # Método que busca un cliente dado su identificador
     def get_customer_by_id_customer(self, id_customer):
-        for customer in self.list_customers:
-            if customer.id_customer == id_customer:
+        for customer in self._list_customers:
+            if customer.get_id_customer() == id_customer:
                 return customer
         return None
 
     # Método que devuelve el tipo de un cliente dado su identificador
     def get_type_by_id_customer(self, id_customer):
-        for customer in self.list_customers:
-            if isinstance(customer, CustomerTTRP) and customer.id_customer == id_customer:
-                return customer.getTypeCustomer()
+        for customer in self._list_customers:
+            if isinstance(customer, CustomerTTRP) and customer._id_customer == id_customer:
+                return customer.get_type_customer()
         return None
 
     # Método que devuelve la demanda de un cliente dado su identificador
-    def get_request_by_id_customer(self, id_customer, list_customers):
+    def get_request_by_id_customer(self, id_customer):
         request_customer = 0.0
         i = 0
         found = False
-        count_customers = len(list_customers)
+        count_customers = len(self._list_customers)
         
         while i < count_customers and not found:
-            if list_customers[i].get_id_customer() == id_customer:
-                request_customer = list_customers[i].get_request_customer()
+            if self._list_customers[i].get_id_customer() == id_customer:
+                request_customer = self._list_customers[i].get_request_customer()
                 found = True
             else:
                 i += 1
@@ -117,15 +122,15 @@ class Problem:
         return [depot.get_list_fleets()[0].get_capacity_vehicle() for depot in list_depots]
     
     # Método que dado un id (deposito o cliente) devuelve la posicion
-    def get_pos_element(self, id_element, list_customers, list_depots):
+    def get_pos_element(self, id_element):
         i = 0
         found = False
         pos_element = -1
-        count_customers = len(list_customers)
-        count_depots = len(list_depots)
+        count_customers = len(self._list_customers)
+        count_depots = len(self._list_depots)
         
         while i < count_depots and not found:
-            if list_depots[i].get_id_depot() == id_element:
+            if self._list_depots[i].get_id_depot() == id_element:
                 pos_element = i + count_customers
                 found = True
             else:
@@ -133,7 +138,7 @@ class Problem:
         
         i = 0
         while i < count_customers and not found:
-            if list_customers[i].get_id_customer() == id_element:
+            if self._list_customers[i].get_id_customer() == id_element:
                 pos_element = i
                 found = True
             else:
@@ -164,19 +169,19 @@ class Problem:
         return pos_element
     
     # Método que devuelve el id del depósito correspondiente a un cliente dado
-    def get_id_depot_by_id_customer(self, id_customer, list_depots):
+    def get_id_depot_by_id_customer(self, id_customer):
         found = False
         id_depot = -1
-        count_depots = len(list_depots)
+        count_depots = len(self._list_depots)
         i = 0
         
         while i < count_depots and not found:
             j = 0
-            count_assigned_customers = len(list_depots[i].get_list_assigned_customers())
+            count_assigned_customers = len(self._list_depots[i].get_list_assigned_customers())
             
             while j < count_assigned_customers and not found:
-                if list_depots[i].get_list_assigned_customers()[j] == id_customer:
-                    id_depot = list_depots[i].get_id_depot()
+                if self._list_depots[i].get_list_assigned_customers()[j] == id_customer:
+                    id_depot = self._list_depots[i].get_id_depot()
                     found = True
                 else:
                     j += 1
@@ -207,18 +212,23 @@ class Problem:
             raise RequestException("La demanda actual del depósito debe ser mayor que cero")
     
     # Método que devuelve la capacidad total de los vehículos de MDVRP
-    def get_total_capacity(self, list_depots):
+    def get_total_capacity(self):
         total_capacity = 0.0
-        count_depots = len(list_depots)
+        count_depots = len(self._list_depots)
         
         for i in range(count_depots):
-            count_fleets = len(list_depots[i].get_list_fleets())
+            count_fleets = len(self._list_depots[i].get_list_fleets())
             
             for j in range(count_fleets):
-                total_capacity += list_depots[i].get_list_fleets()[j].get_capacity_vehicle() * list_depots[i].get_list_fleets()[j].get_count_vehicles()
+                fleet = self._list_depots[i].get_list_fleets()[j]
+                capacity_vehicle = fleet.get_capacity_vehicle()
+                count_vehicles = int(fleet.get_count_vehicles())
+                total_capacity += capacity_vehicle * count_vehicles
                 
-                if self.type_problem == ProblemType.TTRP:
-                    total_capacity += list_depots[i].get_list_fleets()[j].get_capacity_trailer() * list_depots[i].get_list_fleets()[j].get_count_trailers()
+                if self._type_problem == ProblemType.TTRP or self._type_problem == 4:
+                    capacity_trailer = fleet.get_capacity_trailer() 
+                    count_trailers = fleet.get_count_trailers()
+                    total_capacity += capacity_trailer * count_trailers
         
         if total_capacity > 0:
             return total_capacity
@@ -244,15 +254,18 @@ class Problem:
     def get_customers_assigned_by_id_depot(self, id_depot, list_customers, list_depots):
         list_customers_assigned = []
         count_customers = len(list_customers)
-        pos_depot = self.get_pos_element(id_depot, list_customers, list_depots) - count_customers
+        pos_element = self.get_pos_element(id_depot)
+        pos_depot = pos_element - count_customers
         count_assigned_customers = len(list_depots[pos_depot].get_list_assigned_customers())
 
         for i in range(count_assigned_customers):
             j = 0
             found = False
 
+            assigned_customers = list_depots[pos_depot].get_list_assigned_customers()
+
             while j < count_customers and not found:
-                if list_depots[pos_depot].get_list_assigned_customers()[i] == list_customers[j].get_id_customer():
+                if assigned_customers[i] == list_customers[j].get_id_customer():
                     list_customers_assigned.append(list_customers[j])
                     found = True
                 else:
@@ -261,12 +274,12 @@ class Problem:
         return list_customers_assigned
 
     # Método que llena la lista de capacidades de la flota de vehículos en HFVRP
-    def fill_list_capacities(self, pos_depot, list_depots):
+    def fill_list_capacities(self, pos_depot):
         list_capacities = []
 
-        for i in range(len(list_depots[pos_depot].get_list_fleets())):
-            for j in range(list_depots[pos_depot].get_list_fleets()[i].get_count_vehicles()):
-                list_capacities.append(list_depots[pos_depot].get_list_fleets()[i].get_capacity_vehicle())
+        for i in range(len(self._list_depots[pos_depot].get_list_fleets())):
+            for j in range(int(self._list_depots[pos_depot].get_list_fleets()[i].get_count_vehicles())):
+                list_capacities.append(self._list_depots[pos_depot].get_list_fleets()[i].get_capacity_vehicle())
         
         return list_capacities
 

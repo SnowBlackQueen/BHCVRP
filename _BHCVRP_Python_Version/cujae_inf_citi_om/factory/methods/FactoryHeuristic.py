@@ -1,12 +1,13 @@
 from typing import Type
-from cujae_inf_citi_om.factory.interfaces import HeuristicType, IFactoryHeuristic
-from cujae_inf_citi_om.generator.heuristic import Heuristic
-from cujae_inf_citi_om.factory.methods import FactoryLoader
+from factory.interfaces.HeuristicType import HeuristicType
+from factory.interfaces.IFactoryHeuristic import IFactoryHeuristic
+from generator.heuristic.Heuristic import Heuristic
+from factory.methods.FactoryLoader import FactoryLoader
 import traceback
 
 class FactoryHeuristic(IFactoryHeuristic):
-    def createHeuristic(self, type_heuristic: HeuristicType) -> Heuristic:
-        class_name = f"cujae_inf_citi_om.distance.{type_heuristic}"
+    def create_heuristic(self, type_heuristic: HeuristicType) -> Heuristic:
+        class_name = f"generator.heuristic.{type_heuristic.name}.{type_heuristic.name}"
         heuristic = None
         try:
             heuristic = FactoryLoader.get_instance(class_name)

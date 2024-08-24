@@ -1,0 +1,24 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: Sweep
+COSTO TOTAL: 979.53
+TOTAL DE RUTAS: 12
+TIEMPO DE EJECUCIÓN: 0.06214594841003418
+ 
+R1[45, 4, 40, 13, 25]
+R2[19, 15, 17, 37, 42, 44]
+R3[41, 18]
+R4[48, 14, 24, 12]
+R5[47, 32, 1, 6, 23]
+R6[31, 8, 43, 46, 27]
+R7[7, 11, 26]
+R8[10, 5, 9, 30, 38]
+R9[34, 50, 16, 39]
+R10[33, 49]
+R11[22, 20, 3, 28, 29]
+R12[35, 2, 21, 36]
+------------------------------------------

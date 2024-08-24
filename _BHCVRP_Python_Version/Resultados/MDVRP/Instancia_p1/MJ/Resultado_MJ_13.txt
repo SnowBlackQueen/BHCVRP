@@ -1,0 +1,20 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: MoleJameson
+COSTO TOTAL: 645.99
+TOTAL DE RUTAS: 8
+TIEMPO DE EJECUCIÓN: 0.46555662155151367
+ 
+R1[17, 4, 18, 25, 13]
+R2[45, 15, 37, 44, 42, 40, 19]
+R3[23, 7, 43, 24, 14]
+R4[48, 8, 26, 31, 1, 32]
+R5[46, 11, 27, 6, 47]
+R6[49, 10, 33, 39, 30]
+R7[9, 38, 16, 50, 34]
+R8[36, 3, 28, 22, 2, 29]
+------------------------------------------

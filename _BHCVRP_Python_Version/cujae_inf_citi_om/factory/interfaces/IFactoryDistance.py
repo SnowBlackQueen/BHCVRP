@@ -1,5 +1,5 @@
-from cujae_inf_citi_om.distance import Distance
-from cujae_inf_citi_om.factory.interfaces import DistanceType
+from distance.Distance import Distance
+from factory.interfaces.DistanceType import DistanceType
 
 # Interface that defines how to create a Distance object
 class IFactoryDistance:
