@@ -13,7 +13,7 @@ class Tools:
     def ordinate_method(list_capacities, type_order: OrderType):
         flag = False
 
-        if type_order == 0 or type_order == 1:
+        if type_order == 0 or type_order == 1 or type_order == OrderType.Ascending or type_order == OrderType.Descending:
             for i in range(len(list_capacities) - 1):
                 min_val = list_capacities[i]
                 pos = i
@@ -33,7 +33,7 @@ class Tools:
                     if flag:
                         list_capacities[pos], list_capacities[i] = list_capacities[i], min_val
                         flag = False
-        elif type_order == 2:
+        elif type_order == 2 or type_order == OrderType.Random:
             list_capacity_order = []
             while list_capacities:
                 index = random.randint(0, len(list_capacities) - 1)

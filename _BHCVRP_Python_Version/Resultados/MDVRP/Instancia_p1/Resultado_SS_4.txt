@@ -1,0 +1,24 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: SaveSequential
+COSTO TOTAL: 1080.93
+TOTAL DE RUTAS: 12
+TIEMPO DE EJECUCIÓN: 0.2056412696838379
+ 
+R1[17, 37, 15, 45, 44, 42, 40, 19]
+R2[4, 18, 25]
+R3[41, 13]
+R4[1, 31, 26, 7, 43, 24, 6]
+R5[14, 23, 48, 8]
+R6[12, 46, 11, 32, 27]
+R7[47]
+R8[9, 50, 16, 34, 39]
+R9[30, 10, 33, 5]
+R10[49, 38]
+R11[35, 36, 3, 28, 22, 29, 21]
+R12[2, 20]
+------------------------------------------

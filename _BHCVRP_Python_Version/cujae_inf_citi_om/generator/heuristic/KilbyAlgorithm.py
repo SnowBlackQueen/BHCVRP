@@ -44,7 +44,10 @@ class KilbyAlgorithm(Heuristic):
         self.routes_with_customers = 0
 
         for i in range(self.count_vehicles):
-            self.route = Route()
+            if self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+                self.route = RouteTTRP()
+            else:
+                self.route = Route()
             self.list_candidate_routes.append(self.route)
             
         self.list_route_opt = []
@@ -66,7 +69,7 @@ class KilbyAlgorithm(Heuristic):
                     self.routes_with_customers += 1
 
                     if self.type_problem == ProblemType.TTRP:
-                        if self.type_customer == CustomerType.TC:
+                        if self.customer.get_type_customer() == CustomerType.TC or self.customer.get_type_customer() == 1:
                             self.capacity_total = self.capacity_vehicle
                         else:
                             self.capacity_total = self.capacity_vehicle + self.capacity_trailer
@@ -77,9 +80,11 @@ class KilbyAlgorithm(Heuristic):
                         self.is_open = True
 
             j = self.routes_with_customers
+            print("creating1")
 
             while self.routes_with_customers < len(self.list_candidate_routes):
                 self.list_candidate_routes.pop(j)
+            print("creating2")
                 
         
     
@@ -107,22 +112,24 @@ class KilbyAlgorithm(Heuristic):
                     self.is_route_full = self.request_perfect(self.customers_to_visit, self.capacity_vehicle, self.request_route)
 
                     # Verificar si va aquí
-                    if self.type_customer == CustomerType.VC and customer_insert.get_type_customer() == CustomerType.TC:
-                        is_TC = True
+                    if self.customer.get_type_customer() == CustomerType.VC and customer_insert.get_type_customer() == CustomerType.TC\
+                            or self.customer.get_type_customer() == 0 and customer_insert.get_type_customer() == 1:
+                        self.is_TC = True
 
                 # Verificar si va aquí
-                if self.type_customer == CustomerType.TC:
-                    self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.PTR)
-                else:
-                    if is_TC:
-                        self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.CVR)
+                if self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+                    if self.customer.get_type_customer() == CustomerType.TC or self.customer.get_type_customer() == 1:
+                        self.route = RouteTTRP(list_id_customers=self.list_candidate_routes[self.pos_route].get_list_id_customers(), request_route=self.request_route, cost_route=self.list_candidate_routes[self.pos_route].get_cost_route(), id_depot=self.id_depot, list_access_vc=self.list_access_vc, maximum_distance=None, type_route=RouteType.PTR)
                     else:
-                        self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.PVR)
-                    
+                        if self.is_TC:
+                            self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.CVR)
+                        else:
+                            self.route = RouteTTRP(self.list_candidate_routes[self.pos_route].get_list_id_customers(), self.request_route, self.list_candidate_routes[self.pos_route].get_cost_route(), self.id_depot, self.list_access_vc, None, RouteType.PVR)
+
                 
                 if not self.is_route_full:
-                    if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
-                        self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                    #if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                     #   self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
                     self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
                     self.list_candidate_routes.pop(self.pos_route)
                         
@@ -136,11 +143,20 @@ class KilbyAlgorithm(Heuristic):
                         # listRouteOpt.append(listCandidateRoutes[posRoute])
                         # routesCandidates.remove(posRoute)
                         
+                if self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
+                    if not self.list_candidate_routes:
+                        for i in range(self.count_vehicles):
+                            self.route = RouteTTRP()
+                            self.list_candidate_routes.append(self.route)
+                        self.list_kilby_costs = self.select_best_cost(self.count_vehicles, self.count_trailers,
+                                                                      self.id_depot, self.customers_to_visit)
+                        self.creating()
+                print("processing1")
 
             while self.list_candidate_routes:
                 self.pos_route = 0
-                if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
-                    self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                #if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                 #   self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
                 self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
                 self.list_candidate_routes.pop(self.pos_route)
                         
@@ -153,6 +169,7 @@ class KilbyAlgorithm(Heuristic):
                     #
                     # listRouteOpt.append(listCandidateRoutes[posRoute])
                     # listCandidateRoutes.remove(posRoute)
+            print("processing2")
                     
                     
     def execute(self):
@@ -217,6 +234,7 @@ class KilbyAlgorithm(Heuristic):
                 
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+                print("first")
                 if j != self.pos_depot:
                     self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
                     self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
@@ -231,8 +249,16 @@ class KilbyAlgorithm(Heuristic):
                     self.creating()
 
                     self.processing()
-                    
+
+                    print("asd")
                 self.solution.set_list_routes(self.list_route_opt)
+                print("solution")
+
+                for i in range(self.count_vehicles):
+                    self.route = Route()
+                    self.list_candidate_routes.append(self.route)
+
+            print("Fin")
                 
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             self.list_access_vc = []
@@ -378,7 +404,7 @@ class KilbyAlgorithm(Heuristic):
         i = 0
 
         while i < len(list_customer) and not found:
-            if Problem.get_problem().get_type_problem() == ProblemType.CVRP or Problem.get_problem().get_type_problem() == ProblemType.HFVRP or Problem.get_problem().get_type_problem() == ProblemType.OVRP or Problem.get_problem().get_type_problem() == ProblemType.MDVRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP and isinstance(list_routes[0], RouteTTRP) and list_routes[0].get_type_route() == RouteType.PTR):
+            if Problem.get_problem().get_type_problem() == ProblemType.CVRP or Problem.get_problem().get_type_problem() == ProblemType.HFVRP or Problem.get_problem().get_type_problem() == ProblemType.OVRP or Problem.get_problem().get_type_problem() == ProblemType.MDVRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP and isinstance(list_routes[0], RouteTTRP) and list_routes[0]._type_route == 0 or list_routes[0]._type_route == RouteType.PTR):
                 total_capacity = capacity_truck
             else:
                 total_capacity = capacity_truck + capacity_trailer
@@ -397,7 +423,7 @@ class KilbyAlgorithm(Heuristic):
 
         for k in range(len(list_customer)):
             for l in range(len(list_routes)):  # this loop started at 1, had to change it
-                if Problem.get_problem().get_type_problem() == ProblemType.CVRP or Problem.get_problem().get_type_problem() == ProblemType.HFVRP or Problem.get_problem().get_type_problem() == ProblemType.OVRP or Problem.get_problem().get_type_problem() == ProblemType.MDVRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP and isinstance(list_routes[l], RouteTTRP) and list_routes[l].get_type_route() == RouteType.PTR):
+                if Problem.get_problem().get_type_problem() == ProblemType.CVRP or Problem.get_problem().get_type_problem() == ProblemType.HFVRP or Problem.get_problem().get_type_problem() == ProblemType.OVRP or Problem.get_problem().get_type_problem() == ProblemType.MDVRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP and isinstance(list_routes[l], RouteTTRP) and list_routes[l]._type_route == 0 or list_routes[l]._type_route == RouteType.PTR):
                     total_capacity = capacity_truck
                 else:
                     total_capacity = capacity_truck + capacity_trailer

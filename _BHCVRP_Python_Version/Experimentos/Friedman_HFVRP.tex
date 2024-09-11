@@ -1,0 +1,69 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{graphicx}
+\usepackage{lscape}
+\title{Output tables for 1xN statistical comparisons.}
+\author{}
+\date{\today}
+\begin{document}
+\begin{landscape}
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+
+\section{Average rankings of Friedman test}
+
+
+Average ranks obtained by each method in the Friedman test.
+
+\begin{table}[!htp]
+\centering
+\begin{tabular}{|c|c|}\hline
+Algorithm&Ranking\\\hline
+Random&8.5\\NN&6.1875\\Sweep&7.8125\\SaveSeq&2.5\\SaveParall&2.625\\MJ&2.25\\CMT&2.625\\Kilby&6.25\\SaveMatch&6.25\\\hline\end{tabular}
+\caption{Average Rankings of the algorithms (Friedman)}
+\end{table}
+
+Friedman statistic (distributed according to chi-square with 8 degrees of freedom): 53.108333. \newline P-value computed by Friedman Test: 0.\newline
+
+
+\newpage
+
+\section{Post hoc comparison (Friedman)}
+
+
+P-values obtained in by applying post hoc methods over the results of Friedman procedure.
+
+\begin{table}[!htp]
+\centering\footnotesize
+\begin{tabular}{cccc}
+$i$&algorithm&$z=(R_0 - R_i)/SE$&$p$\\
+\hline8&Random&4.564355&0.000005\\7&Sweep&4.062276&0.000049\\6&Kilby&2.921187&0.003487\\5&SaveMatch&2.921187&0.003487\\4&NN&2.875543&0.004033\\3&SaveParall&0.273861&0.784191\\2&CMT&0.273861&0.784191\\1&SaveSeq&0.182574&0.855132\\\hline
+\end{tabular}
+\caption{Post Hoc comparison Table for $\alpha=0.05$ (FRIEDMAN)}
+\end{table}
+\newpage
+
+\section{Adjusted P-Values (Friedman)}
+
+
+Adjusted P-values obtained through the application of the post hoc methods (Friedman).
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{ccc}
+i&algorithm&unadjusted $p$\\
+\hline1&Random&0.000005\\2&Sweep&0.000049\\3&Kilby&0.003487\\4&SaveMatch&0.003487\\5&NN&0.004033\\6&SaveParall&0.784191\\7&CMT&0.784191\\8&SaveSeq&0.855132\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (I)}
+\end{table}
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{ccc}
+i&algorithm&unadjusted $p$\\
+\hline1&Random&0.000005\\2&Sweep&0.000049\\3&Kilby&0.003487\\4&SaveMatch&0.003487\\5&NN&0.004033\\6&SaveParall&0.784191\\7&CMT&0.784191\\8&SaveSeq&0.855132\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (II)}
+\end{table}
+
+\newpage
+\end{landscape}\end{document}

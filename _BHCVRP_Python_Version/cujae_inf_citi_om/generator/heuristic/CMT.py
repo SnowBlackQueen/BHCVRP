@@ -52,8 +52,8 @@ class CMT(Heuristic):
                 request_route += self.customer_to_insert.get_request_customer()
                 route.get_list_id_customers().append(self.customer_to_insert.get_id_customer())
 
-                if len(route.get_list_id_customers()) >= 6:
-                    self.three_opt.to_optimize(route)
+                #if len(route.get_list_id_customers()) >= 6:
+                 #   self.three_opt.to_optimize(route)
 
                 list_tau_costs.pop(self.pos_best_tau)
                 self._delete_element(self.customer_to_insert.get_id_customer(), list_metrics_cmt_by_customer)
@@ -335,8 +335,8 @@ class CMT(Heuristic):
                             request_route += customer_to_insert.get_request_customer()
                             route.get_list_id_customers().append(customer_to_insert.get_id_customer())
 
-                            if len(route.get_list_id_customers()) >= 6:
-                                three_opt.to_optimize(route)
+                            #if len(route.get_list_id_customers()) >= 6:
+                             #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)
@@ -388,8 +388,8 @@ class CMT(Heuristic):
                             route.get_list_id_customers().append(customer_to_insert.get_id_customer())
                             route.set_id_depot(id_depot)
 
-                            if len(route.get_list_id_customers()) >= 6:
-                                three_opt.to_optimize(route)
+                            #if len(route.get_list_id_customers()) >= 6:
+                             #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)
@@ -454,8 +454,8 @@ class CMT(Heuristic):
                             route.get_list_id_customers().append(customer_to_insert.get_id_customer())
                             route.set_id_depot(Problem.get_problem().get_list_depots()[pos_depot].get_id_depot())
 
-                            if len(route.get_list_id_customers()) >= 6:
-                                three_opt.to_optimize(route)
+                            #if len(route.get_list_id_customers()) >= 6:
+                             #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)

@@ -1,0 +1,25 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: SaveParallel
+COSTO TOTAL: 786.07
+TOTAL DE RUTAS: 13
+TIEMPO DE EJECUCIÓN: 0.5676898956298828
+ 
+R1[13, 25]
+R2[17, 37, 15, 45, 44]
+R3[4, 18]
+R4[42, 19, 40, 41]
+R5[23, 7, 43, 24, 14]
+R6[6, 48, 8, 26, 31, 1]
+R7[12, 47]
+R8[27, 32, 11, 46]
+R9[30, 39, 33, 10]
+R10[34, 50, 16, 9]
+R11[38, 5, 49]
+R12[29, 2, 22, 28, 3]
+R13[21, 35, 36, 20]
+------------------------------------------

@@ -18,10 +18,13 @@ class SaveParallel(Save):
 
     def initialize_specifics(self):
         super().initialize_specifics()
-        self.list_capacities = list(Problem.get_problem().fill_list_capacities(self.pos_depot))  
+        self.list_capacities = list(Problem.get_problem().fill_list_capacities(self.pos_depot))
         
         self.inspect_routes(self.list_routes, self.list_capacities, self.solution, self.customers_to_visit)  
         
+        if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
+            self.capacity_vehicle = self.list_capacities.pop(0)
+
         self.total_capacity = self.capacity_vehicle
 
         self.iterations = (self.cant_customers * (self.cant_customers - 1)) / 2
@@ -59,35 +62,35 @@ class SaveParallel(Save):
                 
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             if self.checking_join(self.route_row, self.route_col, self.row_customer, self.col_customer, self.list_capacities[0]):
-                self.route.get_list_id_customers().append(self.route_row.get_list_id_customers())
-                self.route.get_list_id_customers().append(self.route_col.get_list_id_customers())
+                self.route.get_list_id_customers().extend(self.route_row.get_list_id_customers())
+                self.route.get_list_id_customers().extend(self.route_col.get_list_id_customers())
                 self.join = True
             else:
                 if self.checking_join(self.route_col, self.route_row, self.col_customer, self.row_customer, self.list_capacities[0]):
-                    self.route.get_list_id_customers().append(self.route_col.get_list_id_customers())
-                self.route.get_list_id_customers().append(self.route_row.get_list_id_customers())
-                self.join = True
+                    self.route.get_list_id_customers().extend(self.route_col.get_list_id_customers())
+                    self.route.get_list_id_customers().extend(self.route_row.get_list_id_customers())
+                    self.join = True
 
-                if self.join:
-                    self.route.set_request_route(self.route_row.get_request_route() + self.route_col.get_request_route())
+            if self.join:
+                self.route.set_request_route(self.route_row.get_request_route() + self.route_col.get_request_route())
 
-                    self.list_routes.remove(self.route_row)
-                    self.list_routes.remove(self.route_col)
+                self.list_routes.remove(self.route_row)
+                self.list_routes.remove(self.route_col)
 
-                    if self.route.get_request_route() == self.list_capacities[0]:
-                        self.route.set_id_depot(self.id_depot)
+                if self.route.get_request_route() == self.list_capacities[0]:
+                    self.route.set_id_depot(self.id_depot)
 
-                        if len(self.route.get_list_id_customers()) >= 6:
-                            self.three_opt.to_optimize(self.route)
+                    if len(self.route.get_list_id_customers()) >= 6:
+                        self.three_opt.to_optimize(self.route)
                                 
-                            self.solution.get_list_routes().append(self.route)
-                            self.list_capacities.pop(0)
+                    self.solution.get_list_routes().append(self.route)
+                    self.list_capacities.pop(0)
 
-                            is_open = True
-                            self.update_customers_to_visit(self.route, self.customers_to_visit)
+                    self.is_open = True
+                    self.update_customers_to_visit(self.route, self.customers_to_visit)
 
-                        else:
-                            self.list_routes.append(self.route)
+                else:
+                    self.list_routes.append(self.route)
                             
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             if self.compatible_routes(self.route_row, self.route_col) or self.compatible_routes(self.route_col, self.route_row):
@@ -194,7 +197,7 @@ class SaveParallel(Save):
 
                 self.creating()
 
-            if self.counter == self.iterations or not np.all(self.save_matrix == -np.inf):
+            if self.counter == self.iterations or np.all(self.save_matrix == -np.inf):
                 self.close_route = self.route_to_close(self.list_routes)
 
                 self.close_route.set_id_depot(self.id_depot)
@@ -256,7 +259,6 @@ class SaveParallel(Save):
                     self.update_customers_to_visit(self.close_route, self.customers_to_visit)
 
                     if len(self.list_routes) == 1:
-
                         self.list_routes[0].set_id_depot(self.id_depot)
 
                         if len(self.list_routes[0].get_list_id_customers()) >= 6:
@@ -270,7 +272,7 @@ class SaveParallel(Save):
 
                 if not self.is_first:
                     self.cant_customers = len(self.customers_to_visit)
-                    self.save_matrix = np.zeros(self.cant_customers, self.cant_customers)
+                    self.save_matrix = np.full((self.cant_customers, self.cant_customers), 0)
                     self.save_matrix = self.fill_save_matrix(self.id_depot, self.customers_to_visit)
 
                     self.iterations = (self.cant_customers * (self.cant_customers - 1)) / 2
@@ -279,54 +281,58 @@ class SaveParallel(Save):
                 self.is_first = False
                 
                 while self.counter < self.iterations and len(self.list_routes) > 1 and not np.all(self.save_matrix == -np.inf) and self.list_capacities and (not self.is_open):
+                    self.row, self.col = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+
                     self.save_value = self.save_matrix[self.row, self.col]
                     
                     self.processing()
 
-                if len(self.list_routes) > 0:
-                    self.route = Route()
-                    self.request = 0.0
+            if len(self.list_routes) > 0:
+                self.route = Route()
+                self.request = 0.0
 
-                    self.route.set_id_depot(self.id_depot)
+                self.route.set_id_depot(self.id_depot)
 
-                    while self.list_routes:
-                        self.request += self.list_routes[0].get_request_route()
-                        self.route.set_request_route(self.request)
-                        self.route.get_list_id_customers().append(self.list_routes[0].get_list_id_customers())
-                        self.list_routes.pop(0)
+                while self.list_routes:
+                    self.request += self.list_routes[0].get_request_route()
+                    self.route.set_request_route(self.request)
+                    self.route.get_list_id_customers().extend(self.list_routes[0].get_list_id_customers())
+                    self.list_routes.pop(0)
 
-                    if len(self.route.get_list_id_customers()) >= 6:
-                        self.three_opt.to_optimize(self.route)
+                if len(self.route.get_list_id_customers()) >= 6:
+                    self.three_opt.to_optimize(self.route)
                     
-                    self.solution.get_list_routes().append(self.route)
+                self.solution.get_list_routes().append(self.route)
         
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
                 if j != self.pos_depot:
-                    self.id_depot = Problem.get_problem().get_list_depots().get(j).get_id_depot()
-                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot))
+                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
                     
-                    self.capacity_vehicle = Problem.get_problem().get_list_depots().get(j).get_list_fleets()[0].get_capacity_vehicle()
-                    self.count_vehicles = Problem.get_problem().get_list_depots().get(j).get_list_fleets()[0].get_count_vehicles()
+                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_capacity_vehicle()
+                    self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_count_vehicles()
                     
-                    self.list_capacities = list(Problem.getProblem().getListCapacities())  # fill o listparametro con el depot
+                    self.list_capacities = list(Problem.get_problem().fill_list_capacities(self.pos_depot))  # fill o listparametro con el depot
                     
                     if self.customers_to_visit:
                         self.list_routes = self.create_initial_routes(self.customers_to_visit)
                         self.inspect_routes(self.list_routes, self.list_capacities, self.solution, self.customers_to_visit)
                         
                         self.cant_customers = len(self.customers_to_visit)
-                        self.save_matrix = np.zeros(self.cant_customers, self.cant_customers)
-                        self.save_matrix = self.fill_save_matrix(Problem.get_problem().get_list_depots().get(j).get_id_depot(), self.customers_to_visit)
+                        self.save_matrix = np.full((self.cant_customers, self.cant_customers), 0)
+                        self.save_matrix = self.fill_save_matrix(Problem.get_problem().get_list_depots()[j].get_id_depot(), self.customers_to_visit)
                         
                         self.total_capacity = self.capacity_vehicle
                         self.iterations = (self.cant_customers * (self.cant_customers - 1)) / 2
                         self.counter = 0
                 
                 while self.counter < self.iterations and len(self.list_routes) > 1 and not np.all(self.save_matrix == -np.inf):
+                    self.row, self.col = np.unravel_index(np.argmax(self.save_matrix), self.save_matrix.shape)
+
                     self.save_value = self.save_matrix[self.row, self.col]
                     
-                    self.processing
+                    self.processing()
                 
                 self.solution.get_list_routes().extend(self.list_routes)
                 

@@ -10,10 +10,10 @@ from data.Problem import Problem
 
 def main():
     try:
-        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\Resultado_HFVRP_p14_MoleJameson.txt", "w")
-        sys.stdout = file_output
+        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\Instancia_HFVRP_C1_6_1\\Resultado_Matching1.txt", "w")
+        #sys.stdout = file_output
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\HFVRP_p14"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\HFVRP\\HFVRP_1"
 
         load_file = LoadFile()
 
@@ -42,8 +42,7 @@ def main():
 
         type_problem = ProblemType.HFVRP
         order_type = OrderType.Descending
-        heuristic_type = HeuristicType.MoleJameson
-
+        heuristic_type = HeuristicType.MatchingBasedSavingAlgorithm
         if StrategyHeuristic.get_strategy_heuristic().load_hfvrp(id_customers, request_customers, id_depots,
                                                                  count_vehicles[0], capacity_vehicles[0],
                                                                  list_distances,
@@ -58,7 +57,7 @@ def main():
 
             print(" ")
             print("------------------------------------------")
-            print("CANTIDAD DE EJECUCIONES: 100")
+            print("CANTIDAD DE EJECUCIONES: 20")
             print("HEURÍSTICA DE CONSTRUCCIÓN: " + str(heuristic_type))
             print("COSTO TOTAL: " + str(cost))
             print("TOTAL DE RUTAS: " + str(request_by_route))

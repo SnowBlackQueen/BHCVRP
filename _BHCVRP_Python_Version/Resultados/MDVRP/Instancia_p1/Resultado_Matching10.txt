@@ -1,0 +1,24 @@
+Antes de iniciar JVM
+Antes de llamar a Controller
+Antes de apagar la JVM
+FIN
+ 
+------------------------------------------
+HEURÍSTICA DE CONSTRUCCIÓN: MatchingBasedSavingAlgorithm
+COSTO TOTAL: 1418.77
+TOTAL DE RUTAS: 12
+TIEMPO DE EJECUCIÓN: 0.2851855754852295
+ 
+R1[37, 18, 13, 40]
+R2[41, 19, 15, 4, 17, 42]
+R3[44, 45, 25]
+R4[24, 26, 7, 8, 1, 31]
+R5[6, 47, 14, 23]
+R6[32, 27, 46, 12, 48]
+R7[11, 43]
+R8[34]
+R9[10, 49, 38, 5, 39]
+R10[9, 30, 16, 50, 33]
+R11[20, 35, 3, 36, 22]
+R12[21, 29, 2, 28]
+------------------------------------------

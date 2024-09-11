@@ -7,7 +7,7 @@ from exceptions.DistanceNotAccessibleException import DistanceNotAccessibleExcep
 class Route:
     
     def __init__(self, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
-        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None and list_access_vc is not None and maximum_distance is not None:
+        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None:
             self.list_id_customers = list(list_id_customers)
             self.request_route = request_route
             self.cost_route = 0.0

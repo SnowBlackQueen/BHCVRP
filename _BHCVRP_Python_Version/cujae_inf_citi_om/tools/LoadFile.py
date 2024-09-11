@@ -113,9 +113,16 @@ class LoadFile:
         axis_y_depots.append(float(tokens[2]))
 
     def calculate_distance(self, axis_x_start, axis_y_start, axis_x_end, axis_y_end):
+        # Euclidean
         axis_x = (axis_x_start - axis_x_end) ** 2
         axis_y = (axis_y_start - axis_y_end) ** 2
         distance = (axis_x + axis_y) ** 0.5
+
+        # Manhattan
+        '''axisX = abs(axis_x_start - axis_x_end)
+        axisY = abs(axis_y_start - axis_y_end)
+        distance = axisX + axisY'''
+
         return distance
 
     def fill_list_distances(self, id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots, axis_y_depots, list_distances):

@@ -1,0 +1,12 @@
+ 
+------------------------------------------
+CANTIDAD DE EJECUCIONES: 20
+HEURÍSTICA DE CONSTRUCCIÓN: HeuristicType.MatchingBasedSavingAlgorithm
+COSTO TOTAL: 947.59
+TOTAL DE RUTAS: 3
+TIEMPO DE EJECUCIÓN: 1.5569350719451904 milisegundos
+ 
+R1[19, 40, 25, 14, 3, 22, 18, 13, 4, 42, 17, 20, 36, 35, 6, 27, 41, 13, 46, 12, 47]
+R2[8, 26, 11, 38, 38, 9, 10, 30, 39, 31, 32, 37, 44, 15, 5, 45, 33]
+R3[1, 16, 21, 34, 50, 2, 7, 43, 23, 24, 48, 29]
+------------------------------------------

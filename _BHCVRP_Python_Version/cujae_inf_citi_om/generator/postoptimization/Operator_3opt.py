@@ -42,8 +42,11 @@ class Operator_3opt(StepOptimization):
             list_key.append(max(key_first, key_second))
 
         moves = 0
-        while moves < 7:
+        #duplicate = False
+
+        while moves < 7 :
             list_candidates = list_aux.copy()
+            id_vistos = []
 
             if moves == 0:
                 self.invert(list_candidates, list_key[1], list_key[2])
@@ -92,6 +95,13 @@ class Operator_3opt(StepOptimization):
                 cad_two = list_candidates[list_key[1] + 1:list_key[2] + 1]
                 list_candidates = self.swap(list_candidates, cad_one, cad_two, pos_insert_one, pos_insert_two)
                 route.set_list_id_customers(list_candidates)
+
+
+            #for id_cliente in list_candidates:
+             #   if id_cliente in id_vistos:
+              #      duplicate = True
+               # id_vistos.append(id_cliente)
+
 
             current_cost = route.get_cost_single_route()
 

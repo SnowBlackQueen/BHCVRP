@@ -1,0 +1,103 @@
+\documentclass[a4paper,10pt]{article}
+\title{Wilcoxon Signed Ranks test.}
+\date{\today}
+\author{KEEL non-parametric statistical module}
+\begin{document}
+
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+
+
+
+\section{Detailed results for BHCVRP-act}
+
+
+\subsection{Results}
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|c|c|}
+\hline
+ VS & $R^{+}$ & $R^{-}$ & Exact P-value & Asymptotic P-value \\ \hline 
+BHCVRP & 36.0 & 0.0 & $\geq$ 0.2 & 0.009583\\ \hline 
+
+\end{tabular}
+\caption{Results obtained by the Wilcoxon test for algorithm BHCVRP-act}
+\end{table}
+
+\subsection{Confidence intervals for Median of diferences}
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|}
+\hline
+ $\alpha$=0.90 & Confidence interval & Exact confidence \\ \hline 
+BHCVRP & [-332.08 , -44.02] & 0\\ \hline 
+
+\end{tabular}
+\caption{Confidence intervals for algorithm BHCVRP-act ($\alpha$=0.90)}
+\end{table}
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|}
+\hline
+ $\alpha$=0.95 & Confidence interval & Exact confidence \\ \hline 
+BHCVRP & [-332.08 , -44.02] & 0\\ \hline 
+
+\end{tabular}
+\caption{Confidence intervals for algorithm BHCVRP-act ($\alpha$=0.95)}
+\end{table}
+
+ \clearpage 
+
+
+\section{Detailed results for BHCVRP}
+
+
+\subsection{Results}
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|c|c|}
+\hline
+ VS & $R^{+}$ & $R^{-}$ & Exact P-value & Asymptotic P-value \\ \hline 
+BHCVRP-act & 0.0 & 36.0 & $\geq$ 0.2 & 1\\ \hline 
+
+\end{tabular}
+\caption{Results obtained by the Wilcoxon test for algorithm BHCVRP}
+\end{table}
+
+\subsection{Confidence intervals for Median of diferences}
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|}
+\hline
+ $\alpha$=0.90 & Confidence interval & Exact confidence \\ \hline 
+BHCVRP-act & [44.02 , 332.08] & 0\\ \hline 
+
+\end{tabular}
+\caption{Confidence intervals for algorithm BHCVRP ($\alpha$=0.90)}
+\end{table}
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{
+|c|c|c|}
+\hline
+ $\alpha$=0.95 & Confidence interval & Exact confidence \\ \hline 
+BHCVRP-act & [44.02 , 332.08] & 0\\ \hline 
+
+\end{tabular}
+\caption{Confidence intervals for algorithm BHCVRP ($\alpha$=0.95)}
+\end{table}
+
+ \clearpage 
+
+
+\end{document}

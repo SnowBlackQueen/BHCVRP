@@ -157,7 +157,7 @@ class Heuristic(ABC):
 
             self.route.set_request_route(self.request_route)
 
-            if self.type_customer == CustomerType.TC:
+            if self.customer.get_type_customer() == CustomerType.TC or self.customer.get_type_customer() == 1:
                 self.route.set_type_route(RouteType.PTR.value)
             else:
                 if self.is_TC:
@@ -166,7 +166,7 @@ class Heuristic(ABC):
                     self.route.set_type_route(RouteType.PVR.value)
 
             self.route.set_id_depot(self.id_depot)
-            # self.solution.get_list_routes().append(self.route)
+            self.solution.get_list_routes().append(self.route)
 
         return self.solution
 
@@ -279,11 +279,12 @@ class Heuristic(ABC):
                 self.customers_to_visit.remove(self.customer)
             else:
                 self.route.set_request_route(self.request_route)
-                self.route.set_type_route(RouteType.PTR.value)
+                #self.route.set_type_route(RouteType.PTR.value)
                 self.route.set_id_depot(self.id_depot)
-                # self.solution.get_list_routes().append(self.route)  VERIFICAR!!
+                self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(), id_depot=self.id_depot, list_access_vc=[], type_route=RouteType.PTR.value, maximum_distance=None)
+                self.solution.get_list_routes().append(self.route)  #VERIFICAR!!
 
-                #route = Route()
+                self.route = RouteTTRP()
 
                 self.request_route = self.customer.get_request_customer()
                 self.type_customer = self.customer.get_type_customer()
@@ -339,10 +340,10 @@ class Heuristic(ABC):
             while self.customers_to_visit:
                 self.initialize_specifics()
                 found = False
-                if self.type_customer == CustomerType.TC.value:
+                if self.customer.get_type_customer() == CustomerType.TC or self.customer.get_type_customer() == 1:
                     found, new_route = self.creating()
-                if not found:
-                    if self.customer.get_type_customer() == CustomerType.TC.value:
+                else:
+                    if self.customer.get_type_customer() == CustomerType.TC or self.customer.get_type_customer() == 1:
                         self.is_TC = True
 
                     if (self.capacity_vehicle + self.capacity_trailer) >= (
@@ -354,19 +355,20 @@ class Heuristic(ABC):
                         self.route.set_request_route(self.request_route)
 
                         if self.is_TC:
-                            route_ttrp = RouteTTRP(None, self.route.get_list_id_customers(), self.route.get_request_route(), self.route.get_cost_route(), self.route.get_id_depot(), [], self.route.get_maximum_distance())
+                            route_ttrp = RouteTTRP(type_route=2, list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=[], maximum_distance=self.route.get_maximum_distance())
                             self.route = route_ttrp
                             self.route.set_type_route(RouteType.CVR.value)
                         else:
-                            route_ttrp = RouteTTRP(0, self.route.get_list_id_customers(), self.route.get_request_route(), self.route.get_cost_route(), self.route.get_id_depot(), [], self.route.get_maximum_distance())
+                            route_ttrp = RouteTTRP(type_route=1, list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=[], maximum_distance=self.route.get_maximum_distance())
                             self.route = route_ttrp
                             self.route.set_type_route(RouteType.PVR.value)
 
                         self.route.set_id_depot(self.id_depot)
                         self.solution.get_list_routes().append(self.route)
-                        is_TC = False
+                        self.is_TC = False
 
-                        #route = Route()
+                        self.route = RouteTTRP()
+
                         self.request_route = self.customer.get_request_customer()
                         self.type_customer = self.customer.get_type_customer()
                         self.route.get_list_id_customers().append(self.customer.get_id_customer())
