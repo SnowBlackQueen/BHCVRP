@@ -4,10 +4,24 @@ from exceptions.RequestException import RequestException
 from exceptions.CostException import CostException
 from exceptions.DistanceNotAccessibleException import DistanceNotAccessibleException
 
+
 class Route:
-    
-    def __init__(self, list_id_customers=None, request_route=None, cost_route=None, id_depot=None, list_access_vc=None, maximum_distance=None):
-        if list_id_customers is not None and request_route is not None and cost_route is not None and id_depot is not None:
+
+    def __init__(
+        self,
+        list_id_customers=None,
+        request_route=None,
+        cost_route=None,
+        id_depot=None,
+        list_access_vc=None,
+        maximum_distance=None,
+    ):
+        if (
+            list_id_customers is not None
+            and request_route is not None
+            and cost_route is not None
+            and id_depot is not None
+        ):
             self.list_id_customers = list(list_id_customers)
             self.request_route = request_route
             self.cost_route = 0.0
@@ -50,10 +64,10 @@ class Route:
 
     def set_id_depot(self, id_depot):
         self.id_depot = id_depot
-        
+
     def get_maximum_distance(self):
         return self.maximum_distance
-    
+
     def set_maximum_distance(self, maximum_distance):
         if maximum_distance > 0 & maximum_distance < 99999:
             self.maximum_distance = maximum_distance
@@ -73,16 +87,19 @@ class Route:
 
         # Calcular el costo y sumarlo a cost_route
         cost_route += cost_matrix[depot_index][customer_ini_index]
-        
+
         for i in range(1, len(self.list_id_customers)):
             customer_next = self.list_id_customers[i]
             pos_customer_next = Problem.get_problem().get_pos_element(customer_next)
-            cost_route += Problem.get_problem().get_cost_matrix().item(pos_customer_ini, pos_customer_next)
+            cost_route += (
+                Problem.get_problem()
+                .get_cost_matrix()
+                .item(pos_customer_ini, pos_customer_next)
+            )
             customer_ini = customer_next
             pos_customer_ini = pos_customer_next
 
         cost_route += cost_matrix[pos_customer_ini][depot_index]
-        
+
         self.set_cost_route(cost_route)
         return cost_route
-

@@ -2,6 +2,7 @@ from typing import List
 from postoptimization.StepOptimization import StepOptimization
 from solution.Route import Route
 
+
 class Operator_Exchange(StepOptimization):
     def to_optimize(self, route: Route):
         list_opt = route.get_list_id_customers().copy()

@@ -3,10 +3,20 @@ from exceptions.RequestException import RequestException
 
 # Clase que modela los datos de un cliente en un VRP.
 
+
 class Customer:
-    
-    def __init__(self, id_customer=None, request_customer=None, location_customer: Location = None):
-        if id_customer is not None and request_customer is not None and location_customer is not None:
+
+    def __init__(
+        self,
+        id_customer=None,
+        request_customer=None,
+        location_customer: Location = None,
+    ):
+        if (
+            id_customer is not None
+            and request_customer is not None
+            and location_customer is not None
+        ):
             # Constructor con tres argumentos
             self._id_customer = id_customer
             self._request_customer = request_customer

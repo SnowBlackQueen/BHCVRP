@@ -2,9 +2,12 @@ from data import Location
 
 # Clase que modela los datos de un depósito en un VRP
 
+
 class Depot:
-    
-    def __init__(self, id_depot=None, location_depot: Location=None, list_fleets=None):
+
+    def __init__(
+        self, id_depot=None, location_depot: Location = None, list_fleets=None
+    ):
         self._id_depot = id_depot
         self._location_depot = location_depot
         self._list_fleets = list_fleets if list_fleets is not None else []
@@ -14,7 +17,7 @@ class Depot:
 
     def set_id_depot(self, id_depot):
         self._id_depot = id_depot
-        
+
     def get_list_fleets(self):
         return self._list_fleets
 
@@ -26,5 +29,3 @@ class Depot:
 
     def set_location_depot(self, location_depot: Location):
         self._location_depot = location_depot
-
-    

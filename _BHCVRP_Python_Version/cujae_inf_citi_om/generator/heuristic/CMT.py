@@ -45,78 +45,133 @@ class CMT(Heuristic):
         if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
             self.list_capacities = list(Problem.get_problem().get_list_capacities())
 
-    def creating(self, route=None, request_route=None, list_tau_costs=None, list_metrics_cmt_by_customer=None):
-        if self.type_problem in [0, 1, 2,
-                                 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.MDVRP:
-            if self.capacity_vehicle >= (request_route + self.customer_to_insert.get_request_customer()):
+    def creating(
+        self,
+        route=None,
+        request_route=None,
+        list_tau_costs=None,
+        list_metrics_cmt_by_customer=None,
+    ):
+        if (
+            self.type_problem in [0, 1, 2, 3]
+            or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.HFVRP
+            or self.type_problem == ProblemType.MDVRP
+        ):
+            if self.capacity_vehicle >= (
+                request_route + self.customer_to_insert.get_request_customer()
+            ):
                 request_route += self.customer_to_insert.get_request_customer()
-                route.get_list_id_customers().append(self.customer_to_insert.get_id_customer())
+                route.get_list_id_customers().append(
+                    self.customer_to_insert.get_id_customer()
+                )
 
-                #if len(route.get_list_id_customers()) >= 6:
-                 #   self.three_opt.to_optimize(route)
+                # if len(route.get_list_id_customers()) >= 6:
+                #   self.three_opt.to_optimize(route)
 
                 list_tau_costs.pop(self.pos_best_tau)
-                self._delete_element(self.customer_to_insert.get_id_customer(), list_metrics_cmt_by_customer)
+                self._delete_element(
+                    self.customer_to_insert.get_id_customer(),
+                    list_metrics_cmt_by_customer,
+                )
                 self.customers_to_visit.remove(self.customer_to_insert)
             else:
                 list_tau_costs.pop(self.pos_best_tau)
             return route
 
         elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
-            if self.capacity_total >= (self.request_route + self.customer_to_insert.get_request_customer()):
+            if self.capacity_total >= (
+                self.request_route + self.customer_to_insert.get_request_customer()
+            ):
                 self.request_route += self.customer_to_insert.get_request_customer()
-                self.route.get_list_id_customers().append(self.customer_to_insert.get_id_customer())
+                self.route.get_list_id_customers().append(
+                    self.customer_to_insert.get_id_customer()
+                )
 
                 if len(self.route.get_list_id_customers()) >= 6:
                     self.three_opt.to_optimize(self.route)
 
                 self.list_tau_costs.pop(self.pos_best_tau)
-                self._delete_element(self.customer_to_insert.get_id_customer(), self.list_metrics_CMT_by_customer)
+                self._delete_element(
+                    self.customer_to_insert.get_id_customer(),
+                    self.list_metrics_CMT_by_customer,
+                )
                 self.customers_to_visit.remove(self.customer_to_insert)
 
-                if self.type_customer == CustomerType.VC.value and self.customer_to_insert.get_type_customer() == CustomerType.TC.value:
+                if (
+                    self.type_customer == CustomerType.VC.value
+                    and self.customer_to_insert.get_type_customer()
+                    == CustomerType.TC.value
+                ):
                     self.is_TC = True
             else:
                 self.list_tau_costs.pop(self.pos_best_tau)
             return self.route
 
-    def processing(self, customers_to_visit, count_vehicles, request_route, route, id_depot, solution):
-        if self.type_problem in [0, 2,
-                                 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.MDVRP:
+    def processing(
+        self,
+        customers_to_visit,
+        count_vehicles,
+        request_route,
+        route,
+        id_depot,
+        solution,
+    ):
+        if (
+            self.type_problem in [0, 2, 3]
+            or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.MDVRP
+        ):
             while self.list_candidate_routes:
                 self.list_metrics_cmt_by_customer = []
-                self.list_metrics_cmt_by_customer = self._calculate_cost_cmt_by_customer(self.id_depot,
-                                                                                         self.customers_to_visit,
-                                                                                         self.list_candidate_routes)
+                self.list_metrics_cmt_by_customer = (
+                    self._calculate_cost_cmt_by_customer(
+                        self.id_depot,
+                        self.customers_to_visit,
+                        self.list_candidate_routes,
+                    )
+                )
 
                 self.route = Route()
 
-                self.index = self.random.randint(0, (len(self.list_candidate_routes) - 1))
+                self.index = self.random.randint(
+                    0, (len(self.list_candidate_routes) - 1)
+                )
                 self.route = self.list_candidate_routes.pop(self.index)
 
-                self.root_customer = self._get_customer_by_id(self.route.get_list_id_customers()[0],
-                                                              self.list_root_customers)
+                self.root_customer = self._get_customer_by_id(
+                    self.route.get_list_id_customers()[0], self.list_root_customers
+                )
                 self.request_route = self.root_customer.get_request_customer()
                 self.list_root_customers.remove(self.root_customer)
                 self.route.set_id_depot(self.id_depot)
 
                 self.list_tau_costs = []
-                self.list_tau_costs = self._calculate_tau(self.list_metrics_cmt_by_customer, self.index)
+                self.list_tau_costs = self._calculate_tau(
+                    self.list_metrics_cmt_by_customer, self.index
+                )
                 while self.list_tau_costs:
                     self.customer_to_insert = Customer()
                     self.pos_best_tau = len(self.list_tau_costs) - 1
                     self.customer_to_insert = self._get_customer_by_id(
-                        self.list_tau_costs[self.pos_best_tau].get_id_element(), self.customers_to_visit)
-                    self.route = self.creating(self.route, self.request_route, self.list_tau_costs,
-                                               self.list_metrics_cmt_by_customer)
+                        self.list_tau_costs[self.pos_best_tau].get_id_element(),
+                        self.customers_to_visit,
+                    )
+                    self.route = self.creating(
+                        self.route,
+                        self.request_route,
+                        self.list_tau_costs,
+                        self.list_metrics_cmt_by_customer,
+                    )
                 self.route.set_request_route(self.request_route)
                 self.solution.get_list_routes().append(self.route)
             return self.solution
 
         elif self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
             while self.list_candidate_routes and self.list_capacities:
-                list_metrics_cmt_by_customer = self._calculate_cost_cmt_by_customer(id_depot, customers_to_visit,
-                                                                                    self.list_candidate_routes)
+                list_metrics_cmt_by_customer = self._calculate_cost_cmt_by_customer(
+                    id_depot, customers_to_visit, self.list_candidate_routes
+                )
 
                 route = Route()
                 self.is_open = True
@@ -124,19 +179,30 @@ class CMT(Heuristic):
                 index = self.random.randint(0, len(self.list_candidate_routes) - 1)
                 route = self.list_candidate_routes.pop(index)
 
-                root_customer = self._get_customer_by_id(route.get_list_id_customers()[0], self.list_root_customers)
+                root_customer = self._get_customer_by_id(
+                    route.get_list_id_customers()[0], self.list_root_customers
+                )
                 request_route = root_customer.get_request_customer()
                 self.list_root_customers.remove(root_customer)
                 route.set_id_depot(id_depot)
 
-                list_tau_costs = self._calculate_tau(list_metrics_cmt_by_customer, index)
+                list_tau_costs = self._calculate_tau(
+                    list_metrics_cmt_by_customer, index
+                )
 
                 while list_tau_costs:
                     pos_best_tau = len(list_tau_costs) - 1
-                    self.customer_to_insert = self._get_customer_by_id(list_tau_costs[pos_best_tau].get_id_element(),
-                                                                  customers_to_visit)
+                    self.customer_to_insert = self._get_customer_by_id(
+                        list_tau_costs[pos_best_tau].get_id_element(),
+                        customers_to_visit,
+                    )
 
-                    route = self.creating(route, request_route, list_tau_costs, list_metrics_cmt_by_customer)
+                    route = self.creating(
+                        route,
+                        request_route,
+                        list_tau_costs,
+                        list_metrics_cmt_by_customer,
+                    )
 
                 route.set_request_route(request_route)
                 solution.get_list_routes().append(route)
@@ -149,8 +215,13 @@ class CMT(Heuristic):
             list_access_vc = []
             while self.list_candidate_routes:
                 self.list_metrics_CMT_by_customer = []
-                self.list_metrics_CMT_by_customer = self._calculate_cost_cmt_by_customer(self.id_depot, self.customers_to_visit,
-                                                                                    self.list_candidate_routes)
+                self.list_metrics_CMT_by_customer = (
+                    self._calculate_cost_cmt_by_customer(
+                        self.id_depot,
+                        self.customers_to_visit,
+                        self.list_candidate_routes,
+                    )
+                )
 
                 self.route = Route()
 
@@ -158,7 +229,9 @@ class CMT(Heuristic):
                 self.route = self.list_candidate_routes.pop(self.index)
 
                 # self.root_customer = Customer()
-                self.root_customer = self._get_customer_by_id(self.route.get_list_id_customers()[0], self.list_root_customers)
+                self.root_customer = self._get_customer_by_id(
+                    self.route.get_list_id_customers()[0], self.list_root_customers
+                )
                 self.request_route = self.root_customer.get_request_customer()
 
                 # self.root_customer = CustomerTTRP(id_customer=self.root_customer.get_id_customer(), request_customer=self.root_customer.get_request_customer(),
@@ -172,28 +245,50 @@ class CMT(Heuristic):
                     self.capacity_total = self.capacity_vehicle + self.capacity_trailer
 
                 self.list_tau_costs = []
-                self.list_tau_costs = self._calculate_tau(self.list_metrics_CMT_by_customer, self.index)
+                self.list_tau_costs = self._calculate_tau(
+                    self.list_metrics_CMT_by_customer, self.index
+                )
 
                 while self.list_tau_costs:
                     self.customer_to_insert = Customer()
                     self.pos_best_tau = len(self.list_tau_costs) - 1
-                    self.customer_to_insert = self._get_customer_by_id(self.list_tau_costs[self.pos_best_tau].get_id_element(),
-                                                                  self.customers_to_visit)
+                    self.customer_to_insert = self._get_customer_by_id(
+                        self.list_tau_costs[self.pos_best_tau].get_id_element(),
+                        self.customers_to_visit,
+                    )
 
                     self.route = self.creating()
 
                 self.route.set_request_route(self.request_route)
 
                 if self.type_customer == CustomerType.TC.value:
-                    self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(),
-                                          cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=list_access_vc, type_route=RouteType.PTR.value)
+                    self.route = RouteTTRP(
+                        list_id_customers=self.route.get_list_id_customers(),
+                        request_route=self.route.get_request_route(),
+                        cost_route=self.route.get_cost_route(),
+                        id_depot=self.route.get_id_depot(),
+                        list_access_vc=list_access_vc,
+                        type_route=RouteType.PTR.value,
+                    )
                 else:
                     if self.is_TC:
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(),
-                                          cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=list_access_vc, type_route=RouteType.CVR.value)
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=list_access_vc,
+                            type_route=RouteType.CVR.value,
+                        )
                     else:
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(),
-                                          cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=list_access_vc, type_route=RouteType.PVR.value)
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=list_access_vc,
+                            type_route=RouteType.PVR.value,
+                        )
 
                 self.solution.get_list_routes().append(self.route)
             return self.solution
@@ -201,13 +296,24 @@ class CMT(Heuristic):
     def execute(self):
         if self.type_problem == ProblemType.CVRP or self.type_problem in [0, 3]:
             while self.customers_to_visit:
-                self.list_candidate_routes = self._do_first_phase(self.customers_to_visit, self.id_depot,
-                                                                  self.pos_depot, self.capacity_vehicle,
-                                                                  self.count_vehicles)
-                self.list_root_customers = self._update_customers_to_visit(self.list_candidate_routes,
-                                                                           self.customers_to_visit)
-                self.solution = self.processing(self.customers_to_visit, self.count_vehicles, self.request_route,
-                                                self.route, self.id_depot, self.solution)
+                self.list_candidate_routes = self._do_first_phase(
+                    self.customers_to_visit,
+                    self.id_depot,
+                    self.pos_depot,
+                    self.capacity_vehicle,
+                    self.count_vehicles,
+                )
+                self.list_root_customers = self._update_customers_to_visit(
+                    self.list_candidate_routes, self.customers_to_visit
+                )
+                self.solution = self.processing(
+                    self.customers_to_visit,
+                    self.count_vehicles,
+                    self.request_route,
+                    self.route,
+                    self.id_depot,
+                    self.solution,
+                )
                 # break
 
         elif self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
@@ -215,14 +321,24 @@ class CMT(Heuristic):
             self.is_open = False
 
             while self.customers_to_visit and self.list_capacities:
-                self.list_candidate_routes = self._do_first_phase(self.customers_to_visit, self.id_depot,
-                                                                  self.pos_depot, self.capacity_vehicle,
-                                                                  self.count_vehicles)
-                self.list_root_customers = self._update_customers_to_visit(self.list_candidate_routes,
-                                                                           self.customers_to_visit)
-                self.is_open, self.solution = self.processing(self.customers_to_visit, self.count_vehicles,
-                                                              self.request_route, self.route, self.id_depot,
-                                                              self.solution)
+                self.list_candidate_routes = self._do_first_phase(
+                    self.customers_to_visit,
+                    self.id_depot,
+                    self.pos_depot,
+                    self.capacity_vehicle,
+                    self.count_vehicles,
+                )
+                self.list_root_customers = self._update_customers_to_visit(
+                    self.list_candidate_routes, self.customers_to_visit
+                )
+                self.is_open, self.solution = self.processing(
+                    self.customers_to_visit,
+                    self.count_vehicles,
+                    self.request_route,
+                    self.route,
+                    self.id_depot,
+                    self.solution,
+                )
 
                 if self.is_open and self.customers_to_visit:
                     route.set_request_route(self.request_route)
@@ -237,7 +353,9 @@ class CMT(Heuristic):
                     while self.customers_to_visit:
                         new_request += self.customers_to_visit[0].get_request_customer()
                         route.set_request_route(new_request)
-                        route.get_list_id_customers().append(self.customers_to_visit[0].get_id_customer())
+                        route.get_list_id_customers().append(
+                            self.customers_to_visit[0].get_id_customer()
+                        )
                         self.customers_to_visit.pop(0)
 
                     self.solution.get_list_routes().append(route)
@@ -248,40 +366,86 @@ class CMT(Heuristic):
                     self.solution.get_list_routes().append(route)
 
         elif self.type_problem == ProblemType.MDVRP or self.type_problem == 2:
-            for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+            for j in range(
+                self.pos_depot, len(Problem.get_problem().get_list_depots())
+            ):
                 if j != self.pos_depot:
-                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
-                    self.customers_to_visit = list(Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots()))
+                    self.id_depot = (
+                        Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    )
+                    self.customers_to_visit = list(
+                        Problem.get_problem().get_customers_assigned_by_id_depot(
+                            self.id_depot,
+                            Problem.get_problem().get_list_customers(),
+                            Problem.get_problem().get_list_depots(),
+                        )
+                    )
 
-                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
-                        0].get_capacity_vehicle()
-                    self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[
-                        0].get_count_vehicles()
+                    self.capacity_vehicle = (
+                        Problem.get_problem()
+                        .get_list_depots()[j]
+                        .get_list_fleets()[0]
+                        .get_capacity_vehicle()
+                    )
+                    self.count_vehicles = (
+                        Problem.get_problem()
+                        .get_list_depots()[j]
+                        .get_list_fleets()[0]
+                        .get_count_vehicles()
+                    )
 
                 while self.customers_to_visit:
-                    self.list_candidate_routes = self._do_first_phase(self.customers_to_visit, self.id_depot, j, self.capacity_vehicle,
-                                                                      self.count_vehicles)
-                    self.list_root_customers = self._update_customers_to_visit(self.list_candidate_routes,
-                                                                               self.customers_to_visit)
-                    self.solution = self.processing(self.customers_to_visit, self.count_vehicles, self.request_route, self.route,
-                                                    self.id_depot, self.solution)
+                    self.list_candidate_routes = self._do_first_phase(
+                        self.customers_to_visit,
+                        self.id_depot,
+                        j,
+                        self.capacity_vehicle,
+                        self.count_vehicles,
+                    )
+                    self.list_root_customers = self._update_customers_to_visit(
+                        self.list_candidate_routes, self.customers_to_visit
+                    )
+                    self.solution = self.processing(
+                        self.customers_to_visit,
+                        self.count_vehicles,
+                        self.request_route,
+                        self.route,
+                        self.id_depot,
+                        self.solution,
+                    )
 
         elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
             while self.customers_to_visit:
                 self.is_TC = False
-                self.capacity_trailer = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[
-                    0].get_capacity_trailer()
+                self.capacity_trailer = (
+                    Problem.get_problem()
+                    .get_list_depots()[self.pos_depot]
+                    .get_list_fleets()[0]
+                    .get_capacity_trailer()
+                )
                 self.capacity_total = 0.0
 
                 self.type_customer = CustomerType.TC  # ARREGLAR !!!
 
-                self.list_candidate_routes = self._do_first_phase(self.customers_to_visit, self.id_depot, self.pos_depot,
-                                                                  self.capacity_vehicle, self.count_vehicles)
-                self.list_root_customers = self._update_customers_to_visit(self.list_candidate_routes,
-                                                                           self.customers_to_visit)
+                self.list_candidate_routes = self._do_first_phase(
+                    self.customers_to_visit,
+                    self.id_depot,
+                    self.pos_depot,
+                    self.capacity_vehicle,
+                    self.count_vehicles,
+                )
+                self.list_root_customers = self._update_customers_to_visit(
+                    self.list_candidate_routes, self.customers_to_visit
+                )
 
-                self.solution = self.processing(self.customers_to_visit, self.count_vehicles, self.request_route,
-                                                self.route, self.id_depot, self.solution)
+                self.solution = self.processing(
+                    self.customers_to_visit,
+                    self.count_vehicles,
+                    self.request_route,
+                    self.route,
+                    self.id_depot,
+                    self.solution,
+                )
 
         return self.solution
 
@@ -292,7 +456,9 @@ class CMT(Heuristic):
         return self.solution
 
     # Método que realiza la primera fase del algoritmo CMT
-    def _do_first_phase(self, customers_to_visit, id_depot, pos_depot, capacity_vehicle, count_vehicles):
+    def _do_first_phase(
+        self, customers_to_visit, id_depot, pos_depot, capacity_vehicle, count_vehicles
+    ):
         list_routes = []
         list_customers = list(customers_to_visit)
         list_candidate_customers = None
@@ -301,7 +467,9 @@ class CMT(Heuristic):
 
         three_opt = Operator_3opt()
 
-        root_customer = self._get_first_customer(list_customers, self.first_customer_type, id_depot)
+        root_customer = self._get_first_customer(
+            list_customers, self.first_customer_type, id_depot
+        )
         request_route = root_customer.get_request_customer()
         route.get_list_id_customers().append(root_customer.get_id_customer())
         route.set_id_depot(id_depot)
@@ -318,25 +486,38 @@ class CMT(Heuristic):
 
                     for customer in list(list_customers):
                         metric_cmt = Metric()
-                        if capacity_vehicle >= (request_route + customer.get_request_customer()):
+                        if capacity_vehicle >= (
+                            request_route + customer.get_request_customer()
+                        ):
                             metric_cmt.set_id_element(customer.get_id_customer())
                             metric_cmt.set_insertion_cost(
-                                self._calculate_cost_of_cmt(id_depot, root_customer.get_id_customer(),
-                                                            customer.get_id_customer()))
+                                self._calculate_cost_of_cmt(
+                                    id_depot,
+                                    root_customer.get_id_customer(),
+                                    customer.get_id_customer(),
+                                )
+                            )
                             list_candidate_customers.append(metric_cmt)
 
-                    self._ascendent_ordenate_list_without_order(list_candidate_customers)
+                    self._ascendent_ordenate_list_without_order(
+                        list_candidate_customers
+                    )
 
                     while list_candidate_customers:
-                        customer_to_insert = self._get_customer_by_id(list_candidate_customers[0].get_id_element(),
-                                                                      list_customers)
+                        customer_to_insert = self._get_customer_by_id(
+                            list_candidate_customers[0].get_id_element(), list_customers
+                        )
 
-                        if capacity_vehicle >= (request_route + customer_to_insert.get_request_customer()):
+                        if capacity_vehicle >= (
+                            request_route + customer_to_insert.get_request_customer()
+                        ):
                             request_route += customer_to_insert.get_request_customer()
-                            route.get_list_id_customers().append(customer_to_insert.get_id_customer())
+                            route.get_list_id_customers().append(
+                                customer_to_insert.get_id_customer()
+                            )
 
-                            #if len(route.get_list_id_customers()) >= 6:
-                             #   three_opt.to_optimize(route)
+                            # if len(route.get_list_id_customers()) >= 6:
+                            #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)
@@ -349,9 +530,13 @@ class CMT(Heuristic):
                         route = Route()
                         request_route = 0.0
 
-                        root_customer = self._get_first_customer(list_customers, self.first_customer_type, id_depot)
+                        root_customer = self._get_first_customer(
+                            list_customers, self.first_customer_type, id_depot
+                        )
                         request_route = root_customer.get_request_customer()
-                        route.get_list_id_customers().append(root_customer.get_id_customer())
+                        route.get_list_id_customers().append(
+                            root_customer.get_id_customer()
+                        )
                         route.set_id_depot(id_depot)
                         list_customers.remove(root_customer)
 
@@ -370,26 +555,39 @@ class CMT(Heuristic):
 
                     for customer in list(list_customers):
                         metric_cmt = Metric()
-                        if capacity_vehicle >= (request_route + customer.get_request_customer()):
+                        if capacity_vehicle >= (
+                            request_route + customer.get_request_customer()
+                        ):
                             metric_cmt.set_id_element(customer.get_id_customer())
                             metric_cmt.set_insertion_cost(
-                                self._calculate_cost_of_cmt(id_depot, root_customer.get_id_customer(),
-                                                            customer.get_id_customer()))
+                                self._calculate_cost_of_cmt(
+                                    id_depot,
+                                    root_customer.get_id_customer(),
+                                    customer.get_id_customer(),
+                                )
+                            )
                             list_candidate_customers.append(metric_cmt)
 
-                    self._ascendent_ordenate_list_without_order(list_candidate_customers)
+                    self._ascendent_ordenate_list_without_order(
+                        list_candidate_customers
+                    )
 
                     while list_candidate_customers:
-                        customer_to_insert = self._get_customer_by_id(list_candidate_customers[0].get_id_element(),
-                                                                      list_customers)
+                        customer_to_insert = self._get_customer_by_id(
+                            list_candidate_customers[0].get_id_element(), list_customers
+                        )
 
-                        if capacity_vehicle >= (request_route + customer_to_insert.get_request_customer()):
+                        if capacity_vehicle >= (
+                            request_route + customer_to_insert.get_request_customer()
+                        ):
                             request_route += customer_to_insert.get_request_customer()
-                            route.get_list_id_customers().append(customer_to_insert.get_id_customer())
+                            route.get_list_id_customers().append(
+                                customer_to_insert.get_id_customer()
+                            )
                             route.set_id_depot(id_depot)
 
-                            #if len(route.get_list_id_customers()) >= 6:
-                             #   three_opt.to_optimize(route)
+                            # if len(route.get_list_id_customers()) >= 6:
+                            #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)
@@ -403,10 +601,18 @@ class CMT(Heuristic):
                         route = Route()
                         request_route = 0.0
 
-                        root_customer = self._get_first_customer(list_customers, self.first_customer_type, id_depot)
+                        root_customer = self._get_first_customer(
+                            list_customers, self.first_customer_type, id_depot
+                        )
                         request_route = root_customer.get_request_customer()
-                        route.get_list_id_customers().append(root_customer.get_id_customer())
-                        route.set_id_depot(Problem.get_problem().get_list_depots()[pos_depot].get_id_depot())
+                        route.get_list_id_customers().append(
+                            root_customer.get_id_customer()
+                        )
+                        route.set_id_depot(
+                            Problem.get_problem()
+                            .get_list_depots()[pos_depot]
+                            .get_id_depot()
+                        )
                         list_customers.remove(root_customer)
 
                         if not list_capacities:
@@ -419,8 +625,12 @@ class CMT(Heuristic):
 
         elif type_problem == ProblemType.TTRP:
             capacity_total = 0.0
-            capacity_trailer = Problem.get_problem().get_list_depots()[pos_depot].get_list_fleets()[
-                0].get_capacity_trailer()
+            capacity_trailer = (
+                Problem.get_problem()
+                .get_list_depots()[pos_depot]
+                .get_list_fleets()[0]
+                .get_capacity_trailer()
+            )
 
             if not list_customers:
                 list_routes.append(route)
@@ -436,26 +646,43 @@ class CMT(Heuristic):
 
                     for customer in list(list_customers):
                         metric_cmt = Metric()
-                        if capacity_total >= (request_route + customer.get_request_customer()):
+                        if capacity_total >= (
+                            request_route + customer.get_request_customer()
+                        ):
                             metric_cmt.set_id_element(customer.get_id_customer())
                             metric_cmt.set_insertion_cost(
-                                self._calculate_cost_of_cmt(id_depot, root_customer.get_id_customer(),
-                                                            customer.get_id_customer()))
+                                self._calculate_cost_of_cmt(
+                                    id_depot,
+                                    root_customer.get_id_customer(),
+                                    customer.get_id_customer(),
+                                )
+                            )
                             list_candidate_customers.append(metric_cmt)
 
-                    self._ascendent_ordenate_list_without_order(list_candidate_customers)
+                    self._ascendent_ordenate_list_without_order(
+                        list_candidate_customers
+                    )
 
                     while list_candidate_customers:
-                        customer_to_insert = self._get_customer_by_id(list_candidate_customers[0].get_id_element(),
-                                                                      list_customers)
+                        customer_to_insert = self._get_customer_by_id(
+                            list_candidate_customers[0].get_id_element(), list_customers
+                        )
 
-                        if capacity_total >= (request_route + customer_to_insert.get_request_customer()):
+                        if capacity_total >= (
+                            request_route + customer_to_insert.get_request_customer()
+                        ):
                             request_route += customer_to_insert.get_request_customer()
-                            route.get_list_id_customers().append(customer_to_insert.get_id_customer())
-                            route.set_id_depot(Problem.get_problem().get_list_depots()[pos_depot].get_id_depot())
+                            route.get_list_id_customers().append(
+                                customer_to_insert.get_id_customer()
+                            )
+                            route.set_id_depot(
+                                Problem.get_problem()
+                                .get_list_depots()[pos_depot]
+                                .get_id_depot()
+                            )
 
-                            #if len(route.get_list_id_customers()) >= 6:
-                             #   three_opt.to_optimize(route)
+                            # if len(route.get_list_id_customers()) >= 6:
+                            #   three_opt.to_optimize(route)
 
                             list_candidate_customers.pop(0)
                             list_customers.remove(customer_to_insert)
@@ -468,10 +695,18 @@ class CMT(Heuristic):
                         route = Route()
                         request_route = 0.0
 
-                        root_customer = self._get_first_customer(list_customers, self.first_customer_type, id_depot)
+                        root_customer = self._get_first_customer(
+                            list_customers, self.first_customer_type, id_depot
+                        )
                         request_route = root_customer.get_request_customer()
-                        route.get_list_id_customers().append(root_customer.get_id_customer())
-                        route.set_id_depot(Problem.get_problem().get_list_depots()[pos_depot].get_id_depot())
+                        route.get_list_id_customers().append(
+                            root_customer.get_id_customer()
+                        )
+                        route.set_id_depot(
+                            Problem.get_problem()
+                            .get_list_depots()[pos_depot]
+                            .get_id_depot()
+                        )
                         list_customers.remove(root_customer)
 
                         if not list_customers:
@@ -483,11 +718,15 @@ class CMT(Heuristic):
     # Método que calcula el costo de insertar un cliente en la ruta
     def _calculate_cost_of_cmt(self, id_depot, current_element, next_element):
         cost_depot_to_next = Problem.get_problem().get_cost_matrix()[
-            Problem.get_problem().get_pos_element(id_depot), Problem.get_problem().get_pos_element(next_element)]
+            Problem.get_problem().get_pos_element(id_depot),
+            Problem.get_problem().get_pos_element(next_element),
+        ]
         cost_next_to_current = Problem.get_problem().get_cost_matrix()[
-            Problem.get_problem().get_pos_element(next_element), Problem.get_problem().get_pos_element(current_element)]
+            Problem.get_problem().get_pos_element(next_element),
+            Problem.get_problem().get_pos_element(current_element),
+        ]
 
-        return (cost_depot_to_next + (self.parameter_l * cost_next_to_current))
+        return cost_depot_to_next + (self.parameter_l * cost_next_to_current)
 
     # Método que vacia la lista de rutas dejando solo el primer cliente en cada una
     def _empty_routes(self, list_routes):
@@ -529,8 +768,12 @@ class CMT(Heuristic):
                 metric_cmt = Metric()
                 metric_cmt.set_id_element(list_customers[i].get_id_customer())
                 metric_cmt.set_insertion_cost(
-                    self._calculate_cost_of_cmt(id_depot, list_routes[j].get_list_id_customers()[0],
-                                                list_customers[i].get_id_customer()))
+                    self._calculate_cost_of_cmt(
+                        id_depot,
+                        list_routes[j].get_list_id_customers()[0],
+                        list_customers[i].get_id_customer(),
+                    )
+                )
                 metric_cmt.set_index(j)
                 list_metric_cmt.append(metric_cmt)
 
@@ -552,12 +795,16 @@ class CMT(Heuristic):
 
             if list_metrics_cmt_by_customer[i][0].get_index() == pos_route:
                 metric_cmt = Metric()
-                metric_cmt.set_id_element(list_metrics_cmt_by_customer[i][j].get_id_element())
+                metric_cmt.set_id_element(
+                    list_metrics_cmt_by_customer[i][j].get_id_element()
+                )
 
                 first_cost = list_metrics_cmt_by_customer[i][j].get_insertion_cost()
 
                 if len(list_metrics_cmt_by_customer[i]) > 1:
-                    second_cost = list_metrics_cmt_by_customer[i][j + 1].get_insertion_cost()
+                    second_cost = list_metrics_cmt_by_customer[i][
+                        j + 1
+                    ].get_insertion_cost()
                     tau_cost = second_cost - first_cost
                 else:
                     tau_cost = first_cost
