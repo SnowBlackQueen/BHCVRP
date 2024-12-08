@@ -10,3 +10,4 @@ class ProblemType(Enum):
     MDVRP = 2
     OVRP = 3
     TTRP = 4
+    SBRP = 5

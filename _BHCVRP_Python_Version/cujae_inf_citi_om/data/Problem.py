@@ -3,9 +3,11 @@ import numpy as np
 from data.Customer import Customer
 from data.CustomerTTRP import CustomerTTRP
 from data.Depot import Depot
+from data.BusStop import BusStop
 from data.ProblemType import ProblemType
 from exceptions.RequestException import RequestException
 from exceptions.WithoutCapacityException import WithoutCapacityException
+from exceptions.DistanceNotAccessibleException import DistanceNotAccessibleException
 
 # Clase que modela los datos de un problema VRP.
 
@@ -18,6 +20,8 @@ class Problem:
         self._type_problem: ProblemType = None
         self.set_cost_matrix(cost_matrix=None)
         self._list_capacities: List[float] = None
+        self._maximum_walk_distance = None
+        self._list_buses_stop: List[BusStop] = []
 
     @staticmethod  # Método que implementa el Patrón Singleton
     def get_problem():
@@ -66,6 +70,21 @@ class Problem:
 
     def set_list_capacities(self, list_capacities):
         self._list_capacities = list_capacities
+
+    def get_maximum_walk_distance(self):
+        return self._maximum_walk_distance
+
+    def set_maximum_walk_distance(self, maximum_walk_distance):
+        if maximum_walk_distance > 0:
+            self._maximum_walk_distance = maximum_walk_distance
+        else:
+            raise DistanceNotAccessibleException("La distancia debe ser mayor que cero")
+
+    def set_list_buses_stop(self, list_buses_stop: List[BusStop]):
+        self._list_buses_stop = list_buses_stop
+
+    def get_list_buses_stop(self) -> List[BusStop]:
+        return self._list_buses_stop
 
     # Método para obtener la lista de id de los clientes
     def get_list_id_customers(self):
@@ -352,3 +371,60 @@ class Problem:
                     i += 1
 
         return is_full
+
+    def get_total_buses_stop(self):
+        return self._list_buses_stop.__len__()
+
+    def customer_assigned_by_bus_stop(self, bus_stop):
+        passengers = []
+        bus_position = self.get_bus_stop_position(bus_stop)
+        passengers = self._list_buses_stop[bus_position].get_list_customers()
+
+        return passengers
+
+    def get_bus_stop_position(self, id_bus_stop):
+        bus_stop_position = 0
+        found = False
+
+        while bus_stop_position < self._list_buses_stop.__len__() and not found:
+            if self._list_buses_stop[bus_stop_position].get_id_bus_stop == id_bus_stop:
+                found = True
+            else:
+                bus_stop_position += 1
+
+        if not found:
+           print("El vehículo de identificador:" + id_bus_stop + "no existe") #BUSCAR EXCEPCIÓN
+
+        return bus_stop_position
+
+    def alcanzable_bus_stop_for_customer(self, id_customer):
+        alcanzable_bus_stop = []
+        passenger_position = self.get_pos_element(id_customer)
+        row_passenger = self._cost_matrix[passenger_position]
+        bus_stop = None
+
+        for i in row_passenger:
+            if row_passenger[i] != -np.inf:
+               bus_stop = self._list_buses_stop[i].get_id_bus_stop()
+               alcanzable_bus_stop.append(bus_stop)
+
+        return alcanzable_bus_stop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
