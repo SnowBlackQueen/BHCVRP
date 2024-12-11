@@ -2,9 +2,14 @@ package cujae.inf.citi.om.data;
 
 /* Clase que modela los datos de un problema VRP*/
 
+import cujae.inf.citi.om.exceptions.DistanceNotAccessibleException;
+import cujae.inf.citi.om.exceptions.ItemNotFoundException;
 import java.util.ArrayList;
 
-import cujae.inf.citi.om.matrix.NumericMatrix;
+//import cujae.inf.citi.om.matrix.NumericMatrix;
+import java.util.HashMap;
+import libmatrix.cujae.inf.citi.om.matrix.NumericArray;
+import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
 
 public class Problem {
 	
@@ -15,15 +20,18 @@ public class Problem {
 	
 	private static Problem problem = null;
 	private ArrayList<Double> listCapacities = null;
+        private ArrayList<BusStop> listBusesStop;
+        private double maximumWalkDistance;
 	
 	private Problem() {
 		super();
 		listCustomers = new ArrayList<Customer>();
 		listDepots = new ArrayList<Depot>();
+                listBusesStop = new ArrayList<BusStop>();
 		costMatrix = new NumericMatrix();
 	}
 
-	/* Método que implementa el Patrón Singleton*/
+	/* Mï¿½todo que implementa el Patrï¿½n Singleton*/
 	public static Problem getProblem () {
 		if (problem == null) {
 			problem = new Problem();
@@ -87,6 +95,12 @@ public class Problem {
 			  this.typeProblem = ProblemType.TTRP;
 			  break;
 		  }
+                  
+                  case 5:
+                  {
+                      this.typeProblem = ProblemType.SBRP;
+                      break;
+                  }
 		}			
 	}
 	
@@ -105,8 +119,30 @@ public class Problem {
 	public void setListCapacities(ArrayList<Double> listCapacities) {
 		this.listCapacities = listCapacities;
 	}
+        
+        public double getMaximumWalkDistance() {
+            return maximumWalkDistance;
+        }
+        
+        public void setMaximumWalkDistance(double maximumWalkDistance) throws DistanceNotAccessibleException{
+            if (maximumWalkDistance > 0){
+                this.maximumWalkDistance = maximumWalkDistance;
+            }
+            else {
+                throw new DistanceNotAccessibleException("La distancia a recorrer no es accesible. Debe ser mayor que 0");
+            }  
+                
+        }
+        
+        public ArrayList<BusStop> getListBusesStop(){
+            return listBusesStop;
+        }
+        
+        public void setListBusesStop(ArrayList<BusStop> listBusesStop){
+            this.listBusesStop = listBusesStop;
+        }
 
-	/*Método para obtener la lista de id de los clientes*/
+	/*Mï¿½todo para obtener la lista de id de los clientes*/
 	public ArrayList<Integer> getListIDCustomers(){
 		int countCustomers = listCustomers.size();
 		ArrayList<Integer> listIDCustomers = new ArrayList<Integer>();
@@ -117,7 +153,7 @@ public class Problem {
 		return listIDCustomers;
 	}
 
-	/*Método que devuelve la demanda total*/
+	/*Mï¿½todo que devuelve la demanda total*/
     public double getTotalRequest(){
 		double totalRequest = 0.0;
 		int countCustomers = listCustomers.size();
@@ -128,7 +164,7 @@ public class Problem {
 		return totalRequest;
 	}
         
-	/*Método que busca un cliente dado su identificador*/
+	/*Mï¿½todo que busca un cliente dado su identificador*/
 	public Customer getCustomerByIDCustomer(int idCustomer){
 		Customer customer = null;
 		int i = 0;
@@ -149,7 +185,7 @@ public class Problem {
 		return customer;
 	}
 	
-	/*Método que devuelve el tipo de un cliente dado su identificador*/
+	/*Mï¿½todo que devuelve el tipo de un cliente dado su identificador*/
 	public CustomerType getTypeByIDCustomer(int idCustomer){
 		CustomerType typeCustomer = null;
 		int i = 0;
@@ -170,7 +206,7 @@ public class Problem {
 		return typeCustomer;
 	}
 	
-	/*Método que devuelve la demanda de un cliente dado su identificador*/
+	/*Mï¿½todo que devuelve la demanda de un cliente dado su identificador*/
 	public double getRequestByIDCustomer(int idCustomer){
 		double requestCustomer = 0.0;
 		int i = 0;
@@ -218,7 +254,7 @@ public class Problem {
 		return listCapacityVehicles;
 	}
 		
-	/*Método que dado un id (deposito ó cliente) devuelve la posicion*/
+	/*Mï¿½todo que dado un id (deposito ï¿½ cliente) devuelve la posicion*/
 	public int getPosElement(int idElement){
 		int i = 0;
 		boolean found = false;
@@ -252,7 +288,7 @@ public class Problem {
 		return posElement;
 	}
 	
-	/*Método que dado el id del deposito y del cliente devuelve la posicion*/
+	/*Mï¿½todo que dado el id del deposito y del cliente devuelve la posicion*/
 	public int getPosElementByIDDepot(int idDepot, int idCustomer){
 		boolean found = false;
 		int posElement = -1;
@@ -282,7 +318,7 @@ public class Problem {
 		return posElement;
 	}
 	
-	/*Método que devuelve el id del depósito correspondiente a un cliente dado*/
+	/*Mï¿½todo que devuelve el id del depï¿½sito correspondiente a un cliente dado*/
 	public int getIDDepotByIDCustomer(int idCustomer){
 		boolean found = false;
 		int idDepot = -1;
@@ -310,7 +346,7 @@ public class Problem {
 		return idDepot;
 	}
 
-	/*Método que devuelve la demanda de un deposito dado*/
+	/*Mï¿½todo que devuelve la demanda de un deposito dado*/
 	public double currentRequestByDepot(int posDepot) {    
 		double currentRequest = 0.0;
 		int idCustomer = -1;
@@ -337,7 +373,7 @@ public class Problem {
 		return currentRequest;
 	}
 
-	/*Método que dice si hay o no capacidad disponible en los depósitos*/
+	/*Mï¿½todo que dice si hay o no capacidad disponible en los depï¿½sitos*/
     public boolean existCapacityInSomeDepot() {   
     	boolean exist = false;
         double currentRequest = 0.0;
@@ -353,7 +389,7 @@ public class Problem {
         return exist;
     }
      
-	/*Método que devuelve la capacidad total de los vehículos de MDVRP*/
+	/*Mï¿½todo que devuelve la capacidad total de los vehï¿½culos de MDVRP*/
 	public double getTotalCapacity(){
 		double totalCapacity = 0.0; 
 		int countDepots = listDepots.size();
@@ -374,7 +410,7 @@ public class Problem {
 		return totalCapacity;
 	}
      
-    /*Método que dado el depósito devuelve la lista de clientes asignados*/
+    /*Mï¿½todo que dado el depï¿½sito devuelve la lista de clientes asignados*/
     public ArrayList<Customer> getCustomersAssignedByIDDepot(int idDepot){
     	ArrayList<Customer> listCustomersAssigned = new ArrayList<Customer>();
     	int countCustomers = listCustomers.size();
@@ -402,7 +438,7 @@ public class Problem {
     	return listCustomersAssigned;
     }
     
-    /* Método que llena la lista de capacidades de la flota de vehículos en FHVRP*/
+    /* Mï¿½todo que llena la lista de capacidades de la flota de vehï¿½culos en FHVRP*/
     public ArrayList<Double> fillListCapacities(int posDepot){ /**md**/
     	listCapacities = new ArrayList<Double>();
 
@@ -413,7 +449,7 @@ public class Problem {
     	return listCapacities;
     }
     
-    /* Método que llena la lista de capacidades de la flota de vehículos en FHVRP*/
+    /* Mï¿½todo que llena la lista de capacidades de la flota de vehï¿½culos en FHVRP*/
     public ArrayList<Double> fillListCapacitiesTest(){
     	listCapacities = new ArrayList<Double>();
 
@@ -424,7 +460,7 @@ public class Problem {
     	return listCapacities;
     }
     
-	/*Método para obtener la lista de los id de los depositos*/
+	/*Mï¿½todo para obtener la lista de los id de los depositos*/
 	public ArrayList<Integer> getListIDDepots(){
 		int countDepot = listDepots.size();
 		ArrayList<Integer> listIDDepots = new ArrayList<Integer>();
@@ -435,7 +471,7 @@ public class Problem {
 		return listIDDepots;
 	}
 	
-	/* Método que determina si existen clientes que puedan ser asignado al depósito */
+	/* Mï¿½todo que determina si existen clientes que puedan ser asignado al depï¿½sito */
 	public boolean isFullDepot(ArrayList<Customer> listCustomers, int posDepot){
 		boolean isFull = false;
 		double capacityTotal = (listDepots.get(posDepot).getListFleets().get(0).getCapacityVehicle() * listDepots.get(posDepot).getListFleets().get(0).getCountVehicles());
@@ -458,4 +494,129 @@ public class Problem {
 		
 		return isFull;
 	}
+        
+        public int getTotalBusesStop(){
+            return this.listBusesStop.size();
+        }
+        
+        //Lista de pasajeros asignados dado una parada
+        public HashMap<String, ArrayList<String>> customerAssignedByBusStop(String busStop) throws ItemNotFoundException{
+            ArrayList<String> passengers = new ArrayList<String>();
+            HashMap<String, ArrayList<String>> values = new HashMap<String, ArrayList<String>>();
+
+            int count = 0;
+
+            int busPosition = this.getBusStopPosition(busStop);
+
+            passengers = this.listBusesStop.get(busPosition).getListCustomers();
+
+            for (String p : passengers) {
+
+               // int passenger = this.getPosElement(passengers.get(i));
+
+                //double distance = Math.round(this.passanger_stop_matrix.getItem(passenger, bus_position) * 100.0) / 100.0;
+
+                //Passenger p = this.listPassengers.get(passenger);
+
+                ArrayList<String> data = new ArrayList<String>();
+
+                //data.add(p.getLocationPassenger().getAddress());
+                //data.add((Math.round(distance * 100.0) / 100.00) + "");
+
+                data.add(0.00+"");
+
+                values.put(p, data);
+
+            }
+
+            return values;
+        }
+        
+        //Obtener la posicion de una parada dado su identificador
+        public int getBusStopPosition(String id) throws ItemNotFoundException {
+
+            int count = 0;
+            boolean found = false;
+
+            do {
+
+                if (this.listBusesStop.get(count).getIdBusStop().equalsIgnoreCase(id)) {
+                    found = true;
+                } else {
+                    count++;
+                }
+
+            } while (count < this.listBusesStop.size() && !found);
+
+            if (!found) {
+                throw new ItemNotFoundException("El vehÃ­culo de identificador: " + id + " no existe");
+            }
+
+            return count;
+
+        }
+        
+        //Lista de paradas alcanzables para un pasajero
+        public ArrayList<String> alcanzableBusStopForCustomer(int id) {
+
+            ArrayList<String> alcanzableBusStop = new ArrayList<>();
+
+            int passengerPosition = getPosElement(id);
+
+            NumericArray list = this.costMatrix.getRow(passengerPosition);
+
+            for (int i = 0; i < list.getLength(); i++) {
+
+                String bus_stop;
+
+                if (list.getItem(i) != Double.POSITIVE_INFINITY) {
+
+                    bus_stop = this.listBusesStop.get(i).getIdBusStop();
+
+                    alcanzableBusStop.add(bus_stop);
+
+                }
+
+            }//for
+
+            return alcanzableBusStop;
+
+        }
+        
+        //Comprobar que un pasajero este asignado
+        private boolean passengerAssigned(int id) throws ItemNotFoundException {
+
+            int position = this.getPosElement(id);
+
+            boolean found = false;
+
+            int count = 0;
+
+            if (position > -1) {
+
+                do {
+
+                    found = listBusesStop.get(count++).getListCustomers().contains(id);
+
+                } while (!found && count < listBusesStop.size());
+
+            }
+
+            return found;
+
+        }
+        
+        public int getTotalBusStopWithCustomersAssigned() {
+
+            int count = 0;
+
+            for (BusStop b : listBusesStop) {
+                if (!b.getListCustomers().isEmpty()) {
+                    count++;
+                }
+            }
+
+            return count;
+
+        }
 }

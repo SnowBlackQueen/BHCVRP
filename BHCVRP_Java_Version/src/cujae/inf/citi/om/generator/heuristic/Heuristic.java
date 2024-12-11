@@ -7,16 +7,19 @@ import cujae.inf.citi.om.data.Customer;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.generator.solution.Solution;
-import cujae.inf.citi.om.matrix.RowCol;
+//import cujae.inf.citi.om.matrix.NumericMatrix;
+import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
+//import cujae.inf.citi.om.matrix.RowCol;
+import libmatrix.cujae.inf.citi.om.matrix.RowCol;
 
-/* Clase abstracta que modela una heurística de construcción*/
+/* Clase abstracta que modela una heurï¿½stica de construcciï¿½n*/
 
 public abstract class Heuristic {
 	
-	/* Método abstracto encargado de generar la solución*/
+	/* Mï¿½todo abstracto encargado de generar la soluciï¿½n*/
 	public abstract Solution getSolutionInicial();
 	 
-	/* Método que busca un cliente por su identificador*/
+	/* Mï¿½todo que busca un cliente por su identificador*/
 	protected Customer getCustomerByID(int idCustomer, ArrayList<Customer> listCustomers){
 		int i = 0;
 		boolean found = false;
@@ -103,7 +106,7 @@ public abstract class Heuristic {
 		}
 	}
 	
-	/* Método que devuelve el primer cliente a insertar en la ruta cuando es MDVRP*/	
+	/* Mï¿½todo que devuelve el primer cliente a insertar en la ruta cuando es MDVRP*/	
 	private Customer selectFirstCustomerInMDVRP(ArrayList<Customer> CustomersToVisit, FirstCustomerType firstCustomerType, int posMatrixDepot){
 		Customer selectedCustomer = null;
 		int currentIndex = -1;
@@ -145,7 +148,7 @@ public abstract class Heuristic {
 	}
 	
 
-	/* Método que devuelve el primer cliente a insertar en la ruta*/	
+	/* Mï¿½todo que devuelve el primer cliente a insertar en la ruta*/	
 	protected Customer getFirstCustomer(ArrayList<Customer> CustomersToVisit, FirstCustomerType firstCustomerType, int idDepot){ 
 		Random random = new Random ();
 		Customer firstCustomer = null;
@@ -165,6 +168,7 @@ public abstract class Heuristic {
 			default:
 			{
 				posMatrixDepot = Problem.getProblem().getPosElement(idDepot);
+                                System.out.println("Fila" + posMatrixDepot);
 
 				if(Problem.getProblem().getTypeProblem().equals(ProblemType.MDVRP))
 					firstCustomer = selectFirstCustomerInMDVRP(CustomersToVisit, firstCustomerType, posMatrixDepot);
@@ -175,9 +179,16 @@ public abstract class Heuristic {
 					else
 						if(firstCustomerType.equals(FirstCustomerType.FurthestCustomer))
 							rc = Problem.getProblem().getCostMatrix().indexBiggerValue(posMatrixDepot, 0, posMatrixDepot, (CustomersToVisit.size() - 1));
-					
+                                                        
+                                                        /*for(int i = 0; i <= CustomersToVisit.size(); i++)
+                                                            for(int j = 0; j <= CustomersToVisit.size(); j++)
+                                                                System.out.println(m.getItem(i, j));*/
+                                        NumericMatrix m = Problem.getProblem().getCostMatrix();
+                                        System.out.println(m.getItem(rc.getRow(), rc.getCol()));
 					index = rc.getCol();
+                                        System.out.println("Indice"+index);
 					firstCustomer = CustomersToVisit.get(index);
+                                        System.out.println("Id cliente"+firstCustomer.getIdCustomer());
 				}
 			}
 		}
