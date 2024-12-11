@@ -22,6 +22,34 @@ public class CMT extends Heuristic{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+            if (parameterL <= 0){
+                parameterL = 1;
+            }
+
+            ArrayList<Route> listCandidateRoutes = new ArrayList<>();
+
+            Operator_3opt three_opt = new Operator_3opt();
+
+            //int random = new Random();
+            int index = -1;
+
+            ArrayList<Customer> list_root_customers = new ArrayList<>();
+            ArrayList<Metric> list_metrics_cmt_by_customer = new ArrayList<>();
+            ArrayList<Metric> list_tau_costs = new ArrayList<>();
+            Route route = new Route();
+            Customer root_customer = new Customer();
+            Customer customer_to_insert = new Customer();
+            double request_route = 0.0;
+            int pos_best_tau = -1;
+
+            if (Problem.getProblem().getTypeProblem().equals(ProblemType.HFVRP) || Problem.getProblem().getTypeProblem().ordinal() == 1){
+                ArrayList<Double> listCapacities = Problem.getProblem().getListCapacities();
+            }
+           
+        }
 
 	@Override
 	public Solution getSolutionInicial() {

@@ -21,6 +21,35 @@ public class MoleJameson extends Heuristic{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+            int idDepot = Problem.getProblem().getListDepots().get(0).getIdDepot();
+            Customer customer = getFirstCustomer(
+                Problem.getProblem().getListCustomers(), firstCustomerType, idDepot);
+
+            if (!initialized){
+                if (parameterC1 <= 0)
+                    parameterC1 = 1;
+
+                if (parameterC2 <= 0)
+                    parameterC2 = 1;
+
+                Operator_3opt threeOpt = new Operator_3opt();
+                ArrayList<Metric> listBestPositions = new ArrayList<>();
+                Metric metricMJ = new Metric();
+                int countNoFeasible = 0;
+                double requestRoute = customer.getRequestCustomer();
+            }
+
+            Route route = new Route();
+            route.getListIdCustomers().add(idDepot);
+            route.getListIdCustomers().add(customer.getIdCustomer());
+            route.getListIdCustomers().add(idDepot);
+            route.setIdDepot(idDepot);
+            Problem.getProblem().getListCustomers().remove(customer);
+           
+        }
 
 	@Override
 	public Solution getSolutionInicial() {
@@ -74,7 +103,8 @@ public class MoleJameson extends Heuristic{
 		Metric metricMJ = null;
 		int countNoFeasible = 0;
 		
-		customer = getFirstCustomer(CustomersToVisit, firstCustomerType, idDepot);   
+		customer = getFirstCustomer(CustomersToVisit, firstCustomerType, idDepot);  
+                System.out.println("asd");
 		requestRoute = customer.getRequestCustomer();
 		route.getListIdCustomers().add(idDepot);		
 		route.getListIdCustomers().add(customer.getIdCustomer());
