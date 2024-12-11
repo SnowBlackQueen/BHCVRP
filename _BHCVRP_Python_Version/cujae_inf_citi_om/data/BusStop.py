@@ -57,4 +57,26 @@ class BusStop:
     def set_list_customers(self, list_customers):
         self._list_customers = list_customers
 
+    def has_capacity(self):
+        return self._capacity_bus_stop > self._list_customers.__len__()
+
+    def insert_customer(self, id_customer):
+        if self.has_capacity():
+            self._list_customers.append(id_customer)
+
+        return self.has_capacity()
+
+    def increase_capacity_bus_stop(self, increase):
+        if increase > 0:
+            self._capacity_bus_stop += increase
+
+    def decrease_capacity_bus_stop(self, decrease):
+        if decrease > 0 and (self._capacity_bus_stop - decrease > 0):
+            self._capacity_bus_stop -= decrease
+        else:
+            raise BusStopCapacityException("La capacidad de la parada debe ser mayor que cero")
+
+    def get_coordinates(self):
+        return self._location_bus_stop.get_axis_x() + " " + self._location_bus_stop.get_axis_y()
+
 
