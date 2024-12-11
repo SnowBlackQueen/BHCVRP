@@ -5,16 +5,15 @@ import java.util.List;
 
 import cujae.inf.citi.om.generator.solution.Route;
 
-/*Clase abstracta que define el comportamiento de un método de post-optimización */
+/*Clase abstracta que define el comportamiento de un mï¿½todo de post-optimizaciï¿½n */
 
 public abstract class StepOptimization{
 	
-	/* Metodo que define el comportamiento del paso de optimización */
+	/* Metodo que define el comportamiento del paso de optimizaciï¿½n */
 	public abstract void toOptimize(Route route);
 	
-	
-	/* Método que invierte el orden de una cadena*/
-	public void Invert(ArrayList<Integer> listCandidates, int posIni, int posEnd) {
+	/* Mï¿½todo que invierte el orden de una cadena*/
+	public void invert(ArrayList<Integer> listCandidates, int posIni, int posEnd) {
 		if(posIni > posEnd)
 		{
 			int posTemp = posEnd;
