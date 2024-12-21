@@ -1,3 +1,14 @@
+import time
+import numpy as np
+import jpype
+import jpype.imports
+
+from tqdm import tqdm
+from enum import Enum
+from typing import List, Tuple
+from jpype import java
+from jpype.types import *
+
 from factory.methods.FactoryHeuristic import FactoryHeuristic
 from factory.methods.FactoryDistance import FactoryDistance
 from data.Customer import Customer
@@ -8,23 +19,14 @@ from data.Fleet import Fleet
 from data.FleetTTRP import FleetTTRP
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from typing import List, Tuple
+from data.Depot import Depot
 from generator.solution.RouteType import RouteType
 from generator.solution.RouteTTRP import RouteTTRP
 from tools.Tools import Tools
 from tools.OrderType import OrderType
-from data.Depot import Depot
 from distance.Distance import Distance
 from factory.interfaces.DistanceType import DistanceType
 from generator.heuristic.Heuristic import Heuristic
-import numpy as np
-import time
-from tqdm import tqdm
-from enum import Enum
-import jpype
-import jpype.imports
-from jpype.types import *
-from jpype import java
 
 
 class StrategyHeuristic:
@@ -127,19 +129,18 @@ class StrategyHeuristic:
         return list_customers
 
     # Método encargado de cargar los datos de los clientes TTRP sin coordenadas
-    def load_customer_ttrp(self, id_customers, request_customers, type_customers):
+    def load_customer_ttrp(self,
+                           id_customers,
+                           request_customers,
+                           type_customers):
         list_customers = self.load_customer(id_customers, request_customers)
 
         for i in range(len(list_customers)):
             c = list_customers[i]
-
-            customer_ttrp = CustomerTTRP(
-                int(type_customers[i]),
-                c.get_id_customer(),
-                c.get_request_customer(),
-                c.get_location_customer(),
-            )
-
+            customer_ttrp = CustomerTTRP(int(type_customers[i]),
+                                         c.get_id_customer(),
+                                         c.get_request_customer(),
+                                         c.get_location_customer())
             list_customers[i] = customer_ttrp
 
         return list_customers
@@ -316,25 +317,23 @@ class StrategyHeuristic:
         return list_depots
 
     # Método encargado de cargar los datos del problema usando listas de distancias y las coordenadas
-    def load_problem_with_assign(
-        self,
-        id_customers,
-        request_customers,
-        id_depots,
-        count_vehicles,
-        capacity_vehicles,
-        list_distances,
-        axis_X_customers=None,
-        axis_Y_customers=None,
-        axis_X_depots=None,
-        axis_Y_depots=None,
-        type_problem=None,
-        type_assignment=None,
-    ) -> bool:
+    def load_problem_with_assign(self,
+                                 id_customers,
+                                 request_customers,
+                                 id_depots,
+                                 count_vehicles,
+                                 capacity_vehicles,
+                                 list_distances,
+                                 axis_X_customers=None,
+                                 axis_Y_customers=None,
+                                 axis_X_depots=None,
+                                 axis_Y_depots=None,
+                                 type_problem=None,
+                                 type_assignment=None) -> bool:
         loaded = False
         Problem.get_problem().set_type_problem(type_problem)
-        if (
-            id_customers
+
+        if (id_customers
             and request_customers
             and id_depots
             and count_vehicles
@@ -343,26 +342,24 @@ class StrategyHeuristic:
             and axis_X_customers
             and axis_Y_customers
             and axis_X_depots
-            and axis_Y_depots
-        ):
-            list_customers = self.load_customer_(
-                id_customers, request_customers, axis_X_customers, axis_Y_customers
-            )
-            list_depots = self.load_depot_(
-                id_depots,
-                axis_X_depots,
-                axis_Y_depots,
-                None,
-                count_vehicles,
-                capacity_vehicles,
-            )
+            and axis_Y_depots):
+
+            list_customers = self.load_customer_(id_customers,
+                                                 request_customers,
+                                                 axis_X_customers,
+                                                 axis_Y_customers)
+            list_depots = self.load_depot_(id_depots,
+                                           axis_X_depots,
+                                           axis_Y_depots,
+                                           None,
+                                           count_vehicles,
+                                           capacity_vehicles)
+
             Problem.get_problem().set_list_customers(list_customers)
             Problem.get_problem().set_list_depots(list_depots)
 
-            if (
-                Problem.get_problem().get_total_capacity()
-                >= Problem.get_problem().get_total_request()
-            ):
+            if (Problem.get_problem().get_total_capacity()
+                >= Problem.get_problem().get_total_request()):
                 loaded = True
                 Problem.get_problem().set_cost_matrix(
                     self.fill_cost_matrix(list_distances)

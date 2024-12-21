@@ -16,6 +16,7 @@ class RouteTTRP(Route):
         id_depot=None,
         list_access_vc=None,
         maximum_distance=None,
+        list_bus_stops=None,
     ):
         super().__init__(
             list_id_customers,
@@ -24,6 +25,7 @@ class RouteTTRP(Route):
             id_depot,
             list_access_vc,
             maximum_distance,
+            list_bus_stops,
         )
         self._type_route = type_route
         self.list_access_vc = list_access_vc if list_access_vc else []
@@ -37,6 +39,7 @@ class RouteTTRP(Route):
         id_depot=None,
         list_access_vc=None,
         maximum_distance=None,
+        list_bus_stops=None,
     ):
         if (
             list_id_customers is not None
@@ -53,6 +56,7 @@ class RouteTTRP(Route):
                 id_depot,
                 list_access_vc,
                 maximum_distance,
+                list_bus_stops,
             )
             self._type_route = type_route
             self.list_access_vc = list_access_vc

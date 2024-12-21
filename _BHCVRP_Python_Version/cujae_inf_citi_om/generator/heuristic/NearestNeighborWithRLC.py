@@ -20,16 +20,28 @@ class NearestNeighborWithRLC(Heuristic):
     def initialize_specifics(self):
         if self.size_rlc == 0:
             self.size_rlc = 1
-        elif self.size_rlc > (len(Problem.get_problem().get_list_customers()) / 2):
-            raise RLC_Exception(
-                "La lista de candidatos restringidos debe ser menor que la mitad del total de clientes"
-            )
 
-        self.customer = self._get_NN_customer(self.customers_to_visit, self.id_depot)
-        if not self.initialized:
-            self.request_route = self.customer.get_request_customer()
-            self.route.get_list_id_customers().append(self.customer.get_id_customer())
-            self.customers_to_visit.remove(self.customer)
+        if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+            if self.size_rlc > (len(Problem.get_problem().get_list_buses_stop()) / 2):
+                raise RLC_Exception(
+                    "La lista de candidatos restringidos debe ser menor que la mitad del total de clientes"
+                )
+            self.bus_stop = self._get_NN_element(self.list_bus_stops, self.id_depot)
+            if not self.initialized:
+                self.route.get_list_bus_stops().append(self.bus_stop.get_id_bus_stop())
+                self.list_bus_stops.remove(self.bus_stop)
+
+        else:
+            if self.size_rlc > (len(Problem.get_problem().get_list_customers()) / 2):
+                raise RLC_Exception(
+                    "La lista de candidatos restringidos debe ser menor que la mitad del total de clientes"
+                )
+
+            self.customer = self._get_NN_element(self.customers_to_visit, self.id_depot)
+            if not self.initialized:
+                self.request_route = self.customer.get_request_customer()
+                self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                self.customers_to_visit.remove(self.customer)
 
     def get_solution_inicial(self):
         self.execute()
@@ -37,46 +49,43 @@ class NearestNeighborWithRLC(Heuristic):
         return self.solution
 
     # Método que devuelve el cliente más cercano al cliente referencia
-    def _get_NN_customer(self, list_customers, reference):
-        customer = Customer()
+    def _get_NN_element(self, list_elements, reference):
         RLC = -1
 
-        if len(list_customers) == 1:
-            customer = list_customers[0]
+        if len(list_elements) == 1:
+            element = list_elements[0]
         else:
-            list_nn = self._get_list_NN(list_customers, reference)
+            list_nn = self._get_list_NN(list_elements, reference)
             list_rlc = []
 
-            RLC = min(NearestNeighborWithRLC.size_rlc, len(list_customers))
+            RLC = min(NearestNeighborWithRLC.size_rlc, len(list_elements))
 
             for i in range(RLC):
                 list_rlc.append(list_nn[i])
 
             random = Random()
             index = random.randint(0, RLC - 1)
-            customer = list_rlc.pop(index)
+            element = list_rlc.pop(index)
 
-        return customer
+        return element
 
     # Método que devuelve la lista de vecinos más cercanos
-    def _get_list_NN(self, list_customers, reference):
+    def _get_list_NN(self, list_elements, reference):
         list_distances = []
         list_nn = []
         ref_distance = 0.0
 
-        for i in range(len(list_customers)):
-            ref_distance = (
-                Problem.get_problem()
-                .get_cost_matrix()
-                .item(
+        for i in range(len(list_elements)):
+            if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                ref_distance = (Problem.get_problem().get_cost_matrix().item(
                     Problem.get_problem().get_pos_element(reference),
-                    Problem.get_problem().get_pos_element(
-                        list_customers[i].get_id_customer()
-                    ),
-                )
-            )
+                    Problem.get_problem().get_pos_element(list_elements[i].get_id_bus_stop())))
+            else:
+                ref_distance = (Problem.get_problem().get_cost_matrix().item(
+                        Problem.get_problem().get_pos_element(reference),
+                        Problem.get_problem().get_pos_element(list_elements[i].get_id_customer())))
             list_distances.append(ref_distance)
-            list_nn.append(list_customers[i])
+            list_nn.append(list_elements[i])
 
         self._ascendent_ordenate_list_distances(list_distances, list_nn)
 

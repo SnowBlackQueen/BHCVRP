@@ -1,5 +1,7 @@
-from typing import List
 import numpy as np
+
+from typing import List
+
 from data.Customer import Customer
 from data.CustomerTTRP import CustomerTTRP
 from data.Depot import Depot
@@ -58,6 +60,8 @@ class Problem:
             self._type_problem = ProblemType.OVRP
         elif type_problem == 4:
             self._type_problem = ProblemType.TTRP
+        elif type_problem == 5:
+            self._type_problem = ProblemType.SBRP
 
     def get_cost_matrix(self):
         return self._cost_matrix
@@ -148,28 +152,48 @@ class Problem:
             depot.get_list_fleets()[0].get_capacity_vehicle() for depot in list_depots
         ]
 
-    # Método que dado un id (deposito o cliente) devuelve la posicion
+    # Método que dado un id (deposito, cliente o parada) devuelve la posicion
     def get_pos_element(self, id_element):
         i = 0
         found = False
         pos_element = -1
         count_customers = len(self._list_customers)
         count_depots = len(self._list_depots)
+        count_bus_stops = len(self._list_buses_stop)
 
-        while i < count_depots and not found:
-            if self._list_depots[i].get_id_depot() == id_element:
-                pos_element = i + count_customers
-                found = True
-            else:
-                i += 1
+        if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+            while i < count_depots and not found:
+                if self._list_depots[i].get_id_depot() == id_element:
+                    pos_element = i + count_bus_stops
+                    found = True
+                else:
+                    i += 1
 
-        i = 0
-        while i < count_customers and not found:
-            if self._list_customers[i].get_id_customer() == id_element:
-                pos_element = i
-                found = True
-            else:
-                i += 1
+            i = 0
+            while i < count_bus_stops and not found:
+                if isinstance(id_element, int):
+                    # Convert to the string format "bus_stop_id_#"
+                    id_element = f"bus_stop_id_{id_element}"
+                if self._list_buses_stop[i].get_id_bus_stop() == id_element:
+                    pos_element = i
+                    found = True
+                else:
+                    i += 1
+        else:
+            while i < count_depots and not found:
+                if self._list_depots[i].get_id_depot() == id_element:
+                    pos_element = i + count_customers
+                    found = True
+                else:
+                    i += 1
+
+            i = 0
+            while i < count_customers and not found:
+                if self._list_customers[i].get_id_customer() == id_element:
+                    pos_element = i
+                    found = True
+                else:
+                    i += 1
 
         return pos_element
 
@@ -288,14 +312,15 @@ class Problem:
         return exist
 
     # Método que dado el depósito devuelve la lista de clientes asignados
-    def get_customers_assigned_by_id_depot(self, id_depot, list_customers, list_depots):
+    def get_customers_assigned_by_id_depot(self,
+                                           id_depot,
+                                           list_customers,
+                                           list_depots):
         list_customers_assigned = []
         count_customers = len(list_customers)
         pos_element = self.get_pos_element(id_depot)
         pos_depot = pos_element - count_customers
-        count_assigned_customers = len(
-            list_depots[pos_depot].get_list_assigned_customers()
-        )
+        count_assigned_customers = len(list_depots[pos_depot].get_list_assigned_customers())
 
         for i in range(count_assigned_customers):
             j = 0
@@ -409,6 +434,29 @@ class Problem:
                alcanzable_bus_stop.append(bus_stop)
 
         return alcanzable_bus_stop
+
+    def is_customer_assigned(self, id_customer):
+        passenger_position = self.get_pos_element(id_customer)
+        found = False
+        count = 0
+
+        if passenger_position > -1:
+            while not found and count < self._list_buses_stop.__len__():
+                count += 1
+                found = id_customer in self._list_buses_stop[count].get_list_passengers()
+
+        return found
+
+    def get_total_bus_stop_with_customers_assigned(self):
+        total_bus_stop_with_customers_assigned = 0
+        for b in self._list_buses_stop:
+            if not b.get_list_customers():
+                total_bus_stop_with_customers_assigned += 1
+
+        return total_bus_stop_with_customers_assigned
+
+
+
 
 
 

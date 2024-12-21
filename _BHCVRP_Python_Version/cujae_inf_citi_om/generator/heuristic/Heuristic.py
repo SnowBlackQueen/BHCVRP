@@ -1,22 +1,24 @@
+import random
 import numpy as np
+
+from typing import List
+from abc import ABC, abstractmethod
+from random import Random
 
 from data.Customer import Customer
 from data.CustomerType import CustomerType
+from data.BusStop import BusStop
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from generator.solution.Solution import Solution
-from typing import List
-from generator.heuristic.Metric import Metric
-from generator.heuristic.FirstCustomerType import FirstCustomerType
-import random
-from random import Random
-from abc import ABC, abstractmethod
 from data.DepotMDVRP import DepotMDVRP
+from generator.solution.Solution import Solution
 from generator.solution.Route import Route
 from generator.solution.RouteType import RouteType
-from generator.postoptimization.Operator_3opt import Operator_3opt
 from generator.solution.RouteTTRP import RouteTTRP
+from generator.heuristic.Metric import Metric
+from generator.heuristic.FirstCustomerType import FirstCustomerType
 
+from generator.postoptimization.Operator_3opt import Operator_3opt
 
 # Clase abstracta que modela una heurística de construcción
 
@@ -49,12 +51,17 @@ class Heuristic(ABC):
             or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
             or Problem.get_problem().get_type_problem() == ProblemType.OVRP
             or Problem.get_problem().get_type_problem() == ProblemType.TTRP
+            or Problem.get_problem().get_type_problem() == ProblemType.SBRP
         ):
             self.pos_depot = 0
             self.id_depot = (
                 Problem.get_problem().get_list_depots()[self.pos_depot].get_id_depot()
             )
-            self.customers_to_visit = list(Problem.get_problem().get_list_customers())
+            if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                self.list_bus_stops = list(Problem.get_problem().get_list_buses_stop())
+                self.bus_stop = BusStop()
+            else:
+                self.customers_to_visit = list(Problem.get_problem().get_list_customers())
         else:
             i = 0
             self.found = False
@@ -101,12 +108,13 @@ class Heuristic(ABC):
         if self.type_problem == ProblemType.TTRP or self.type_problem == 4:
             self.route = RouteTTRP()
 
+
     @abstractmethod  # Método para ejecutar la variante específica del problema para cierta heurística
     def get_solution_inicial(self) -> Solution:
         pass
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem in [0, 3]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem in [0, 3, 5]:
             self.processing(
                 self.customers_to_visit,
                 self.count_vehicles,
@@ -238,65 +246,178 @@ class Heuristic(ABC):
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         created = False
-        if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
-            if (
-                self.request_route + self.customer.get_request_customer()
-                <= self.capacity_vehicle
-            ):
-                self.request_route += self.customer.get_request_customer()
-                self.route.get_list_id_customers().append(
-                    self.customer.get_id_customer()
-                )
-                self.customers_to_visit.remove(self.customer)
-                if not self.customers_to_visit:
+        if self.type_problem == ProblemType.SBRP:
+            # Logic for SBRP variant
+            while self.list_bus_stops:
+                self.initialize_specifics()  # Initialize bus stop specifics
+
+                # Get the current bus stop
+                bus_stop = self.bus_stop  # Assuming self.bus_stop is set correctly
+
+                # Check if adding this bus stop exceeds vehicle capacity
+                if (self.request_route + bus_stop.get_capacity_bus_stop() <= self.capacity_vehicle):
+                    self.request_route += bus_stop.get_capacity_bus_stop()  # Update request_route
+                    self.route.get_list_bus_stops().append(bus_stop.get_id_bus_stop())  # Add bus stop to route
+                    self.list_bus_stops.remove(bus_stop)  # Remove bus stop from the list
+                else:
+                    # If capacity is exceeded, finalize the current route
                     self.route.set_request_route(self.request_route)
                     self.route.set_id_depot(self.id_depot)
                     self.solution.get_list_routes().append(self.route)
-            else:
+
+                    # Reset for the next route
+                    self.route = Route()  # Create a new route
+                    self.request_route = 0.0  # Reset request_route for the new route
+
+            # Finalize the last route if it has bus stops
+            if self.route.get_list_bus_stops():
                 self.route.set_request_route(self.request_route)
                 self.route.set_id_depot(self.id_depot)
                 self.solution.get_list_routes().append(self.route)
-                self.route = Route()
-                self.route.get_list_id_customers().append(
-                    self.customer.get_id_customer()
-                )
-                self.request_route = self.customer.get_request_customer()
-                self.customers_to_visit.remove(self.customer)
-                created = True
 
+            created = True  # Indicate that a route was created
             return created, self.route
-
-        elif self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
-            while self.customers_to_visit:
-                self.initialize_specifics()
-
-                if self.capacity_vehicle >= (
+        else:
+            if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
+                if (
                     self.request_route + self.customer.get_request_customer()
+                    <= self.capacity_vehicle
                 ):
                     self.request_route += self.customer.get_request_customer()
                     self.route.get_list_id_customers().append(
                         self.customer.get_id_customer()
                     )
-                    self.customers_to_visit.remove(
-                        self.customer
-                    )  # Remueve el primer cliente procesado
+                    self.customers_to_visit.remove(self.customer)
+                    if not self.customers_to_visit:
+                        self.route.set_request_route(self.request_route)
+                        self.route.set_id_depot(self.id_depot)
+                        self.solution.get_list_routes().append(self.route)
                 else:
                     self.route.set_request_route(self.request_route)
                     self.route.set_id_depot(self.id_depot)
                     self.solution.get_list_routes().append(self.route)
+                    self.route = Route()
+                    self.route.get_list_id_customers().append(
+                        self.customer.get_id_customer()
+                    )
+                    self.request_route = self.customer.get_request_customer()
+                    self.customers_to_visit.remove(self.customer)
+                    created = True
 
-                    return False  # Indicando que se necesita un nuevo vehículo/ruta
+                return created, self.route
 
-            return True  # Indicando que el vehículo aún tiene capacidad
+            elif self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
+                while self.customers_to_visit:
+                    self.initialize_specifics()
 
-        elif self.type_problem == ProblemType.MDVRP or self.type_problem == 2:
-            # routes = self.solution.get_list_routes()
+                    if self.capacity_vehicle >= (
+                        self.request_route + self.customer.get_request_customer()
+                    ):
+                        self.request_route += self.customer.get_request_customer()
+                        self.route.get_list_id_customers().append(
+                            self.customer.get_id_customer()
+                        )
+                        self.customers_to_visit.remove(
+                            self.customer
+                        )  # Remueve el primer cliente procesado
+                    else:
+                        self.route.set_request_route(self.request_route)
+                        self.route.set_id_depot(self.id_depot)
+                        self.solution.get_list_routes().append(self.route)
 
-            while self.customers_to_visit and self.count_vehicles > 0:
-                self.initialize_specifics()
+                        return False  # Indicando que se necesita un nuevo vehículo/ruta
 
-                if self.capacity_vehicle >= (
+                return True  # Indicando que el vehículo aún tiene capacidad
+
+            elif self.type_problem == ProblemType.MDVRP or self.type_problem == 2:
+                # routes = self.solution.get_list_routes()
+
+                while self.customers_to_visit and self.count_vehicles > 0:
+                    self.initialize_specifics()
+
+                    if self.capacity_vehicle >= (
+                        self.request_route + self.customer.get_request_customer()
+                    ):
+                        self.request_route += self.customer.get_request_customer()
+                        self.route.get_list_id_customers().append(
+                            self.customer.get_id_customer()
+                        )
+                        self.customers_to_visit.remove(self.customer)
+                    else:
+                        self.route.set_request_route(self.request_route)
+                        self.route.set_id_depot(self.id_depot)
+                        self.solution.get_list_routes().append(self.route)
+                        self.count_vehicles -= 1
+
+                        if self.count_vehicles > 0:
+                            self.route = Route()
+
+                            self.route.get_list_id_customers().append(
+                                self.customer.get_id_customer()
+                            )
+                            self.request_route = self.customer.get_request_customer()
+                            self.customers_to_visit.remove(self.customer)
+
+                if self.route != None:
+                    self.route.set_request_route(self.request_route)
+                    self.route.set_id_depot(self.id_depot)
+                    # self.solution.get_list_routes().append(self.route)
+
+                if self.customers_to_visit:
+                    self.route = Route()
+                    self.request_route = 0.0
+
+                    while self.customers_to_visit:
+                        k = 0
+                        found = False
+                        self.request_route = self.solution.get_list_routes()[
+                            k
+                        ].get_request_route()
+
+                        while k < len(self.solution.get_list_routes()) and not found:
+                            if self.capacity_vehicle >= (
+                                self.request_route + self.customer.get_request_customer()
+                            ):
+                                self.solution.get_list_routes()[k].set_request_route(
+                                    self.request_route
+                                    + self.customer.get_request_customer()
+                                )
+                                self.solution.get_list_routes()[
+                                    k
+                                ].get_list_id_customers().append(
+                                    self.customer.get_id_customer()
+                                )
+                                self.customers_to_visit.remove(self.customer)
+                                found = True
+                            else:
+                                k += 1
+                                self.request_route = self.solution.get_list_routes()[
+                                    k
+                                ].get_request_route()
+
+                        if not found:
+                            self.route.get_list_id_customers().append(
+                                self.customer.get_id_customer()
+                            )
+                            self.route.set_request_route(
+                                self.route.get_request_route()
+                                + self.customer.get_request_customer()
+                            )
+                            self.customers_to_visit.remove(self.customer)
+
+                        if self.customers_to_visit:
+                            self.initialize_specifics()
+
+                if self.route.get_list_id_customers():
+                    self.route.set_id_depot(self.id_depot)
+                    self.solution.get_list_routes().append(self.route)
+
+                # return self.solution.get_list_routes()
+
+            elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
+                if (
                     self.request_route + self.customer.get_request_customer()
+                    <= self.capacity_vehicle
                 ):
                     self.request_route += self.customer.get_request_customer()
                     self.route.get_list_id_customers().append(
@@ -305,108 +426,27 @@ class Heuristic(ABC):
                     self.customers_to_visit.remove(self.customer)
                 else:
                     self.route.set_request_route(self.request_route)
+                    # self.route.set_type_route(RouteType.PTR.value)
                     self.route.set_id_depot(self.id_depot)
-                    self.solution.get_list_routes().append(self.route)
-                    self.count_vehicles -= 1
+                    self.route = RouteTTRP(
+                        list_id_customers=self.route.get_list_id_customers(),
+                        request_route=self.route.get_request_route(),
+                        cost_route=self.route.get_cost_route(),
+                        id_depot=self.id_depot,
+                        list_access_vc=[],
+                        type_route=RouteType.PTR.value,
+                        maximum_distance=None,
+                    )
+                    self.solution.get_list_routes().append(self.route)  # VERIFICAR!!
 
-                    if self.count_vehicles > 0:
-                        self.route = Route()
+                    self.route = RouteTTRP()
 
-                        self.route.get_list_id_customers().append(
-                            self.customer.get_id_customer()
-                        )
-                        self.request_route = self.customer.get_request_customer()
-                        self.customers_to_visit.remove(self.customer)
-
-            if self.route != None:
-                self.route.set_request_route(self.request_route)
-                self.route.set_id_depot(self.id_depot)
-                # self.solution.get_list_routes().append(self.route)
-
-            if self.customers_to_visit:
-                self.route = Route()
-                self.request_route = 0.0
-
-                while self.customers_to_visit:
-                    k = 0
-                    found = False
-                    self.request_route = self.solution.get_list_routes()[
-                        k
-                    ].get_request_route()
-
-                    while k < len(self.solution.get_list_routes()) and not found:
-                        if self.capacity_vehicle >= (
-                            self.request_route + self.customer.get_request_customer()
-                        ):
-                            self.solution.get_list_routes()[k].set_request_route(
-                                self.request_route
-                                + self.customer.get_request_customer()
-                            )
-                            self.solution.get_list_routes()[
-                                k
-                            ].get_list_id_customers().append(
-                                self.customer.get_id_customer()
-                            )
-                            self.customers_to_visit.remove(self.customer)
-                            found = True
-                        else:
-                            k += 1
-                            self.request_route = self.solution.get_list_routes()[
-                                k
-                            ].get_request_route()
-
-                    if not found:
-                        self.route.get_list_id_customers().append(
-                            self.customer.get_id_customer()
-                        )
-                        self.route.set_request_route(
-                            self.route.get_request_route()
-                            + self.customer.get_request_customer()
-                        )
-                        self.customers_to_visit.remove(self.customer)
-
-                    if self.customers_to_visit:
-                        self.initialize_specifics()
-
-            if self.route.get_list_id_customers():
-                self.route.set_id_depot(self.id_depot)
-                self.solution.get_list_routes().append(self.route)
-
-            # return self.solution.get_list_routes()
-
-        elif self.type_problem == ProblemType.TTRP or self.type_problem == 4:
-            if (
-                self.request_route + self.customer.get_request_customer()
-                <= self.capacity_vehicle
-            ):
-                self.request_route += self.customer.get_request_customer()
-                self.route.get_list_id_customers().append(
-                    self.customer.get_id_customer()
-                )
-                self.customers_to_visit.remove(self.customer)
-            else:
-                self.route.set_request_route(self.request_route)
-                # self.route.set_type_route(RouteType.PTR.value)
-                self.route.set_id_depot(self.id_depot)
-                self.route = RouteTTRP(
-                    list_id_customers=self.route.get_list_id_customers(),
-                    request_route=self.route.get_request_route(),
-                    cost_route=self.route.get_cost_route(),
-                    id_depot=self.id_depot,
-                    list_access_vc=[],
-                    type_route=RouteType.PTR.value,
-                    maximum_distance=None,
-                )
-                self.solution.get_list_routes().append(self.route)  # VERIFICAR!!
-
-                self.route = RouteTTRP()
-
-                self.request_route = self.customer.get_request_customer()
-                self.type_customer = self.customer.get_type_customer()
-                self.route.get_list_id_customers().append(
-                    self.customer.get_id_customer()
-                )
-                self.customers_to_visit.remove(self.customer)
+                    self.request_route = self.customer.get_request_customer()
+                    self.type_customer = self.customer.get_type_customer()
+                    self.route.get_list_id_customers().append(
+                        self.customer.get_id_customer()
+                    )
+                    self.customers_to_visit.remove(self.customer)
 
             created = True
             return created, self.route
@@ -424,6 +464,15 @@ class Heuristic(ABC):
         if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
             cv = int(count_vehicles)
             while customers_to_visit and cv > 0:
+                self.initialize_specifics()  # Para que customer sea tratado según la variante
+                found, new_route = self.creating()
+                if found:
+                    route = new_route
+                    cv -= 1
+
+        elif self.type_problem == ProblemType.SBRP or self.type_problem == 5:
+            cv = int(count_vehicles)
+            while self.list_bus_stops and cv > 0:
                 self.initialize_specifics()  # Para que customer sea tratado según la variante
                 found, new_route = self.creating()
                 if found:
