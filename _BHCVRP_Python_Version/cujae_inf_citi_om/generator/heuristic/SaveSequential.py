@@ -28,9 +28,10 @@ class SaveSequential(Save):
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         if (
-            self.type_problem in [0, 2, 3]
+            self.type_problem in [0, 2, 3, 5]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.MDVRP
+            or self.type_problem == ProblemType.SBRP
         ):
             if self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
                 row_matrix = Problem.get_problem().get_pos_element_by_id_depot(
@@ -41,7 +42,10 @@ class SaveSequential(Save):
             else:
                 row_matrix = Problem.get_problem().get_pos_element(self.ext_inic)
 
-            submatrix = self.save_matrix[row_matrix, : self.cant_customers]
+            if self.type_problem == ProblemType.SBRP:
+                submatrix = self.save_matrix[row_matrix, : self.cant_bus_stops]
+            else:
+                submatrix = self.save_matrix[row_matrix, : self.cant_customers]
 
             self.max_save_inic = (row_matrix, np.argmax(submatrix))
             if self.ext_inic != self.ext_end:
@@ -53,7 +57,11 @@ class SaveSequential(Save):
                     )
                 else:
                     row_matrix = Problem.get_problem().get_pos_element(self.ext_end)
-                submatrix = self.save_matrix[row_matrix, : self.cant_customers]
+
+                if self.type_problem == ProblemType.SBRP:
+                    submatrix = self.save_matrix[row_matrix, : self.cant_bus_stops]
+                else:
+                    submatrix = self.save_matrix[row_matrix, : self.cant_customers]
                 self.max_save_end = (row_matrix, np.argmax(submatrix))
             else:
                 self.max_save_end = self.max_save_inic
@@ -239,19 +247,23 @@ class SaveSequential(Save):
         solution=None,
     ):
         if (
-            self.type_problem in [0, 1, 2, 3]
+            self.type_problem in [0, 1, 2, 3, 5]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.HFVRP
+            or self.type_problem == ProblemType.SBRP
         ):
             if self.save_value == -np.inf:
                 self.exist_save = False
                 return
             else:
-                pos_route = self.get_position_route(
-                    self.list_routes,
-                    self.customers_to_visit[self.max_save[1]].get_id_customer(),
-                )
+                if self.type_problem == ProblemType.SBRP:
+                    pos_route = self.get_position_route(self.list_routes, self.list_bus_stops[self.max_save[1]].get_id_bus_stop())
+                else:
+                    pos_route = self.get_position_route(
+                        self.list_routes,
+                        self.customers_to_visit[self.max_save[1]].get_id_customer(),
+                    )
                 save_route = self.list_routes[pos_route]
 
                 is_factible = None
@@ -259,6 +271,7 @@ class SaveSequential(Save):
                 if (
                     self.type_problem == ProblemType.CVRP
                     or self.type_problem == ProblemType.MDVRP
+                    or self.type_problem == ProblemType.SBRP
                 ):
                     is_factible = self.checking_merge(
                         self.current_route,
@@ -277,21 +290,29 @@ class SaveSequential(Save):
                     )
 
                 if is_factible != -1:
-                    if self.position_save:
-                        self.current_route.get_list_id_customers().extend(
-                            save_route.get_list_id_customers()
-                        )
-                        self.ext_end = self.customers_to_visit[
-                            self.max_save[1]
-                        ].get_id_customer()
+                    if self.type_problem == ProblemType.SBRP:
+                        if self.position_save:
+                            self.current_route.get_list_bus_stops().extend(save_route.get_list_bus_stops())
+                            self.ext_end = self.list_bus_stops[self.max_save[1]].get_id_bus_stop()
+                        else:
+                            self.current_route.list_bus_stops = (save_route.get_list_bus_stops() + self.current_route.get_list_bus_stops())
+                            self.ext_inic = self.list_bus_stops[self.max_save[1]].get_id_bus_stop()
                     else:
-                        self.current_route.list_id_customers = (
-                            save_route.get_list_id_customers()
-                            + self.current_route.get_list_id_customers()
-                        )
-                        self.ext_inic = self.customers_to_visit[
-                            self.max_save[1]
-                        ].get_id_customer()
+                        if self.position_save:
+                            self.current_route.get_list_id_customers().extend(
+                                save_route.get_list_id_customers()
+                            )
+                            self.ext_end = self.customers_to_visit[
+                                self.max_save[1]
+                            ].get_id_customer()
+                        else:
+                            self.current_route.list_id_customers = (
+                                save_route.get_list_id_customers()
+                                + self.current_route.get_list_id_customers()
+                            )
+                            self.ext_inic = self.customers_to_visit[
+                                self.max_save[1]
+                            ].get_id_customer()
 
                     self.current_route.set_id_depot(id_depot)
                     self.current_route.set_request_route(
@@ -302,50 +323,61 @@ class SaveSequential(Save):
                     )
                     self.list_routes.remove(save_route)
 
-                    if len(self.current_route.get_list_id_customers()) > 2:
-                        no_extreme = self.max_save[0]
-                        # Llenar con infinito negativo para no_extreme
-                        self.save_matrix[no_extreme, :] = -np.inf
-                        self.save_matrix[:, no_extreme] = -np.inf
+                    if self.type_problem == ProblemType.SBRP:
+                        if len(self.current_route.get_list_bus_stops()) > 2:
+                            no_extreme = self.max_save[0]
+                            # Llenar con infinito negativo para no_extreme
+                            self.save_matrix[no_extreme, :] = -np.inf
+                            self.save_matrix[:, no_extreme] = -np.inf
 
-                        if (
-                            self.type_problem == 2
-                            or self.type_problem == ProblemType.MDVRP
-                        ):
-                            self.save_matrix[
-                                Problem.get_problem().get_pos_element_by_id_depot(
-                                    self.id_depot,
-                                    self.ext_inic,
-                                    Problem.get_problem().get_list_depots(),
-                                ),
-                                Problem.get_problem().get_pos_element_by_id_depot(
-                                    self.id_depot,
-                                    self.ext_end,
-                                    Problem.get_problem().get_list_depots(),
-                                ),
-                            ] = -np.inf
-                            self.save_matrix[
-                                Problem.get_problem().get_pos_element_by_id_depot(
-                                    self.id_depot,
-                                    self.ext_end,
-                                    Problem.get_problem().get_list_depots(),
-                                ),
-                                Problem.get_problem().get_pos_element_by_id_depot(
-                                    self.id_depot,
-                                    self.ext_inic,
-                                    Problem.get_problem().get_list_depots(),
-                                ),
-                            ] = -np.inf
-                        else:
                             # Llenar con infinito negativo para ext_inic y ext_end
-                            self.save_matrix[
-                                Problem.get_problem().get_pos_element(self.ext_inic),
-                                Problem.get_problem().get_pos_element(self.ext_end),
-                            ] = -np.inf
-                            self.save_matrix[
-                                Problem.get_problem().get_pos_element(self.ext_end),
-                                Problem.get_problem().get_pos_element(self.ext_inic),
-                            ] = -np.inf
+                            self.save_matrix[Problem.get_problem().get_pos_element(self.ext_inic), Problem.get_problem().get_pos_element(self.ext_end)] = -np.inf
+                            self.save_matrix[Problem.get_problem().get_pos_element(self.ext_end), Problem.get_problem().get_pos_element(self.ext_inic)] = -np.inf
+                    else:
+                        if len(self.current_route.get_list_id_customers()) > 2:
+                            no_extreme = self.max_save[0]
+                            # Llenar con infinito negativo para no_extreme
+                            self.save_matrix[no_extreme, :] = -np.inf
+                            self.save_matrix[:, no_extreme] = -np.inf
+
+                            if (
+                                self.type_problem == 2
+                                or self.type_problem == ProblemType.MDVRP
+                            ):
+                                self.save_matrix[
+                                    Problem.get_problem().get_pos_element_by_id_depot(
+                                        self.id_depot,
+                                        self.ext_inic,
+                                        Problem.get_problem().get_list_depots(),
+                                    ),
+                                    Problem.get_problem().get_pos_element_by_id_depot(
+                                        self.id_depot,
+                                        self.ext_end,
+                                        Problem.get_problem().get_list_depots(),
+                                    ),
+                                ] = -np.inf
+                                self.save_matrix[
+                                    Problem.get_problem().get_pos_element_by_id_depot(
+                                        self.id_depot,
+                                        self.ext_end,
+                                        Problem.get_problem().get_list_depots(),
+                                    ),
+                                    Problem.get_problem().get_pos_element_by_id_depot(
+                                        self.id_depot,
+                                        self.ext_inic,
+                                        Problem.get_problem().get_list_depots(),
+                                    ),
+                                ] = -np.inf
+                            else:
+                                # Llenar con infinito negativo para ext_inic y ext_end
+                                self.save_matrix[
+                                    Problem.get_problem().get_pos_element(self.ext_inic),
+                                    Problem.get_problem().get_pos_element(self.ext_end),
+                                ] = -np.inf
+                                self.save_matrix[
+                                    Problem.get_problem().get_pos_element(self.ext_end),
+                                    Problem.get_problem().get_pos_element(self.ext_inic),
+                                ] = -np.inf
 
                 # Asignar infinito negativo a max_save
                 self.save_matrix[self.max_save[0], self.max_save[1]] = -np.inf
@@ -440,14 +472,18 @@ class SaveSequential(Save):
                 # self.solution.get_list_routes().append(self.current_route)
 
     def execute(self):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
+        if self.type_problem in [0, 3, 4] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP:
             while self.list_routes:
                 self.index = self.random.randint(0, len(self.list_routes) - 1)
                 self.current_route = self.list_routes.pop(self.index)
                 self.exist_save = True
 
-                self.ext_inic = self.current_route.get_list_id_customers()[0]
-                self.ext_end = self.current_route.get_list_id_customers()[-1]
+                if self.type_problem == ProblemType.SBRP:
+                    self.ext_inic = self.current_route.get_list_bus_stops()[0]
+                    self.ext_end = self.current_route.get_list_bus_stops()[-1]
+                else:
+                    self.ext_inic = self.current_route.get_list_id_customers()[0]
+                    self.ext_end = self.current_route.get_list_id_customers()[-1]
 
                 while self.exist_save:
                     self.max_save_inic = None
@@ -460,8 +496,12 @@ class SaveSequential(Save):
                         continue
                     self.processing()
 
-                if len(self.current_route.get_list_id_customers()) >= 6:
-                    self.three_opt.to_optimize(self.current_route)
+                if self.type_problem == ProblemType.SBRP:
+                    if len(self.current_route.get_list_bus_stops()) >= 6:
+                        self.three_opt.to_optimize(self.current_route)
+                else:
+                    if len(self.current_route.get_list_id_customers()) >= 6:
+                        self.three_opt.to_optimize(self.current_route)
 
                 self.solution.get_list_routes().append(self.current_route)
 

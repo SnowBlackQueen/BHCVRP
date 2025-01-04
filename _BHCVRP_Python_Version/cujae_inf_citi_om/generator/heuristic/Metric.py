@@ -1,5 +1,9 @@
 class Metric:
-    def __init__(self, id_element=None, insertion_cost=None, index=None):
+
+    def __init__(self,
+                 id_element=None,
+                 insertion_cost=None,
+                 index=None):
         self._id_element = id_element
         self._insertion_cost = insertion_cost
         self._index = index

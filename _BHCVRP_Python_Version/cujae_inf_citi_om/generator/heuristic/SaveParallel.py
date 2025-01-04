@@ -21,22 +21,28 @@ class SaveParallel(Save):
             Problem.get_problem().fill_list_capacities(self.pos_depot)
         )
 
-        self.inspect_routes(
-            self.list_routes,
-            self.list_capacities,
-            self.solution,
-            self.customers_to_visit,
-        )
+        if self.type_problem == ProblemType.SBRP:
+            self.inspect_routes(self.list_routes, self.list_capacities, self.solution, self.list_bus_stops)
+            self.iterations = (self.cant_bus_stops * (self.cant_bus_stops - 1)) / 2
+            self.row_bus_stop = 0
+            self.col_bus_stop = 0
+        else:
+            self.inspect_routes(
+                self.list_routes,
+                self.list_capacities,
+                self.solution,
+                self.customers_to_visit,
+            )
+            self.iterations = (self.cant_customers * (self.cant_customers - 1)) / 2
+            self.row_customer = 0
+            self.col_customer = 0
 
         if self.type_problem == ProblemType.HFVRP or self.type_problem == 1:
             self.capacity_vehicle = self.list_capacities.pop(0)
 
         self.total_capacity = self.capacity_vehicle
 
-        self.iterations = (self.cant_customers * (self.cant_customers - 1)) / 2
         self.counter = 0
-        self.row_customer = 0
-        self.col_customer = 0
         self.pos_row = 0
         self.pos_col = 0
 
@@ -52,39 +58,71 @@ class SaveParallel(Save):
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         if (
-            self.type_problem in [0, 2, 3]
+            self.type_problem in [0, 2, 3, 5]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.MDVRP
+            or self.type_problem == ProblemType.SBRP
         ):
-            if self.checking_join(
-                self.route_row,
-                self.route_col,
-                self.row_customer,
-                self.col_customer,
-                self.total_capacity,
-            ):
-                self.route.get_list_id_customers().extend(
-                    self.route_row.get_list_id_customers()
-                )
-                self.route.get_list_id_customers().extend(
-                    self.route_col.get_list_id_customers()
-                )
-                self.join = True
+            if self.type_problem == ProblemType.SBRP:
+                if self.checking_join(
+                    self.route_row,
+                    self.route_col,
+                    self.row_bus_stop,
+                    self.col_bus_stop,
+                    self.total_capacity,
+                ):
+                    self.route.get_list_bus_stops().extend(
+                        self.route_row.get_list_bus_stops()
+                    )
+                    self.route.get_list_bus_stops().extend(
+                        self.route_col.get_list_bus_stops()
+                    )
+                    self.join = True
+                else:
+                    if self.checking_join(
+                        self.route_col,
+                        self.route_row,
+                        self.col_bus_stop,
+                        self.row_bus_stop,
+                        self.total_capacity,
+                    ):
+                        self.route.get_list_bus_stops().extend(
+                            self.route_col.get_list_bus_stops()
+                        )
+                        self.route.get_list_bus_stops().extend(
+                            self.route_row.get_list_bus_stops()
+                        )
+                        self.join = True
             else:
                 if self.checking_join(
-                    self.route_col,
                     self.route_row,
-                    self.col_customer,
+                    self.route_col,
                     self.row_customer,
+                    self.col_customer,
                     self.total_capacity,
                 ):
                     self.route.get_list_id_customers().extend(
-                        self.route_col.get_list_id_customers()
-                    )
-                    self.route.get_list_id_customers().extend(
                         self.route_row.get_list_id_customers()
                     )
+                    self.route.get_list_id_customers().extend(
+                        self.route_col.get_list_id_customers()
+                    )
                     self.join = True
+                else:
+                    if self.checking_join(
+                        self.route_col,
+                        self.route_row,
+                        self.col_customer,
+                        self.row_customer,
+                        self.total_capacity,
+                    ):
+                        self.route.get_list_id_customers().extend(
+                            self.route_col.get_list_id_customers()
+                        )
+                        self.route.get_list_id_customers().extend(
+                            self.route_row.get_list_id_customers()
+                        )
+                        self.join = True
 
             if self.join:
                 self.route.set_request_route(
@@ -244,27 +282,36 @@ class SaveParallel(Save):
         solution=None,
     ):
         if (
-            self.type_problem in [0, 2, 3, 4]
+            self.type_problem in [0, 2, 3, 4, 5]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.TTRP
+            or self.type_problem == ProblemType.SBRP
         ):
             if self.save_value > 0 or (
                 self.save_value <= 0 and len(self.list_routes) > self.count_vehicles
             ):
-                self.row_customer = self.customers_to_visit[self.row].get_id_customer()
-                self.col_customer = self.customers_to_visit[self.col].get_id_customer()
+                if self.type_problem == ProblemType.SBRP:
+                    self.row_bus_stop = self.list_bus_stops[self.row].get_id_bus_stop()
+                    self.col_bus_stop = self.list_bus_stops[self.col].get_id_bus_stop()
+                else:
+                    self.row_customer = self.customers_to_visit[self.row].get_id_customer()
+                    self.col_customer = self.customers_to_visit[self.col].get_id_customer()
                 self.counter += 1
 
                 self.save_matrix[self.row, self.col] = -np.inf
                 self.save_matrix[self.col, self.row] = -np.inf
 
-                self.pos_row = self.get_position_route(
-                    self.list_routes, self.row_customer
-                )
-                self.pos_col = self.get_position_route(
-                    self.list_routes, self.col_customer
-                )
+                if self.type_problem == ProblemType.SBRP:
+                    self.pos_row = self.get_position_route(self.list_routes, self.row_bus_stop)
+                    self.pos_col = self.get_position_route(self.list_routes, self.col_bus_stop)
+                else:
+                    self.pos_row = self.get_position_route(
+                        self.list_routes, self.row_customer
+                    )
+                    self.pos_col = self.get_position_route(
+                        self.list_routes, self.col_customer
+                    )
 
                 if self.pos_row == self.pos_col:
                     return
@@ -344,11 +391,7 @@ class SaveParallel(Save):
                 self.is_open = True
 
     def execute(self):
-        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP:
-            cond1 = self.counter < self.iterations
-            cond2 = len(self.list_routes) > 1
-            cond3 = not np.all(self.save_matrix == -np.inf)
-
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
             while (
                 self.counter < self.iterations
                 and len(self.list_routes) > 1
@@ -362,12 +405,16 @@ class SaveParallel(Save):
                 )
 
             for j in range(len(self.list_routes)):
-                if len(self.list_routes[j].get_list_id_customers()) >= 6:
-                    self.three_opt.to_optimize(self.list_routes[j])
+                if self.type_problem == ProblemType.SBRP:
+                    if len(self.list_routes[j].get_list_bus_stops()) >= 6:
+                        self.three_opt.to_optimize(self.list_routes[j])
+                else:
+                    if len(self.list_routes[j].get_list_id_customers()) >= 6:
+                        self.three_opt.to_optimize(self.list_routes[j])
 
             self.solution.get_list_routes().extend(self.list_routes)
 
-        if self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
+        elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             self.is_first = True
             self.is_open = False
 
@@ -614,18 +661,29 @@ class SaveParallel(Save):
 
     # Método que indica si dos rutas pueden unirse
     def checking_join(
-        self, route_ini, route_end, id_customer_ini, id_customer_end, total_capacity
+        self, route_ini, route_end, id_element_ini, id_element_end, total_capacity
     ):
         join = False
-        size_route = len(route_ini.get_list_id_customers())
 
-        if (
-            route_ini.get_request_route() + route_end.get_request_route()
-        ) <= total_capacity:
+        if self.type_problem == ProblemType.SBRP:
+            size_route = len(route_ini.get_list_bus_stops())
             if (
-                route_ini.get_list_id_customers()[size_route - 1] == id_customer_ini
-            ) and (route_end.get_list_id_customers()[0] == id_customer_end):
-                join = True
+                route_ini.get_request_route() + route_end.get_request_route()
+            ) <= total_capacity:
+                bus_stop_ini = route_ini.get_list_bus_stops()[size_route - 1]
+                bus_stop_end = route_end.get_list_bus_stops()[0]
+                if (bus_stop_ini.get_id_bus_stop() == id_element_ini) and (bus_stop_end.get_id_bus_stop() == id_element_end):
+                    join = True
+        else:
+            size_route = len(route_ini.get_list_id_customers())
+
+            if (
+                route_ini.get_request_route() + route_end.get_request_route()
+            ) <= total_capacity:
+                if (
+                        route_ini.get_list_id_customers()[size_route - 1] == id_element_ini
+                ) and (route_end.get_list_id_customers()[0] == id_element_end):
+                    join = True
 
         return join
 

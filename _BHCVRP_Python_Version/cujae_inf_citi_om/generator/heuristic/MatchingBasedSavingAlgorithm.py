@@ -25,6 +25,9 @@ class MatchingBasedSavingAlgorithm(Save):
                 self.id_depot, Problem.get_problem().get_list_customers(), self.depots
             )
 
+        elif self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            self.list_bus_stops = Problem.get_problem().get_list_buses_stop()
+
         else:
             self.customers = Problem.get_problem().get_list_customers()
 
@@ -34,10 +37,13 @@ class MatchingBasedSavingAlgorithm(Save):
         # self.routes = []
 
     def get_solution_inicial(self):
-        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP:
-            self.list_routes = self.match_based_savings_algorithm(
-                self.customers, self.depots
-            )
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            if self.type_problem == ProblemType.SBRP:
+                self.list_routes = self.match_based_savings_algorithm(self.list_bus_stops, self.depots)
+            else:
+                self.list_routes = self.match_based_savings_algorithm(
+                    self.customers, self.depots
+                )
 
             # for r in self.list_routes:
             #    if len(r.get_list_id_customers()) >= 6:
@@ -128,15 +134,15 @@ class MatchingBasedSavingAlgorithm(Save):
         return self.solution
 
     def calculate_savings_matrix(
-        self, customers: List[Customer]
+        self, elements
     ) -> List[Tuple[Tuple[int, int], float]]:
         """Calculate savings for each pair of customers based on cost matrix and depot location."""
         savings_list = []
         # if self.type_problem == 0 or self.type_problem == 1 or self.type_problem == 4 or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP:
         # for k in range (len(self.depots)):
-        for i in range(len(customers)):
-            for j in range(i + 1, len(customers)):
-                c_i, c_j = customers[i], customers[j]
+        for i in range(len(elements)):
+            for j in range(i + 1, len(elements)):
+                c_i, c_j = elements[i], elements[j]
 
                 if self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
                     ci = Problem.get_problem().get_pos_element_by_id_depot(
@@ -145,6 +151,9 @@ class MatchingBasedSavingAlgorithm(Save):
                     cj = Problem.get_problem().get_pos_element_by_id_depot(
                         self.id_depot, c_j.get_id_customer(), self.depots
                     )
+                elif self.type_problem == ProblemType.SBRP:
+                    ci = Problem.get_problem().get_pos_element(c_i.get_id_bus_stop())
+                    cj = Problem.get_problem().get_pos_element(c_j.get_id_bus_stop())
                 else:
                     ci = Problem.get_problem().get_pos_element(c_i.get_id_customer())
                     cj = Problem.get_problem().get_pos_element(c_j.get_id_customer())
@@ -160,6 +169,8 @@ class MatchingBasedSavingAlgorithm(Save):
                     self.pos_depot = (
                         Problem.get_problem().get_pos_element(self.depots[0]._id_depot)
                     ) - self.cant_customers
+                elif self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+                    self.pos_depot = (Problem.get_problem().get_pos_element(self.depots[0]._id_depot)) - self.cant_bus_stops
                 else:
                     self.pos_depot = Problem.get_problem().get_pos_element(
                         self.cant_customers
@@ -169,7 +180,11 @@ class MatchingBasedSavingAlgorithm(Save):
                 i_to_j = self.save_matrix[ci][cj]
 
                 savings = depot_to_i + depot_to_j - i_to_j
-                savings_list.append(((c_i._id_customer, c_j._id_customer), savings))
+
+                if self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+                    savings_list.append(((c_i.get_id_bus_stop(), c_j.get_id_bus_stop()), savings))
+                else:
+                    savings_list.append(((c_i._id_customer, c_j._id_customer), savings))
 
         # else:
         #   pass
@@ -179,15 +194,17 @@ class MatchingBasedSavingAlgorithm(Save):
         return savings_list
 
     def match_based_savings_algorithm(
-        self, customers: List[Customer], depots: List[Depot]
+        self, elements, depots: List[Depot]
     ) -> List[Route]:
         if (
             self.type_problem == 0
             or self.type_problem == 1
             or self.type_problem == 2
+            or self.type_problem == 5
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
+            or self.type_problem == ProblemType.SBRP
         ):
             """Solve CVRP using matching-based savings algorithm."""
             if self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
@@ -196,7 +213,7 @@ class MatchingBasedSavingAlgorithm(Save):
                 fleet_capacity = depots[0]._list_fleets[0]._capacity_vehicle
 
             # Step 1: Calculate savings matrix
-            savings_list = self.calculate_savings_matrix(customers)
+            savings_list = self.calculate_savings_matrix(elements)
 
             # Step 2: Merge routes based on savings
             for (c1_id, c2_id), saving in savings_list:
@@ -204,10 +221,16 @@ class MatchingBasedSavingAlgorithm(Save):
                 route2 = None
 
                 for route in self.list_routes:
-                    if c1_id in route.list_id_customers:
-                        route1 = route
-                    if c2_id in route.list_id_customers:
-                        route2 = route
+                    if self.type_problem == ProblemType.SBRP:
+                        if c1_id in route.list_bus_stops:
+                            route1 = route
+                        if c2_id in route.list_bus_stops:
+                            route2 = route
+                    else:
+                        if c1_id in route.list_id_customers:
+                            route1 = route
+                        if c2_id in route.list_id_customers:
+                            route2 = route
 
                 if route1 is None or route2 is None or route1 == route2:
                     continue  # Skip if they're already merged
@@ -215,23 +238,38 @@ class MatchingBasedSavingAlgorithm(Save):
                 combined_demand = route1.request_route + route2.request_route
                 if combined_demand <= fleet_capacity:
                     # Merge the routes
-                    merged_route = Route(
-                        list_id_customers=route1.list_id_customers
-                        + route2.list_id_customers,
-                        request_route=combined_demand,
-                        cost_route=route1.cost_route + route2.cost_route - saving,
-                        id_depot=depots[0]._id_depot,
-                        list_access_vc=None,
-                        maximum_distance=None,
-                    )
+                    if self.type_problem == ProblemType.SBRP:
+                        merged_route = Route(
+                            list_bus_stops=route1.list_bus_stops
+                                              + route2.list_bus_stops,
+                            request_route=combined_demand,
+                            cost_route=route1.cost_route + route2.cost_route - saving,
+                            id_depot=depots[0]._id_depot,
+                            list_access_vc=None,
+                            maximum_distance=None,
+                        )
+                    else:
+                        merged_route = Route(
+                            list_id_customers=route1.list_id_customers
+                            + route2.list_id_customers,
+                            request_route=combined_demand,
+                            cost_route=route1.cost_route + route2.cost_route - saving,
+                            id_depot=depots[0]._id_depot,
+                            list_access_vc=None,
+                            maximum_distance=None,
+                        )
                     # merged_route.get_cost_single_route()
 
                     # Remove old routes and add the new merged route
                     self.list_routes.remove(route1)
                     self.list_routes.remove(route2)
 
-                    if len(merged_route.get_list_id_customers()) >= 6:
-                        self.three_opt.to_optimize(merged_route)
+                    if self.type_problem == ProblemType.SBRP:
+                        if len(merged_route.get_list_bus_stops()) >= 6:
+                            self.three_opt.to_optimize(merged_route)
+                    else:
+                        if len(merged_route.get_list_id_customers()) >= 6:
+                            self.three_opt.to_optimize(merged_route)
 
                     self.list_routes.append(merged_route)
 

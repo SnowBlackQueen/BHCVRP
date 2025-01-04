@@ -16,7 +16,7 @@ from generator.solution.Route import Route
 from generator.solution.RouteType import RouteType
 from generator.solution.RouteTTRP import RouteTTRP
 from generator.heuristic.Metric import Metric
-from generator.heuristic.FirstCustomerType import FirstCustomerType
+from generator.heuristic.FirstElementType import FirstElementType
 
 from generator.postoptimization.Operator_3opt import Operator_3opt
 
@@ -473,7 +473,7 @@ class Heuristic(ABC):
         elif self.type_problem == ProblemType.SBRP or self.type_problem == 5:
             cv = int(count_vehicles)
             while self.list_bus_stops and cv > 0:
-                self.initialize_specifics()  # Para que customer sea tratado según la variante
+                self.initialize_specifics()  # Para que bus_stop sea tratado según la variante
                 found, new_route = self.creating()
                 if found:
                     route = new_route
@@ -576,19 +576,26 @@ class Heuristic(ABC):
                         )
                         self.customers_to_visit.remove(self.customer)
 
-    def _get_customer_by_id(self, id_customer, list_customers):
+    def _get_element_by_id(self, id_element, list_elements):
         i = 0
         found = False
-        customer = None
+        element = None
 
-        while i < len(list_customers) and not found:
-            if list_customers[i].get_id_customer() == id_customer:
-                customer = list_customers[i]
-                found = True
+        while i < len(list_elements) and not found:
+            if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                if list_elements[i].get_id_bus_stop() == id_element:
+                    element = list_elements[i]
+                    found = True
+                else:
+                    i += 1
             else:
-                i += 1
+                if list_elements[i].get_id_customer() == id_element:
+                    element = list_elements[i]
+                    found = True
+                else:
+                    i += 1
 
-        return customer
+        return element
 
     def _ascendent_ordenate_list_without_order(self, list_without_order: List[Metric]):
         for i in range(len(list_without_order)):
@@ -659,13 +666,13 @@ class Heuristic(ABC):
                 .item(pos_matrix_depot, current_index)
             )
 
-            if first_customer_type == FirstCustomerType.FurthestCustomer:
+            if first_customer_type == FirstElementType.Furthest:
                 if current_cost > best_cost:
                     best_cost = current_cost
                     best_index = current_index
                     selected_customer = customers_to_visit[i]
             else:
-                if first_customer_type == FirstCustomerType.NearestCustomer:
+                if first_customer_type == FirstElementType.Nearest:
                     if current_cost < best_cost:
                         best_cost = current_cost
                         best_index = current_index
@@ -673,37 +680,37 @@ class Heuristic(ABC):
 
         return selected_customer
 
-    def _get_first_customer(self, customers_to_visit, first_customer_type, id_depot):
-        first_customer = None
+    def _get_first_element(self, elements_to_visit, first_element_type, id_depot):
+        first_element = None
         index = -1
         pos_matrix_depot = -1
         rc = None
 
         if (
-            first_customer_type == FirstCustomerType.RandomCustomer
+            first_element_type == FirstElementType.Random
         ):  # Replace with the actual condition
-            index = random.randint(0, len(customers_to_visit) - 1)
-            first_customer = customers_to_visit[index]
+            index = random.randint(0, len(elements_to_visit) - 1)
+            first_element = elements_to_visit[index]
         else:
             pos_matrix_depot = Problem.get_problem().get_pos_element(id_depot)
 
             if Problem.get_problem().get_type_problem() == ProblemType.MDVRP:
-                first_customer = self._select_first_customer_in_mdvrp(
-                    customers_to_visit, first_customer_type, pos_matrix_depot
+                first_element = self._select_first_customer_in_mdvrp(
+                    elements_to_visit, first_element_type, pos_matrix_depot
                 )
             else:
-                if first_customer_type == FirstCustomerType.NearestCustomer:
+                if first_element_type == FirstElementType.Nearest:
                     cm = Problem.get_problem().get_cost_matrix()
-                    submatrix = cm[pos_matrix_depot, : len(self.customers_to_visit)]
+                    submatrix = cm[pos_matrix_depot, : len(elements_to_visit)]
                     index = np.argmin(submatrix)
-                elif first_customer_type == FirstCustomerType.FurthestCustomer:
+                elif first_element_type == FirstElementType.Furthest:
                     cm = Problem.get_problem().get_cost_matrix()
-                    submatrix = cm[pos_matrix_depot, : len(self.customers_to_visit)]
+                    submatrix = cm[pos_matrix_depot, : len(elements_to_visit)]
                     index = np.argmax(submatrix)
 
-                first_customer = customers_to_visit[index]
+                first_element = elements_to_visit[index]
 
-        return first_customer
+        return first_element
 
     """# Cómo usar el patrón Template 
     def execute(self):

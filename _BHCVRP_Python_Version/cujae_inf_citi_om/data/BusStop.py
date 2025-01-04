@@ -58,7 +58,7 @@ class BusStop:
         self._list_customers = list_customers
 
     def has_capacity(self):
-        return self._capacity_bus_stop > self._list_customers.__len__()
+        return self._capacity_bus_stop > len(self._list_customers)
 
     def insert_customer(self, id_customer):
         if self.has_capacity():
@@ -78,5 +78,11 @@ class BusStop:
 
     def get_coordinates(self):
         return self._location_bus_stop.get_axis_x() + " " + self._location_bus_stop.get_axis_y()
+
+
+
+
+
+
 
 

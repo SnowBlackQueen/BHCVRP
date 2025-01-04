@@ -10,6 +10,7 @@ from generator.solution.RouteTTRP import RouteTTRP
 from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.CustomerTTRP import CustomerTTRP
+from data.BusStop import BusStop
 from generator.postoptimization.Operator_3opt import Operator_3opt
 
 
@@ -54,7 +55,7 @@ class KilbyAlgorithm(Heuristic):
         self.metric_kilby = None
         self.pos_route = -1
         self.is_route_full = True
-        self.routes_with_customers = 0
+        self.routes_with_elements = 0
 
         for i in range(self.count_vehicles):
             if self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
@@ -69,30 +70,48 @@ class KilbyAlgorithm(Heuristic):
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         if (
-            self.type_problem in [0, 1, 2, 3, 4]
+            self.type_problem in [0, 1, 2, 3, 4, 5]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.TTRP
+            or self.type_problem == ProblemType.SBRP
         ):
             while self.list_kilby_costs:
                 i = 0
                 while i < len(self.list_candidate_routes) and self.list_kilby_costs:
-                    self.customer = Customer()
-                    self.customer = self._get_customer_by_id(
-                        self.list_kilby_costs[0].get_id_element(),
-                        self.customers_to_visit,
-                    )
-                    self.request_route = self.customer.get_request_customer()
+                    if self.type_problem == ProblemType.SBRP:
+                        self.bus_stop = BusStop()
+                        self.bus_stop = self._get_element_by_id(
+                            self.list_kilby_costs[0].get_id_element(),
+                            self.list_bus_stops,
+                        )
+                        self.request_route = self.bus_stop.get_capacity_bus_stop()
 
-                    self.list_candidate_routes[i].get_list_id_customers().append(
-                        self.customer.get_id_customer()
-                    )
+                        self.list_candidate_routes[i].get_list_bus_stops().append(
+                            self.bus_stop
+                        )
+                    else:
+                        self.customer = Customer()
+                        self.customer = self._get_element_by_id(
+                            self.list_kilby_costs[0].get_id_element(),
+                            self.customers_to_visit,
+                        )
+                        self.request_route = self.customer.get_request_customer()
+
+                        self.list_candidate_routes[i].get_list_id_customers().append(
+                            self.customer.get_id_customer()
+                        )
+
                     self.list_candidate_routes[i].set_request_route(self.request_route)
                     self.list_candidate_routes[i].set_id_depot(self.id_depot)
                     self.list_kilby_costs.pop(0)
-                    self.customers_to_visit.remove(self.customer)
-                    self.routes_with_customers += 1
+
+                    if self.type_problem == ProblemType.SBRP:
+                        self.list_bus_stops.remove(self.bus_stop)
+                    else:
+                        self.customers_to_visit.remove(self.customer)
+                    self.routes_with_elements += 1
 
                     if self.type_problem == ProblemType.TTRP:
                         if (
@@ -110,12 +129,12 @@ class KilbyAlgorithm(Heuristic):
                     if self.type_problem == ProblemType.HFVRP:
                         self.is_open = True
 
-            j = self.routes_with_customers
-            print("creating1")
+            j = self.routes_with_elements
+            # print("creating1")
 
-            while self.routes_with_customers < len(self.list_candidate_routes):
+            while self.routes_with_elements < len(self.list_candidate_routes):
                 self.list_candidate_routes.pop(j)
-            print("creating2")
+            # print("creating2")
 
     def processing(
         self,
@@ -126,16 +145,70 @@ class KilbyAlgorithm(Heuristic):
         id_depot=None,
         solution=None,
     ):
-        if (
-            self.type_problem in [0, 1, 2, 3, 4]
-            or self.type_problem == ProblemType.CVRP
-            or self.type_problem == ProblemType.HFVRP
-            or self.type_problem == ProblemType.MDVRP
-            or self.type_problem == ProblemType.TTRP
-        ):
+        if self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            while self.list_candidate_routes and self.list_bus_stops:
+                self.metric_kilby = Metric()
+                self.metric_kilby = self.get_best_element(
+                    self.id_depot,
+                    self.list_bus_stops,
+                    self.list_candidate_routes,
+                    self.capacity_vehicle,
+                    self.count_trailers,
+                )
+
+                if self.metric_kilby is None:
+                    self.pos_route = self.close_route(self.list_candidate_routes)
+                    self.is_route_full = False
+                else:
+                    bus_stop_insert = BusStop()
+                    bus_stop_insert = self._get_element_by_id(
+                        self.metric_kilby.get_id_element(), self.list_bus_stops
+                    )
+
+                    self.pos_route = self.metric_kilby.get_index()
+                    self.request_route = (
+                        self.list_candidate_routes[
+                            self.metric_kilby.get_index()
+                        ].get_request_route()
+                        + bus_stop_insert.get_capacity_bus_stop()
+                    )
+
+                    self.list_candidate_routes[
+                        self.pos_route
+                    ].get_list_bus_stops().append(bus_stop_insert)
+                    self.list_candidate_routes[self.pos_route].set_request_route(
+                        self.request_route
+                    )
+                    self.list_candidate_routes[self.pos_route].set_id_depot(
+                        self.id_depot
+                    )
+                    self.list_bus_stops.remove(bus_stop_insert)
+
+                    self.is_route_full = self.request_perfect(
+                        self.list_bus_stops,
+                        self.capacity_vehicle,
+                        self.request_route,
+                    )
+
+                if not self.is_route_full:
+                    # if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                    #   self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                    self.list_route_opt.append(
+                        self.list_candidate_routes[self.pos_route]
+                    )
+                    self.list_candidate_routes.pop(self.pos_route)
+
+            while self.list_candidate_routes:
+                self.pos_route = 0
+                # if len(self.list_candidate_routes[self.pos_route].get_list_id_customers()) >= 6:
+                #   self.three_opt.to_optimize(self.list_candidate_routes[self.pos_route])
+                self.list_route_opt.append(self.list_candidate_routes[self.pos_route])
+                self.list_candidate_routes.pop(self.pos_route)
+
+        else:
             while self.list_candidate_routes and self.customers_to_visit:
                 self.metric_kilby = Metric()
-                self.metric_kilby = self.get_best_customer(
+                self.metric_kilby = self.get_best_element(
                     self.id_depot,
                     self.customers_to_visit,
                     self.list_candidate_routes,
@@ -148,7 +221,7 @@ class KilbyAlgorithm(Heuristic):
                     self.is_route_full = False
                 else:
                     customer_insert = Customer()
-                    customer_insert = self._get_customer_by_id(
+                    customer_insert = self._get_element_by_id(
                         self.metric_kilby.get_id_element(), self.customers_to_visit
                     )
 
@@ -287,26 +360,47 @@ class KilbyAlgorithm(Heuristic):
             print("processing2")
 
     def execute(self):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
-            if self.customers_to_visit:
-                self.list_kilby_costs = []
-                self.list_kilby_costs = self.select_best_cost(
-                    self.count_vehicles,
-                    self.count_trailers,
-                    self.id_depot,
-                    self.customers_to_visit,
-                )
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            if self.type_problem == ProblemType.SBRP:
+                if self.list_bus_stops:
+                    self.list_kilby_costs = []
+                    self.list_kilby_costs = self.select_best_cost(
+                        self.count_vehicles,
+                        self.count_trailers,
+                        self.id_depot,
+                        self.list_bus_stops,
+                    )
 
-                self.creating()
+                    self.creating()
 
-                self.processing(
-                    self.customers_to_visit,
-                    self.count_vehicles,
-                    self.request_route,
-                    self.route,
-                    self.id_depot,
-                    self.solution,
-                )
+                    self.processing(
+                        self.list_bus_stops,
+                        self.count_vehicles,
+                        self.request_route,
+                        self.route,
+                        self.id_depot,
+                        self.solution,
+                    )
+            else:
+                if self.customers_to_visit:
+                    self.list_kilby_costs = []
+                    self.list_kilby_costs = self.select_best_cost(
+                        self.count_vehicles,
+                        self.count_trailers,
+                        self.id_depot,
+                        self.customers_to_visit,
+                    )
+
+                    self.creating()
+
+                    self.processing(
+                        self.customers_to_visit,
+                        self.count_vehicles,
+                        self.request_route,
+                        self.route,
+                        self.id_depot,
+                        self.solution,
+                    )
 
             self.solution.set_list_routes(self.list_route_opt)
 
@@ -463,7 +557,7 @@ class KilbyAlgorithm(Heuristic):
         return self.solution
 
     # Método que devuelve una lista de los n mejores para las n rutas
-    def select_best_cost(self, count_vehicles, count_trailers, id_depot, list_customer):
+    def select_best_cost(self, count_vehicles, count_trailers, id_depot, list_element):
         list_kilby_costs = []
         metric_kilby = None
         cost_kilby = 0.0
@@ -472,60 +566,85 @@ class KilbyAlgorithm(Heuristic):
         count_routes_ptr = count_vehicles - count_trailers
         type_customer = None
 
-        for i in range(len(list_customer)):
+        for i in range(len(list_element)):
             metric_kilby = Metric()
 
-            if isinstance(list_customer[i], CustomerTTRP):
-                type_customer = list_customer[i].get_type_customer()
-            else:
-                type_customer = CustomerType.TC
-
-            cost_kilby = self.calculate_cost_of_kilby(
-                id_depot, id_depot, list_customer[i].get_id_customer()
-            )
-
-            if len(list_kilby_costs) < count_vehicles:
-                if (
-                    (
-                        type_customer == CustomerType.VC
-                        or type_customer == CustomerType.VC.value
-                    )
-                    and count_routes_pvr != 0
-                ) or (
-                    (
-                        type_customer == CustomerType.TC
-                        or type_customer == CustomerType.TC.value
-                    )
-                    and count_routes_ptr != 0
-                ):
-                    metric_kilby.set_id_element(list_customer[i].get_id_customer())
-                    metric_kilby.set_insertion_cost(cost_kilby)
-
-                    list_kilby_costs.append(metric_kilby)
-
-                    if (
-                        type_customer == CustomerType.VC
-                        or type_customer == CustomerType.VC.value
-                    ):
-                        count_routes_pvr -= 1
-                    else:
-                        count_routes_ptr -= 1
-            else:
-                pos_max_cost = self.find_max_cost(
-                    list_kilby_costs, list_customer, type_customer
+            if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                cost_kilby = self.calculate_cost_of_kilby(
+                    id_depot, id_depot, list_element[i].get_id_bus_stop()
                 )
 
-                if cost_kilby < list_kilby_costs[pos_max_cost].get_insertion_cost():
-                    metric_kilby.set_id_element(list_customer[i].get_id_customer())
+                if len(list_kilby_costs) < count_vehicles:
+                    metric_kilby.set_id_element(list_element[i].get_id_bus_stop())
                     metric_kilby.set_insertion_cost(cost_kilby)
-
-                    list_kilby_costs.pop(pos_max_cost)
                     list_kilby_costs.append(metric_kilby)
+
+                else:
+                    pos_max_cost = self.find_max_cost(
+                        list_kilby_costs, list_element, type_customer
+                    )
+
+                    if cost_kilby < list_kilby_costs[pos_max_cost].get_insertion_cost():
+                        metric_kilby.set_id_element(list_element[i].get_id_bus_stop())
+                        metric_kilby.set_insertion_cost(cost_kilby)
+
+                        list_kilby_costs.pop(pos_max_cost)
+                        list_kilby_costs.append(metric_kilby)
+            else:
+                if isinstance(list_element[i], CustomerTTRP):
+                    type_customer = list_element[i].get_type_customer()
+                else:
+                    type_customer = CustomerType.TC
+
+                cost_kilby = self.calculate_cost_of_kilby(
+                    id_depot, id_depot, list_element[i].get_id_customer()
+                )
+
+                if len(list_kilby_costs) < count_vehicles:
+                    if (
+                        (
+                            type_customer == CustomerType.VC
+                            or type_customer == CustomerType.VC.value
+                        )
+                        and count_routes_pvr != 0
+                    ) or (
+                        (
+                            type_customer == CustomerType.TC
+                            or type_customer == CustomerType.TC.value
+                        )
+                        and count_routes_ptr != 0
+                    ):
+                        metric_kilby.set_id_element(list_element[i].get_id_customer())
+                        metric_kilby.set_insertion_cost(cost_kilby)
+
+                        list_kilby_costs.append(metric_kilby)
+
+                        if (
+                            type_customer == CustomerType.VC
+                            or type_customer == CustomerType.VC.value
+                        ):
+                            count_routes_pvr -= 1
+                        else:
+                            count_routes_ptr -= 1
+                else:
+                    pos_max_cost = self.find_max_cost(
+                        list_kilby_costs, list_element, type_customer
+                    )
+
+                    if cost_kilby < list_kilby_costs[pos_max_cost].get_insertion_cost():
+                        metric_kilby.set_id_element(list_element[i].get_id_customer())
+                        metric_kilby.set_insertion_cost(cost_kilby)
+
+                        list_kilby_costs.pop(pos_max_cost)
+                        list_kilby_costs.append(metric_kilby)
 
         return list_kilby_costs
 
     # Método que calcula el costo de insertar un cliente en la ruta
     def calculate_cost_of_kilby(self, id_depot, current_element, next_element):
+        #if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+         #   current_element = current_element[0].get_id_bus_stop()
+
         cost_actual_to_next = Problem.get_problem().get_cost_matrix()[
             Problem.get_problem().get_pos_element(current_element),
             Problem.get_problem().get_pos_element(next_element),
@@ -542,7 +661,7 @@ class KilbyAlgorithm(Heuristic):
         return cost_actual_to_next + cost_next_to_depot - cost_actual_to_depot
 
     # Método que devuelve la posición del mayor costo de la lista
-    def find_max_cost(self, list_kilby_costs, list_customers, type_customer):
+    def find_max_cost(self, list_kilby_costs, list_elements, type_customer):
         pos_max_cost = -1
         max_cost = 0.0
         current_cost = 0.0
@@ -550,7 +669,7 @@ class KilbyAlgorithm(Heuristic):
 
         case = Problem.get_problem().get_type_problem()
 
-        if case in [0, 1, 2, 3]:
+        if case in [0, 1, 2, 3, 5]:
             pos_max_cost = 0
             max_cost = list_kilby_costs[pos_max_cost].get_insertion_cost()
 
@@ -563,14 +682,14 @@ class KilbyAlgorithm(Heuristic):
 
         elif case == 4:
             pos_max_cost = self.find_first_customer_equals_access(
-                type_customer, list_kilby_costs, list_customers
+                type_customer, list_kilby_costs, list_elements
             )
             max_cost = list_kilby_costs[pos_max_cost].get_insertion_cost()
 
             for i in range(pos_max_cost + 1, len(list_kilby_costs)):
                 current_cost = list_kilby_costs[i].get_insertion_cost()
                 current_type_customer = self.get_customer_by_id(
-                    list_kilby_costs[i].get_id_element(), list_customers
+                    list_kilby_costs[i].get_id_element(), list_elements
                 ).get_type_customer()
 
                 if max_cost < current_cost and current_type_customer == type_customer:
@@ -602,13 +721,13 @@ class KilbyAlgorithm(Heuristic):
         return pos
 
     # Método que devuelve el mejor cliente
-    def get_best_customer(
-        self, id_depot, list_customer, list_routes, capacity_truck, capacity_trailer
+    def get_best_element(
+        self, id_depot, list_element, list_routes, capacity_truck, capacity_trailer
     ):
         best_metric_kilby = None
 
         best_cost = 0.0
-        best_id_customer = -1
+        best_id_element = -1
         best_route = -1
         current_cost = 0.0
         request_route = 0.0
@@ -617,12 +736,13 @@ class KilbyAlgorithm(Heuristic):
         found = False
         i = 0
 
-        while i < len(list_customer) and not found:
+        while i < len(list_element) and not found:
             if (
                 Problem.get_problem().get_type_problem() == ProblemType.CVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.MDVRP
+                or Problem.get_problem().get_type_problem() == ProblemType.SBRP
                 or (
                     Problem.get_problem().get_type_problem() == ProblemType.TTRP
                     and isinstance(list_routes[0], RouteTTRP)
@@ -636,25 +756,42 @@ class KilbyAlgorithm(Heuristic):
 
             j = 0
             while j < len(list_routes) and not found:
-                if (
-                    list_routes[j].get_request_route()
-                    + list_customer[i].get_request_customer()
-                    <= total_capacity
-                ):
-                    best_id_customer = list_customer[i].get_id_customer()
-                    best_cost = self.calculate_cost_of_kilby(
-                        id_depot,
-                        list_routes[0].get_list_id_customers()[0],
-                        list_customer[0].get_id_customer(),
-                    )
-                    best_route = j
-                    found = True
+                if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                    if (
+                        list_routes[j].get_request_route()
+                        + list_element[i].get_capacity_bus_stop()
+                        <= total_capacity
+                    ):
+                        best_id_element = list_element[i].get_id_bus_stop()
+                        best_cost = self.calculate_cost_of_kilby(
+                            id_depot,
+                            list_routes[0].get_list_bus_stops()[0],
+                            list_element[0].get_id_bus_stop(),
+                        )
+                        best_route = j
+                        found = True
+                    else:
+                        j += 1
                 else:
-                    j += 1
+                    if (
+                        list_routes[j].get_request_route()
+                        + list_element[i].get_request_customer()
+                        <= total_capacity
+                    ):
+                        best_id_element = list_element[i].get_id_customer()
+                        best_cost = self.calculate_cost_of_kilby(
+                            id_depot,
+                            list_routes[0].get_list_id_customers()[0],
+                            list_element[0].get_id_customer(),
+                        )
+                        best_route = j
+                        found = True
+                    else:
+                        j += 1
 
             i += 1
 
-        for k in range(len(list_customer)):
+        for k in range(len(list_element)):
             for l in range(
                 len(list_routes)
             ):  # this loop started at 1, had to change it
@@ -663,6 +800,7 @@ class KilbyAlgorithm(Heuristic):
                     or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.MDVRP
+                    or Problem.get_problem().get_type_problem() == ProblemType.SBRP
                     or (
                         Problem.get_problem().get_type_problem() == ProblemType.TTRP
                         and isinstance(list_routes[l], RouteTTRP)
@@ -675,23 +813,37 @@ class KilbyAlgorithm(Heuristic):
                     total_capacity = capacity_truck + capacity_trailer
 
                 request_route = list_routes[l].get_request_route()
-                current_cost = self.calculate_cost_of_kilby(
-                    id_depot,
-                    list_routes[l].get_list_id_customers()[0],
-                    list_customer[k].get_id_customer(),
-                )
-                request_analice = (
-                    request_route + list_customer[k].get_request_customer()
-                )
+
+                if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                    current_cost = self.calculate_cost_of_kilby(
+                        id_depot,
+                        list_routes[l].get_list_bus_stops()[0],
+                        list_element[k].get_id_bus_stop(),
+                    )
+                    request_analice = (
+                            request_route + list_element[k].get_capacity_bus_stop()
+                    )
+                else:
+                    current_cost = self.calculate_cost_of_kilby(
+                        id_depot,
+                        list_routes[l].get_list_id_customers()[0],
+                        list_element[k].get_id_customer(),
+                    )
+                    request_analice = (
+                            request_route + list_element[k].get_request_customer()
+                    )
 
                 if current_cost < best_cost and request_analice <= total_capacity:
                     best_cost = current_cost
-                    best_id_customer = list_customer[k].get_id_customer()
+                    if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                        best_id_element = list_element[k].get_id_bus_stop()
+                    else:
+                        best_id_element = list_element[k].get_id_customer()
                     best_route = l
 
         if found:
             best_metric_kilby = Metric()
-            best_metric_kilby.set_id_element(best_id_customer)
+            best_metric_kilby.set_id_element(best_id_element)
             best_metric_kilby.set_insertion_cost(best_cost)
             best_metric_kilby.set_index(best_route)
 
@@ -711,17 +863,23 @@ class KilbyAlgorithm(Heuristic):
         return pos_route
 
     # Método que determina si una ruta está llena
-    def request_perfect(self, customers_to_visit, capacity_total, request_route):
+    def request_perfect(self, elements_to_visit, capacity_total, request_route):
         pass_val = False
         ideal_request = capacity_total - request_route
 
         if ideal_request != 0:
             i = 0
 
-            while i < len(customers_to_visit) and not pass_val:
-                if customers_to_visit[i].get_request_customer() <= ideal_request:
-                    pass_val = True
+            while i < len(elements_to_visit) and not pass_val:
+                if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+                    if elements_to_visit[i].get_capacity_bus_stop() <= ideal_request:
+                        pass_val = True
+                    else:
+                        i += 1
                 else:
-                    i += 1
+                    if elements_to_visit[i].get_request_customer() <= ideal_request:
+                        pass_val = True
+                    else:
+                        i += 1
 
         return pass_val

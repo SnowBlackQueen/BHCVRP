@@ -111,6 +111,12 @@ class Problem:
                 return customer
         return None
 
+    def get_bus_stop_by_id_bus_stop(self, id_bus_stop):
+        for bus_stop in self._list_buses_stop:
+            if bus_stop.get_id_bus_stop() == id_bus_stop:
+                return bus_stop
+        return None
+
     # Método que devuelve el tipo de un cliente dado su identificador
     def get_type_by_id_customer(self, id_customer):
         for customer in self._list_customers:
@@ -138,6 +144,23 @@ class Problem:
             return request_customer
         else:
             raise RequestException("La demanda del cliente debe ser mayor que cero")
+
+    def get_request_by_id_bus_stop(self, id_bus_stop):
+        request_bus_stop = 0.0
+        i = 0
+        found = False
+        count_bus_stops = len(self._list_buses_stop)
+
+        while i < count_bus_stops and not found:
+            if self._list_buses_stop[i].get_id_bus_stop() == id_bus_stop:
+                request_bus_stop = self._list_buses_stop[i].get_capacity_bus_stop()
+                found = True
+            else:
+                i += 1
+        if request_bus_stop > 0:
+            return request_bus_stop
+        else:
+            raise RequestException("La demanda de la parada debe ser mayor que cero")
 
     def get_list_request_customers(self, list_customers):
         return [customer.get_request_customer() for customer in list_customers]
@@ -174,6 +197,8 @@ class Problem:
                 if isinstance(id_element, int):
                     # Convert to the string format "bus_stop_id_#"
                     id_element = f"bus_stop_id_{id_element}"
+                if isinstance(id_element, BusStop):
+                    id_element = id_element.get_id_bus_stop()
                 if self._list_buses_stop[i].get_id_bus_stop() == id_element:
                     pos_element = i
                     found = True

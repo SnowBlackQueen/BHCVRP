@@ -62,7 +62,7 @@ def main():
             id_depots, axis_x_depots, axis_y_depots,
             list_distances)
 
-        heuristic_type = HeuristicType.NearestNeighborWithRLC
+        heuristic_type = HeuristicType.CMT
         problem = Problem.get_problem()
         problem.set_type_problem(type_problem=ProblemType.SBRP)
         Problem.get_problem().set_cost_matrix(StrategyHeuristic.get_strategy_heuristic().fill_cost_matrix(list_distances))
@@ -81,13 +81,24 @@ def main():
         print("TOTAL DE RUTAS: " + str(request_by_route))
         print("TIEMPO DE EJECUCIÓN: " + str(time))
         print(" ")
-        for j in range(request_by_route):
-            print(
-                "R"
-                + str(j + 1)
-                + str(result.get_list_routes()[j].get_list_bus_stops())
-            )
-            # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
+        if heuristic_type == HeuristicType.SaveSequential or heuristic_type == HeuristicType.SaveParallel or heuristic_type == HeuristicType.MatchingBasedSavingAlgorithm or heuristic_type == HeuristicType.KilbyAlgorithm:
+            for j in range(request_by_route):
+                bus_stops_by_route = result.get_list_routes()[j].get_list_bus_stops()
+                for k in range(len(bus_stops_by_route)):
+                    print(
+                        "R"
+                        + str(j + 1)
+                        + str(bus_stops_by_route[k].get_id_bus_stop())
+                    )
+                # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
+        else:
+            for j in range(request_by_route):
+                print(
+                    "R"
+                    + str(j + 1)
+                    + str(result.get_list_routes()[j].get_list_bus_stops())
+                )
+                # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
         print("------------------------------------------")
 
         file_output.close()
