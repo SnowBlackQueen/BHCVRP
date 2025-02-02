@@ -4,6 +4,7 @@ import math
 
 # Clase que modela como calcular la distancia mediante la fórmula de Euclideana
 
+
 class Euclidean(Distance):
 
     def __init__(self):

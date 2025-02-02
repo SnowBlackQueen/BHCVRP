@@ -71,7 +71,7 @@ public class Operator_3opt extends StepOptimization{
 			{
 				case 0:
 				{
-					Invert(listCandidates, listKey.get(1), listKey.get(2));
+					invert(listCandidates, listKey.get(1), listKey.get(2));
 					route.setListIdCustomers(listCandidates);
 					listKey.add(listKey.remove(0));
 		
@@ -80,7 +80,7 @@ public class Operator_3opt extends StepOptimization{
 				
 				case 1:
 				{
-					Invert(listCandidates, listKey.get(1), listKey.get(2));
+					invert(listCandidates, listKey.get(1), listKey.get(2));
 					listKey.add(listKey.remove(0));
 		
 					route.setListIdCustomers(listCandidates);
@@ -90,7 +90,7 @@ public class Operator_3opt extends StepOptimization{
 				
 				case 2:
 				{
-					Invert(listCandidates, listKey.get(1), listKey.get(2));
+					invert(listCandidates, listKey.get(1), listKey.get(2));
 					listKey.add(listKey.remove(0));
 		
 					route.setListIdCustomers(listCandidates);
@@ -100,8 +100,8 @@ public class Operator_3opt extends StepOptimization{
 				
 				case 3:
 				{
-					Invert(listCandidates, listKey.get(0), listKey.get(1));
-					Invert(listCandidates,  listKey.get(1),  listKey.get(2));
+					invert(listCandidates, listKey.get(0), listKey.get(1));
+					invert(listCandidates,  listKey.get(1),  listKey.get(2));
 		
 					route.setListIdCustomers(listCandidates);
 		
@@ -116,7 +116,7 @@ public class Operator_3opt extends StepOptimization{
 					int posInsertOne =  listKey.get(0) + 1;
 					int posInsertTwo =  listKey.get(0) + cadTwo.size() + 1;
 		
-					listCandidates = Swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
+					listCandidates = swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
 		
 					route.setListIdCustomers(listCandidates);
 		
@@ -131,9 +131,9 @@ public class Operator_3opt extends StepOptimization{
 					int posInsertOne = listKey.get(0) + 1;
 					int posInsertTwo = listKey.get(0) + cadTwo.size() + 1;
 		
-					Invert(listCandidates, listKey.get(0), listKey.get(1));
+					invert(listCandidates, listKey.get(0), listKey.get(1));
 					cadOne =  listCandidates.subList((listKey.get(0) + 1), (listKey.get(1) + 1));
-					listCandidates = Swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
+					listCandidates = swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
 		
 					route.setListIdCustomers(listCandidates);
 		
@@ -148,9 +148,9 @@ public class Operator_3opt extends StepOptimization{
 					int posInsertOne = listKey.get(0) + 1;
 					int posInsertTwo = listKey.get(0) + cadTwo.size() + 1;
 		
-					Invert(listCandidates, listKey.get(1), listKey.get(2));
+					invert(listCandidates, listKey.get(1), listKey.get(2));
 					cadTwo = listCandidates.subList((listKey.get(1) + 1), (listKey.get(2) + 1));
-					listCandidates = Swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
+					listCandidates = swap(listCandidates, cadOne, cadTwo, posInsertOne, posInsertTwo);
 		
 					route.setListIdCustomers(listCandidates);
 		
@@ -175,7 +175,7 @@ public class Operator_3opt extends StepOptimization{
 
 	
 	/* Metodo que intercambia dos cadenas */
-	public ArrayList<Integer> Swap(ArrayList<Integer> listCandidates, List<Integer> cadOne, List<Integer> cadTwo, int posInsertOne, int posInsertTwo){
+	public ArrayList<Integer> swap(ArrayList<Integer> listCandidates, List<Integer> cadOne, List<Integer> cadTwo, int posInsertOne, int posInsertTwo){
 		ArrayList<Integer> listTemp = new ArrayList<Integer>();
 
 		for(int i = 0; i < listCandidates.size(); i++)
@@ -206,4 +206,16 @@ public class Operator_3opt extends StepOptimization{
 		
 		return listTemp;
 	}
+        
+        @Override
+        public void invert(ArrayList<Integer> listCandidates, int posIni, int posEnd) {
+            while(posIni < posEnd){
+                int temp = listCandidates.get(posIni);
+                listCandidates.set(posIni, listCandidates.get(posEnd));
+                listCandidates.set(posEnd, temp);
+                
+                posIni += 1;
+                posEnd -= 1;
+            }
+        }
 }

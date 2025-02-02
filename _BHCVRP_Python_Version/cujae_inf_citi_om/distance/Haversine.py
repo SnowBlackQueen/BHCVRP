@@ -1,5 +1,6 @@
 from distance import Distance
-import math 
+import math
+
 
 class Haversine(Distance):
 
@@ -20,9 +21,13 @@ class Haversine(Distance):
         dif_latitude = latitude_end - latitude_start
         dif_longitude = longitude_end - longitude_start
 
-        distance = (math.sin(dif_latitude / 2) ** 2 +
-                    math.cos(latitude_start) * math.cos(latitude_end) * 
-                    (math.sin(dif_longitude / 2) ** 2))
-        distance = 2 * self.EARTH_RADIUS_KM * math.atan2(math.sqrt(distance), math.sqrt(1 - distance))
+        distance = math.sin(dif_latitude / 2) ** 2 + math.cos(
+            latitude_start
+        ) * math.cos(latitude_end) * (math.sin(dif_longitude / 2) ** 2)
+        distance = (
+            2
+            * self.EARTH_RADIUS_KM
+            * math.atan2(math.sqrt(distance), math.sqrt(1 - distance))
+        )
 
         return distance

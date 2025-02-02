@@ -3,6 +3,7 @@ from data.ProblemType import ProblemType
 from generator.solution import RouteType
 from exceptions.CostException import CostException
 
+
 class Solution:
     def __init__(self, list_routes=None):
         self._list_routes = list_routes if list_routes else []
@@ -16,8 +17,14 @@ class Solution:
     def calculate_cost(self):
         total_cost = 0.0
 
-        for route in self._list_routes: #and (isinstance(route, RouteType.PTR) or isinstance(route, RouteType.PVR))
-            if not Problem.get_problem().get_type_problem() == ProblemType.TTRP or (Problem.get_problem().get_type_problem() == ProblemType.TTRP ):
+        for (
+            route
+        ) in (
+            self._list_routes
+        ):  # and (isinstance(route, RouteType.PTR) or isinstance(route, RouteType.PVR))
+            if not Problem.get_problem().get_type_problem() == ProblemType.TTRP or (
+                Problem.get_problem().get_type_problem() == ProblemType.TTRP
+            ):
                 total_cost += route.get_cost_single_route()
             else:
                 total_cost = route.get_cost_route_with_sub_tour()
@@ -25,7 +32,7 @@ class Solution:
         if total_cost > 0:
             return total_cost
         else:
-            raise CostException("El costo total debe ser mayor que cero") 
+            raise CostException("El costo total debe ser mayor que cero")
 
     def get_cost_solution(self):
         cost_solution = 0.0

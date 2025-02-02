@@ -17,12 +17,17 @@ import cujae.inf.citi.om.generator.solution.*;
 
 public class NearestNeighborWithRLC extends Heuristic{
 
-	public static int sizeRCL = 1;
+	public static int sizeRCL = 3;
 	
 	public NearestNeighborWithRLC() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+           
+        }
 
 	@Override
 	public Solution getSolutionInicial() {

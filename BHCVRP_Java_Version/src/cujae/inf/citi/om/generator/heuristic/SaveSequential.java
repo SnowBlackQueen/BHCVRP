@@ -20,6 +20,11 @@ public class SaveSequential extends Save {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+           
+        }
 
 	/* M�todo encargado de generar la soluci�n */
 	

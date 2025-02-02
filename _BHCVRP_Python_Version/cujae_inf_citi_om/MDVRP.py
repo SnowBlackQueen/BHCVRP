@@ -10,11 +10,13 @@ from generator.controller.StrategyHeuristic import AssignmentTypePython
 
 def main():
     try:
-        file_output = open("D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p14\\Resultado_Matching1.txt",
-                           "w")
-        sys.stdout = file_output
+        file_output = open(
+            "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p14\\Resultado_Matching1.txt",
+            "w",
+        )
+        # sys.stdout = file_output
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\p14"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\p1"
         # total_instances = 5
         load_file = LoadFile()
 
@@ -36,23 +38,45 @@ def main():
 
         load_file.load_count_vehicles_for_depot(count_vehicles)
         load_file.is_load_capacity_vehicles(capacity_vehicles)
-        load_file.is_load_customers(id_customers, axis_x_customers, axis_y_customers, request_customers)
+        load_file.is_load_customers(
+            id_customers, axis_x_customers, axis_y_customers, request_customers
+        )
         load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
 
-        load_file.fill_list_distances(id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots,
-                                      axis_y_depots, list_distances)
+        load_file.fill_list_distances(
+            id_customers,
+            axis_x_customers,
+            axis_y_customers,
+            id_depots,
+            axis_x_depots,
+            axis_y_depots,
+            list_distances,
+        )
 
-        heuristic_type = HeuristicType.MatchingBasedSavingAlgorithm
+        heuristic_type = HeuristicType.KilbyAlgorithm
 
-        if StrategyHeuristic.get_strategy_heuristic().load_problem_with_assign(id_customers, request_customers, id_depots,
-                                                                               count_vehicles[0], capacity_vehicles[0],
-                                                                               list_distances, axis_x_customers, axis_y_customers,
-                                                                               axis_x_depots, axis_y_depots, ProblemType.MDVRP,
-                                                                               AssignmentTypePython.BestNearest):
-            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(1, heuristic_type)
+        if StrategyHeuristic.get_strategy_heuristic().load_problem_with_assign(
+            id_customers,
+            request_customers,
+            id_depots,
+            count_vehicles[0],
+            capacity_vehicles[0],
+            list_distances,
+            axis_x_customers,
+            axis_y_customers,
+            axis_x_depots,
+            axis_y_depots,
+            ProblemType.MDVRP,
+            AssignmentTypePython.BestNearest,
+        ):
+            StrategyHeuristic.get_strategy_heuristic().execute_heuristic(
+                20, heuristic_type
+            )
             result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
             cost = StrategyHeuristic.get_strategy_heuristic().get_total_cost_solution()
-            request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
+            request_by_route = len(
+                StrategyHeuristic.get_strategy_heuristic().get_request_by_route()
+            )
             time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
             print(" ")
@@ -64,7 +88,11 @@ def main():
             print("TIEMPO DE EJECUCIÓN: " + str(time))
             print(" ")
             for j in range(request_by_route):
-                print("R" + str(j + 1) + str(result.get_list_routes()[j].get_list_id_customers()))
+                print(
+                    "R"
+                    + str(j + 1)
+                    + str(result.get_list_routes()[j].get_list_id_customers())
+                )
                 # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
             print("------------------------------------------")
 
@@ -76,4 +104,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

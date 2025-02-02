@@ -1,12 +1,13 @@
 import importlib
 
+
 class FactoryLoader:
 
     @staticmethod
     def get_instance(class_name):
         try:
             # Separa el nombre del módulo y el nombre de la clase
-            module_path, class_name = class_name.rsplit('.', 1)
+            module_path, class_name = class_name.rsplit(".", 1)
             # Importa el módulo dinámicamente
             module = importlib.import_module(module_path)
             # Obtiene la clase del módulo importado
@@ -18,7 +19,8 @@ class FactoryLoader:
             print(f"Error al crear la instancia de {class_name}: {e}")
             return None
 
-'''def get_instance(class_name):
+
+"""def get_instance(class_name):
         try:
             module_name, class_name = class_name.rsplit('.', 1)
             module = importlib.import_module(module_name)
@@ -37,5 +39,4 @@ class FactoryLoader:
             print("Esta clase no tiene constructores disponibles")
             raise e
 
-        return instance'''
-
+        return instance"""

@@ -19,6 +19,11 @@ public class Sweep extends Heuristic{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+           
+        }
 
 	@Override
 	public Solution getSolutionInicial() {
@@ -487,7 +492,7 @@ public class Sweep extends Heuristic{
 		return solution;
 	}
 
-	/*Método de ordenamiento Burbujas utilizando las coordenadas polares*/
+	/*Mï¿½todo de ordenamiento Burbujas utilizando las coordenadas polares*/
 	private void bubbleMethod(ArrayList<Customer> listCustomers){
 		double valueThetaOne = 0.0;
 		double valueRhoOne = 0.0;
@@ -532,7 +537,7 @@ public class Sweep extends Heuristic{
 			}
 		}
 	}
-//	/*Método de ordenamiento Quicksort utilizando las coordenadas polares*/
+//	/*Mï¿½todo de ordenamiento Quicksort utilizando las coordenadas polares*/
 //	private void quicksortMethod(ArrayList<Customer> listCustomers, int initial, int end){  
 //		Customer pivote = listCustomers.get(initial);
 //		

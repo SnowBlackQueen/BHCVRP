@@ -21,6 +21,11 @@ public class RandomMethod extends Heuristic{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+           
+        }
 
 	@Override
 	public Solution getSolutionInicial() {

@@ -2,8 +2,9 @@ import math
 
 # Clase que modela la ubicación geográfica de un cliente VRP o depósito a partir de sus coordenadas cartesianas
 
+
 class Location:
-    
+
     def __init__(self, axis_X=None, axis_Y=None):
         self._axis_X = axis_X
         self._axis_Y = axis_Y
@@ -20,7 +21,7 @@ class Location:
     def set_axis_y(self, axis_Y):
         self._axis_Y = axis_Y
 
-    # Método que devuelve para un punto su coordenada polar Theta 
+    # Método que devuelve para un punto su coordenada polar Theta
     def get_polar_theta(self):
         if self._axis_X == 0:
             if self._axis_Y > 0:
@@ -33,4 +34,4 @@ class Location:
 
     # Método que devuelve para un punto su coordenada Rho
     def get_polar_rho(self):
-        return math.sqrt(self._axis_X ** 2 + self._axis_Y ** 2)
+        return math.sqrt(self._axis_X**2 + self._axis_Y**2)
