@@ -27,7 +27,7 @@
 
 
 - Variants of VRP:
-- [ ] School Bus Routing Problem (SBRP).
+- [X] School Bus Routing Problem (SBRP).
 - [ ] Vehicle Routing Problem with Time Windows (VRPTW).
 - [ ] Open Vehicle Routing Problem (OVRP).
 
