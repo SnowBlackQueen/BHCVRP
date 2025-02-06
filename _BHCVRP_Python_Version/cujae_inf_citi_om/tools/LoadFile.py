@@ -3,8 +3,14 @@ from typing import List
 from io import FileIO
 from io import StringIO
 import re
+import json
 from data.CustomerType import CustomerType
-
+from data.BusStop import BusStop
+from data.Location import Location
+from data.Problem import Problem
+from data.Customer import Customer
+from data.Depot import Depot
+from data.Fleet import Fleet
 
 class LoadFile:
     def __init__(self):
@@ -91,6 +97,17 @@ class LoadFile:
             axis_y_customers.append(float(tokens[2]))
             request_customers.append(float(tokens[3]))
 
+    def is_load_time_windows(
+        self, initial_nodes, end_nodes, service_times
+    ):
+        total_customers = self.load_total_customers()
+        total_depots = self.load_total_depots()
+        for i in range(total_depots + 1, total_customers + total_depots + 1):
+            tokens = re.split(r"\s+", self.instance_file[i])
+            initial_nodes.append(float(tokens[4]))
+            end_nodes.append(float(tokens[5]))
+            service_times.append(float(tokens[6]))
+
     def is_load_customers_ttrp(
         self,
         id_customers,
@@ -126,14 +143,14 @@ class LoadFile:
 
     def calculate_distance(self, axis_x_start, axis_y_start, axis_x_end, axis_y_end):
         # Euclidean
-        axis_x = (axis_x_start - axis_x_end) ** 2
+        """axis_x = (axis_x_start - axis_x_end) ** 2
         axis_y = (axis_y_start - axis_y_end) ** 2
-        distance = (axis_x + axis_y) ** 0.5
+        distance = (axis_x + axis_y) ** 0.5"""
 
         # Manhattan
-        """axisX = abs(axis_x_start - axis_x_end)
+        axisX = abs(axis_x_start - axis_x_end)
         axisY = abs(axis_y_start - axis_y_end)
-        distance = axisX + axisY"""
+        distance = axisX + axisY
 
         return distance
 
@@ -286,6 +303,122 @@ class LoadFile:
             fleet.set_capacity_vehicle(capacity)
             depot.set_list_fleets([fleet])  # Assuming set_listfleets accepts a list
         return depots
+
+    def load_bus_stops_from_json(self, file_path: str):
+        # Step 1: Load the JSON file
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+
+        # Step 2: Create an instance of the Problem class
+        problem_instance = Problem.get_problem()
+
+        # Step 3: Extract bus stops and create BusStop instances
+        for bus_stop_data in data['bus_stops']:
+            # Extract coordinates
+            coordinate_x = bus_stop_data['coordinate_x']
+            coordinate_y = bus_stop_data['coordinate_y']
+
+            # Create a Location instance
+            location = Location(coordinate_x, coordinate_y)
+
+            # Create a BusStop instance
+            bus_stop = BusStop(
+                id_bus_stop=bus_stop_data['id'],
+                capacity_bus_stop=bus_stop_data['total_passengers_assigned'],
+                # Assuming capacity is the same as total passengers assigned
+                location_bus_stop=location,
+                list_customers=[passenger['passenger_id'] for passenger in bus_stop_data['passenger_list']]
+            )
+
+            # Step 4: Add the BusStop instance to the Problem instance
+            problem_instance.get_list_buses_stop().append(bus_stop)
+            # print(bus_stop.get_id_bus_stop())
+        return problem_instance.get_list_buses_stop()
+
+    def load_depots_from_json(self, file_path: str):
+        # Step 1: Load the JSON file
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+
+        # Step 2: Create an instance of the Problem class
+        problem_instance = Problem.get_problem()
+
+        # Step 3: Set the maximum number of vehicles and their capacity
+        max_vehicles = data['max_vehicles']
+        max_vehicles_capacity = data['max_vehicles_capacity']
+
+        # Set the capacities in the Problem instance
+        fleets = [Fleet(count_vehicles=max_vehicles, capacity_vehicle=max_vehicles_capacity)]
+
+        problem_instance.set_list_capacities([max_vehicles_capacity] * max_vehicles)
+        # print(problem_instance.get_list_capacities())
+
+        # Step 4: Create and add depots
+        for depot_data in data['depots']:
+            coordinate_x = depot_data['coordinate_x']
+            coordinate_y = depot_data['coordinate_y']
+
+            location = Location(coordinate_x, coordinate_y)
+
+            depot = Depot(
+                id_depot=depot_data['id'],
+                location_depot=location,
+                list_fleets=fleets
+            )
+            problem_instance.get_list_depots().append(depot)  # Assuming set_list_depots accepts a list
+            #print(problem_instance.get_list_depots())
+
+        return problem_instance.get_list_depots()
+
+    def fill_list_distances_sbrp(
+        self,
+        id_bus_stops, axis_x_bus_stops, axis_y_bus_stops,
+        id_depots, axis_x_depots, axis_y_depots,
+        list_distances,
+    ):
+        total_bus_stops = len(id_bus_stops)
+        total_depots = len(id_depots)
+        for i in range(total_bus_stops):
+            distances_from_bus_stops = [
+                self.calculate_distance(
+                    axis_x_bus_stops[j],
+                    axis_y_bus_stops[j],
+                    axis_x_bus_stops[i],
+                    axis_y_bus_stops[i],
+                )
+                for j in range(total_bus_stops)
+            ]
+            for k in range(total_depots):
+                distances_from_bus_stops.append(
+                    self.calculate_distance(
+                        axis_x_depots[k],
+                        axis_y_depots[k],
+                        axis_x_bus_stops[i],
+                        axis_y_bus_stops[i],
+                    )
+                )
+            list_distances.append(distances_from_bus_stops)
+
+        for i in range(total_depots):
+            distances_from_bus_stops = [
+                self.calculate_distance(
+                    axis_x_bus_stops[j],
+                    axis_y_bus_stops[j],
+                    axis_x_depots[i],
+                    axis_y_depots[i],
+                )
+                for j in range(total_bus_stops)
+            ]
+            for k in range(total_depots):
+                distances_from_bus_stops.append(
+                    self.calculate_distance(
+                        axis_x_depots[k],
+                        axis_y_depots[k],
+                        axis_x_depots[i],
+                        axis_y_depots[i],
+                    )
+                )
+            list_distances.append(distances_from_bus_stops)
 
 
 class CustomerAux:

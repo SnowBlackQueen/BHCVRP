@@ -11,3 +11,4 @@ class ProblemType(Enum):
     OVRP = 3
     TTRP = 4
     SBRP = 5
+    VRPTW = 6

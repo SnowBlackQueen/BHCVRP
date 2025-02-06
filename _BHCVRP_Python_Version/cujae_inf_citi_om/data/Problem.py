@@ -6,9 +6,11 @@ from data.Customer import Customer
 from data.CustomerTTRP import CustomerTTRP
 from data.Depot import Depot
 from data.BusStop import BusStop
+from data.TimeWindow import TimeWindow
 from data.ProblemType import ProblemType
 from exceptions.RequestException import RequestException
 from exceptions.WithoutCapacityException import WithoutCapacityException
+from exceptions.VehicleSpeedException import VehicleSpeedException
 from exceptions.DistanceNotAccessibleException import DistanceNotAccessibleException
 
 # Clase que modela los datos de un problema VRP.
@@ -24,6 +26,9 @@ class Problem:
         self._list_capacities: List[float] = None
         self._maximum_walk_distance = None
         self._list_buses_stop: List[BusStop] = []
+        self._list_time_windows: List[TimeWindow] = []
+        self._vehicle_speed = None
+        self.set_time_matrix(time_matrix=None)
 
     @staticmethod  # Método que implementa el Patrón Singleton
     def get_problem():
@@ -62,12 +67,20 @@ class Problem:
             self._type_problem = ProblemType.TTRP
         elif type_problem == 5:
             self._type_problem = ProblemType.SBRP
+        elif type_problem == 6:
+            self._type_problem = ProblemType.VRPTW
 
     def get_cost_matrix(self):
         return self._cost_matrix
 
     def set_cost_matrix(self, cost_matrix):
         self._cost_matrix = cost_matrix
+
+    def get_time_matrix(self):
+        return self._time_matrix
+
+    def set_time_matrix(self, time_matrix):
+        self._time_matrix = time_matrix
 
     def get_list_capacities(self):
         return self._list_capacities
@@ -89,6 +102,21 @@ class Problem:
 
     def get_list_buses_stop(self) -> List[BusStop]:
         return self._list_buses_stop
+
+    def get_vehicle_speed(self):
+        return self._vehicle_speed
+
+    def set_vehicle_speed(self, vehicle_speed):
+        if vehicle_speed >= 0: # si es cero o None es que no se tiene en cuenta en la variante de problema
+            self._vehicle_speed = vehicle_speed
+        else:
+            raise VehicleSpeedException("La velocidad del vehículo no puede ser negativa")
+
+    def get_list_time_windows(self) -> List[TimeWindow]:
+        return self._list_time_windows
+
+    def set_list_time_windows(self, list_time_windows: List[TimeWindow]):
+        self._list_time_windows = list_time_windows
 
     # Método para obtener la lista de id de los clientes
     def get_list_id_customers(self):
