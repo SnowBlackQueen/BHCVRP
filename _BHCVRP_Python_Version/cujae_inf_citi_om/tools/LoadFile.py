@@ -5,6 +5,7 @@ from io import StringIO
 import re
 from data.CustomerType import CustomerType
 
+
 class LoadFile:
     def __init__(self):
         self.instance_file = []
@@ -20,8 +21,10 @@ class LoadFile:
 
     def load_file(self, path_file: str) -> bool:
         try:
-            with open(path_file, 'r') as file:
-                self.instance_file = [line.strip() for line in file if not self.find_end_element(line)]
+            with open(path_file, "r") as file:
+                self.instance_file = [
+                    line.strip() for line in file if not self.find_end_element(line)
+                ]
             return True
         except IOError as e:
             print(e)
@@ -76,21 +79,30 @@ class LoadFile:
         capacity_fleet = list(map(float, self.instance_file[1].split(" ")))
         capacity_vehicles.append(capacity_fleet)
 
-    def is_load_customers(self, id_customers, axis_x_customers, axis_y_customers, request_customers):
+    def is_load_customers(
+        self, id_customers, axis_x_customers, axis_y_customers, request_customers
+    ):
         total_customers = self.load_total_customers()
         total_depots = self.load_total_depots()
         for i in range(total_depots + 1, total_customers + total_depots + 1):
-            tokens = re.split(r'\s+', self.instance_file[i])
+            tokens = re.split(r"\s+", self.instance_file[i])
             id_customers.append(int(tokens[0]))
             axis_x_customers.append(float(tokens[1]))
             axis_y_customers.append(float(tokens[2]))
             request_customers.append(float(tokens[3]))
 
-    def is_load_customers_ttrp(self, id_customers, axis_x_customers, axis_y_customers, request_customers, type_customers):
+    def is_load_customers_ttrp(
+        self,
+        id_customers,
+        axis_x_customers,
+        axis_y_customers,
+        request_customers,
+        type_customers,
+    ):
         total_customers = self.load_total_customers_ttrp()
         total_depots = 1
         for i in range(total_depots + 1, total_customers + total_depots + 1):
-            tokens = re.split(r'\s+', self.instance_file[i])
+            tokens = re.split(r"\s+", self.instance_file[i])
             id_customers.append(int(tokens[0]))
             axis_x_customers.append(float(tokens[1]))
             axis_y_customers.append(float(tokens[2]))
@@ -101,13 +113,13 @@ class LoadFile:
         total_customers = self.load_total_customers()
         total_depots = self.load_total_depots()
         for i in range(total_depots + total_customers + 1, len(self.instance_file)):
-            tokens = re.split(r'\s+', self.instance_file[i])
+            tokens = re.split(r"\s+", self.instance_file[i])
             id_depots.append(int(tokens[0]))
             axis_x_depots.append(float(tokens[1]))
             axis_y_depots.append(float(tokens[2]))
 
     def is_load_depots_ttrp(self, id_depots, axis_x_depots, axis_y_depots):
-        tokens = re.split(r'\s+', self.instance_file[1])
+        tokens = re.split(r"\s+", self.instance_file[1])
         id_depots.append(int(tokens[0]))
         axis_x_depots.append(float(tokens[1]))
         axis_y_depots.append(float(tokens[2]))
@@ -119,27 +131,66 @@ class LoadFile:
         distance = (axis_x + axis_y) ** 0.5
 
         # Manhattan
-        '''axisX = abs(axis_x_start - axis_x_end)
+        """axisX = abs(axis_x_start - axis_x_end)
         axisY = abs(axis_y_start - axis_y_end)
-        distance = axisX + axisY'''
+        distance = axisX + axisY"""
 
         return distance
 
-    def fill_list_distances(self, id_customers, axis_x_customers, axis_y_customers, id_depots, axis_x_depots, axis_y_depots, list_distances):
+    def fill_list_distances(
+        self,
+        id_customers,
+        axis_x_customers,
+        axis_y_customers,
+        id_depots,
+        axis_x_depots,
+        axis_y_depots,
+        list_distances,
+    ):
         total_customers = len(id_customers)
         total_depots = len(id_depots)
         for i in range(total_customers):
-            distances_from_customers = [self.calculate_distance(axis_x_customers[j], axis_y_customers[j], axis_x_customers[i], axis_y_customers[i]) for j in range(total_customers)]
+            distances_from_customers = [
+                self.calculate_distance(
+                    axis_x_customers[j],
+                    axis_y_customers[j],
+                    axis_x_customers[i],
+                    axis_y_customers[i],
+                )
+                for j in range(total_customers)
+            ]
             for k in range(total_depots):
-                distances_from_customers.append(self.calculate_distance(axis_x_depots[k], axis_y_depots[k], axis_x_customers[i], axis_y_customers[i]))
+                distances_from_customers.append(
+                    self.calculate_distance(
+                        axis_x_depots[k],
+                        axis_y_depots[k],
+                        axis_x_customers[i],
+                        axis_y_customers[i],
+                    )
+                )
             list_distances.append(distances_from_customers)
 
         for i in range(total_depots):
-            distances_from_customers = [self.calculate_distance(axis_x_customers[j], axis_y_customers[j], axis_x_depots[i], axis_y_depots[i]) for j in range(total_customers)]
+            distances_from_customers = [
+                self.calculate_distance(
+                    axis_x_customers[j],
+                    axis_y_customers[j],
+                    axis_x_depots[i],
+                    axis_y_depots[i],
+                )
+                for j in range(total_customers)
+            ]
             for k in range(total_depots):
-                distances_from_customers.append(self.calculate_distance(axis_x_depots[k], axis_y_depots[k], axis_x_depots[i], axis_y_depots[i]))
+                distances_from_customers.append(
+                    self.calculate_distance(
+                        axis_x_depots[k],
+                        axis_y_depots[k],
+                        axis_x_depots[i],
+                        axis_y_depots[i],
+                    )
+                )
             list_distances.append(distances_from_customers)
-            
+
     def load_count_vehicles_fleet(self, instance_file):
         fleet = FleetAux()
         tokens = instance_file[0].split(" ")
@@ -153,7 +204,9 @@ class LoadFile:
         tokens.pop(0)  # Remove the second token since it's not needed
         tokens.pop(0)  # Remove the third token since it's not needed
         fleet.set_count_vehicles(int(tokens[0]))
-        fleet.set_count_trailers(int(tokens[1]))  # Adjusted for Python naming convention
+        fleet.set_count_trailers(
+            int(tokens[1])
+        )  # Adjusted for Python naming convention
         return fleet
 
     def load_count_customers(self, instance_file):
@@ -175,32 +228,52 @@ class LoadFile:
 
     def load_customers(self, instance_file):
         customers = []
-        for i in range(len(instance_file) - 1, -1, -1):  # Start from end to avoid overlap with depots
+        for i in range(
+            len(instance_file) - 1, -1, -1
+        ):  # Start from end to avoid overlap with depots
             tokens = instance_file[i].split(" ")
             customer = CustomerAux()
             customer.set_id_customer(int(tokens[0]))
-            customer.set_axis_x(float(tokens[1]))  # Adjusted for Python naming convention
-            customer.set_axis_y(float(tokens[2]))  # Adjusted for Python naming convention
-            customer.set_request_customer(float(tokens[3]))  # Adjusted for Python naming convention
+            customer.set_axis_x(
+                float(tokens[1])
+            )  # Adjusted for Python naming convention
+            customer.set_axis_y(
+                float(tokens[2])
+            )  # Adjusted for Python naming convention
+            customer.set_request_customer(
+                float(tokens[3])
+            )  # Adjusted for Python naming convention
             customers.append(customer)
         return customers
 
     def load_customers_ttrp(self, instance_file):
         customers = []
-        for i in range(len(instance_file) - 1, -1, -1):  # Start from end to avoid overlap with depots
+        for i in range(
+            len(instance_file) - 1, -1, -1
+        ):  # Start from end to avoid overlap with depots
             tokens = instance_file[i].split(" ")
             customer = CustomerTTRPAux()
             customer.set_id_customer(int(tokens[0]))
-            customer.set_axis_x(float(tokens[1]))  # Adjusted for Python naming convention
-            customer.set_axis_y(float(tokens[2]))  # Adjusted for Python naming convention
-            customer.set_request_customer(float(tokens[3]))  # Adjusted for Python naming convention
-            customer.set_type_customer(int(tokens[4]))  # Adjusted for Python naming convention
+            customer.set_axis_x(
+                float(tokens[1])
+            )  # Adjusted for Python naming convention
+            customer.set_axis_y(
+                float(tokens[2])
+            )  # Adjusted for Python naming convention
+            customer.set_request_customer(
+                float(tokens[3])
+            )  # Adjusted for Python naming convention
+            customer.set_type_customer(
+                int(tokens[4])
+            )  # Adjusted for Python naming convention
             customers.append(customer)
         return customers
 
     def load_depots(self, instance_file):
         depots = []
-        for i in range(len(instance_file) - 1, -1, -1):  # Start from end to avoid overlap with fleets
+        for i in range(
+            len(instance_file) - 1, -1, -1
+        ):  # Start from end to avoid overlap with fleets
             tokens = instance_file[i].split(" ")
             depot = DepotAux()
             depot.set_id_depot(int(tokens[0]))  # Adjusted for Python naming convention
@@ -213,6 +286,7 @@ class LoadFile:
             fleet.set_capacity_vehicle(capacity)
             depot.set_list_fleets([fleet])  # Assuming set_listfleets accepts a list
         return depots
+
 
 class CustomerAux:
     def __init__(self):
@@ -251,7 +325,8 @@ class CustomerAux:
 
     def set_axis_y(self, axis_y):
         self.axis_y = axis_y
-        
+
+
 class CustomerTTRPAux(CustomerAux):
     def __init__(self, type_customer=CustomerType.VC):
         super().__init__()  # Assuming CustomerAux has been defined above
@@ -270,7 +345,8 @@ class CustomerTTRPAux(CustomerAux):
             self.type_customer = CustomerType.TC
         else:
             raise ValueError("Invalid customer type integer")
-        
+
+
 class DepotAux:
     def __init__(self, id_depot=None, list_fleets=None, axis_x=None, axis_y=None):
         self.id_depot = id_depot
@@ -301,7 +377,8 @@ class DepotAux:
 
     def set_axis_y(self, axis_y):
         self.axis_y = axis_y
-        
+
+
 class FleetAux:
     def __init__(self, count_vehicles=None, capacity_vehicle=None):
         self.count_vehicles = count_vehicles
@@ -318,10 +395,13 @@ class FleetAux:
 
     def set_capacity_vehicle(self, capacity_vehicle):
         self.capacity_vehicle = capacity_vehicle
-        
+
+
 class FleetTTRPAux(FleetAux):
     def __init__(self, count_trailers=None, capacity_trailer=None):
-        super().__init__(count_vehicles=0, capacity_vehicle=0)  # Initialize FleetAux attributes
+        super().__init__(
+            count_vehicles=0, capacity_vehicle=0
+        )  # Initialize FleetAux attributes
         self.count_trailers = count_trailers
         self.capacity_trailer = capacity_trailer
 

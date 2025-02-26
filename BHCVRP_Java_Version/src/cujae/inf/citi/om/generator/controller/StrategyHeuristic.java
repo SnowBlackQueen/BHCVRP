@@ -24,7 +24,8 @@ import cujae.inf.citi.om.generator.solution.RouteType;
 import cujae.inf.citi.om.generator.solution.Solution;
 import cujae.inf.citi.om.heuristic.controller.Controller;
 import cujae.inf.citi.om.heuristic.output.Cluster;
-import cujae.inf.citi.om.matrix.NumericMatrix;
+//import cujae.inf.citi.om.matrix.NumericMatrix;
+import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
 import cujae.inf.citi.om.tools.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -552,6 +553,7 @@ public class StrategyHeuristic {
 
 			Problem.getProblem().setListCustomers(listCustomers);
 			Problem.getProblem().setListDepots(listDepots);
+                        
 
 			if((Problem.getProblem().getTotalCapacity() >= Problem.getProblem().getTotalRequest()))
 			{

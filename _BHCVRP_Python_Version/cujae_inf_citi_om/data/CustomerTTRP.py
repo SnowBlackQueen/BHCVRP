@@ -3,14 +3,27 @@ from data.Customer import Customer
 
 # Clase que modela los datos de un cliente en el TTRP
 
+
 class CustomerTTRP(Customer):
-    
-    def __init__(self, type_customer=None, id_customer=None, request_customer=None, location_customer=None):
-        super().__init__(id_customer, request_customer, location_customer)  
+
+    def __init__(
+        self,
+        type_customer=None,
+        id_customer=None,
+        request_customer=None,
+        location_customer=None,
+    ):
+        super().__init__(id_customer, request_customer, location_customer)
         self.type_customer = type_customer
-        
-    def __init__(self,type_customer=None, id_customer=None, request_customer=None, location_customer=None):
-        super().__init__(id_customer, request_customer, location_customer)  
+
+    def __init__(
+        self,
+        type_customer=None,
+        id_customer=None,
+        request_customer=None,
+        location_customer=None,
+    ):
+        super().__init__(id_customer, request_customer, location_customer)
         self.type_customer = type_customer
         self._id_customer = id_customer
         self._request_customer = request_customer

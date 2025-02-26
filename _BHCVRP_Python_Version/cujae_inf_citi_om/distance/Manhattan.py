@@ -1,6 +1,7 @@
 from distance import Distance
 import math
 
+
 class Manhattan(Distance):
 
     def __init__(self):

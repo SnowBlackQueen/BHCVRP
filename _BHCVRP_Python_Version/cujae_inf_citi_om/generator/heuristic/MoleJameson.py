@@ -3,7 +3,7 @@ from data.Problem import Problem
 from data.ProblemType import ProblemType
 from generator.heuristic.Metric import Metric
 from data.CustomerType import CustomerType
-from generator.heuristic.FirstCustomerType import FirstCustomerType
+from generator.heuristic.FirstElementType import FirstElementType
 from generator.solution.Solution import Solution
 from data.DepotMDVRP import DepotMDVRP
 from data.Customer import Customer
@@ -13,18 +13,34 @@ from generator.solution.RouteTTRP import RouteTTRP
 from generator.solution.RouteType import RouteType
 from data.FleetTTRP import FleetTTRP
 
+
 class MoleJameson(Heuristic):
-    
+
     parameter_c1 = 1
     parameter_c2 = 1
-    first_customer_type = FirstCustomerType.FurthestCustomer
+    first_customer_type = FirstElementType.Furthest
 
     def __init__(self):
         super().__init__()
 
     def initialize_specifics(self):
 
-        self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+        if self.type_problem == ProblemType.SBRP:
+            self.bus_stop = self._get_first_element(self.list_bus_stops, self.first_customer_type, self.id_depot)
+            self.route.get_list_bus_stops().append(self.id_depot)
+            self.route.get_list_bus_stops().append(self.bus_stop)
+            self.route.get_list_bus_stops().append(self.id_depot)
+            self.route.set_id_depot(self.id_depot)
+            self.list_bus_stops.remove(self.bus_stop)
+        else:
+            self.customer = self._get_first_element(
+                self.customers_to_visit, self.first_customer_type, self.id_depot
+            )
+            self.route.get_list_id_customers().append(self.id_depot)
+            self.route.get_list_id_customers().append(self.customer.get_id_customer())
+            self.route.get_list_id_customers().append(self.id_depot)
+            self.route.set_id_depot(self.id_depot)
+            self.customers_to_visit.remove(self.customer)
 
         if not self.initialized:
             if self.parameter_c1 <= 0:
@@ -37,25 +53,35 @@ class MoleJameson(Heuristic):
             self.list_best_positions = None
             self.metric_MJ = None
             self.count_no_feasible = 0
-            self.request_route = self.customer.get_request_customer()
 
-        self.route.get_list_id_customers().append(self.id_depot)
-        self.route.get_list_id_customers().append(self.customer.get_id_customer())
-        self.route.get_list_id_customers().append(self.id_depot)
-        self.route.set_id_depot(self.id_depot)
-        self.customers_to_visit.remove(self.customer)
-    
-    def creating(self, route=None, request_route=None, list_tau=None, list_metrics=None):
+            if self.type_problem == ProblemType.SBRP:
+                self.request_route = self.bus_stop.get_capacity_bus_stop()
+            else:
+                self.request_route = self.customer.get_request_customer()
+
+
+    def creating(
+        self, route=None, request_route=None, list_tau=None, list_metrics=None
+    ):
         if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
             for i in range(len(self.customers_to_visit)):
-                if self.capacity_vehicle >= (self.request_route + self.customers_to_visit[i].get_request_customer()):
-                    self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
+                if self.capacity_vehicle >= (
+                    self.request_route
+                    + self.customers_to_visit[i].get_request_customer()
+                ):
+                    self.list_best_positions.append(
+                        self.get_position_with_best_cost(
+                            self.route, self.customers_to_visit[i].get_id_customer()
+                        )
+                    )
                 else:
                     self.count_no_feasible += 1
-                    
+
             if self.count_no_feasible == len(self.customers_to_visit):
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().pop(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
                 self.solution.get_list_routes().append(self.route)
 
@@ -65,33 +91,124 @@ class MoleJameson(Heuristic):
                 if self.count_vehicles > 0:
                     self.route = Route()
 
-                    self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+                    self.customer = self._get_first_element(
+                        self.customers_to_visit, self.first_customer_type, self.id_depot
+                    )
                     self.request_route = self.customer.get_request_customer()
                     self.route.get_list_id_customers().append(self.id_depot)
-                    self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                    self.route.get_list_id_customers().append(
+                        self.customer.get_id_customer()
+                    )
                     self.route.get_list_id_customers().append(self.id_depot)
                     self.route.set_id_depot(self.id_depot)
                     self.customers_to_visit.remove(self.customer)
             else:
-                self.metric_MJ = self.get_MJ_customer(self.list_best_positions, self.id_depot)
-                self.request_route += Problem.get_problem().get_request_by_id_customer(self.metric_MJ.get_id_element())
-                self.route.get_list_id_customers().insert(self.metric_MJ.get_index(), self.metric_MJ.get_id_element())
-                self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(self.metric_MJ.get_id_element()))
+                self.metric_MJ = self.get_MJ_element(
+                    self.list_best_positions, self.id_depot
+                )
+                self.request_route += Problem.get_problem().get_request_by_id_customer(
+                    self.metric_MJ.get_id_element()
+                )
+                self.route.get_list_id_customers().insert(
+                    self.metric_MJ.get_index(), self.metric_MJ.get_id_element()
+                )
+                self.customers_to_visit.remove(
+                    Problem.get_problem().get_customer_by_id_customer(
+                        self.metric_MJ.get_id_element()
+                    )
+                )
 
                 if len(self.route.get_list_id_customers()) >= 6:
                     self.route.get_list_id_customers().pop(0)
-                    self.route.get_list_id_customers().pop(len(self.route.get_list_id_customers()) - 1)
+                    self.route.get_list_id_customers().pop(
+                        len(self.route.get_list_id_customers()) - 1
+                    )
 
                     if len(self.route.get_list_id_customers()) >= 6:
                         self.three_opt.to_optimize(self.route)
 
                     self.route.get_list_id_customers().insert(0, self.id_depot)
                     self.route.get_list_id_customers().append(self.id_depot)
-                    
+
+        elif self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            for i in range(len(self.list_bus_stops)):
+                if self.capacity_vehicle >= (
+                    self.request_route
+                    + self.list_bus_stops[i].get_capacity_bus_stop()
+                ):
+                    self.list_best_positions.append(
+                        self.get_position_with_best_cost(
+                            self.route, self.list_bus_stops[i].get_id_bus_stop()
+                        )
+                    )
+                else:
+                    self.count_no_feasible += 1
+
+            if self.count_no_feasible == len(self.list_bus_stops):
+                self.route.get_list_bus_stops().pop(0)
+                self.route.get_list_bus_stops().pop(
+                    (len(self.route.get_list_bus_stops()) - 1)
+                )
+                self.route.set_request_route(self.request_route)
+                self.solution.get_list_routes().append(self.route)
+
+                # route = None
+                self.count_vehicles -= 1
+
+                if self.count_vehicles > 0:
+                    self.route = Route()
+
+                    self.bus_stop = self._get_first_element(
+                        self.list_bus_stops, self.first_customer_type, self.id_depot
+                    )
+                    self.request_route = self.bus_stop.get_capacity_bus_stop()
+                    self.route.get_list_bus_stops().append(self.id_depot)
+                    self.route.get_list_bus_stops().append(
+                        self.bus_stop.get_id_bus_stop()
+                    )
+                    self.route.get_list_bus_stops().append(self.id_depot)
+                    self.route.set_id_depot(self.id_depot)
+                    self.list_bus_stops.remove(self.bus_stop)
+            else:
+                self.metric_MJ = self.get_MJ_element(
+                    self.list_best_positions, self.id_depot
+                )
+                self.request_route += Problem.get_problem().get_request_by_id_bus_stop(
+                    self.metric_MJ.get_id_element()
+                )
+                self.route.get_list_id_customers().insert(
+                    self.metric_MJ.get_index(), self.metric_MJ.get_id_element()
+                )
+                self.list_bus_stops.remove(
+                    Problem.get_problem().get_bus_stop_by_id_bus_stop(
+                        self.metric_MJ.get_id_element()
+                    )
+                )
+
+                if len(self.route.get_list_bus_stops()) >= 6:
+                    self.route.get_list_bus_stops().pop(0)
+                    self.route.get_list_bus_stops().pop(
+                        len(self.route.get_list_bus_stops()) - 1
+                    )
+
+                    if len(self.route.get_list_bus_stops()) >= 6:
+                        self.three_opt.to_optimize(self.route)
+
+                    self.route.get_list_bus_stops().insert(0, self.id_depot)
+                    self.route.get_list_bus_stops().append(self.id_depot)
+
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             for i in range(len(self.customers_to_visit)):
-                if self.capacity_vehicle >= self.request_route + self.customers_to_visit[i].get_request_customer():
-                    self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
+                if (
+                    self.capacity_vehicle
+                    >= self.request_route
+                    + self.customers_to_visit[i].get_request_customer()
+                ):
+                    self.list_best_positions.append(
+                        self.get_position_with_best_cost(
+                            self.route, self.customers_to_visit[i].get_id_customer()
+                        )
+                    )
                 else:
                     self.count_no_feasible += 1
 
@@ -108,18 +225,32 @@ class MoleJameson(Heuristic):
 
                     self.route = Route()
 
-                    customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+                    customer = self._get_first_element(
+                        self.customers_to_visit, self.first_customer_type, self.id_depot
+                    )
                     self.request_route = customer.get_request_customer()
-                    self.route.get_list_id_customers().extend([self.id_depot, customer.get_id_customer(), self.id_depot])
+                    self.route.get_list_id_customers().extend(
+                        [self.id_depot, customer.get_id_customer(), self.id_depot]
+                    )
                     self.route.set_id_depot(self.id_depot)
                     self.customers_to_visit.remove(customer)
 
                     self.capacity_vehicle = self.list_capacities[0]
             else:
-                metric_MJ = self.get_MJ_customer(self.list_best_positions, self.id_depot)
-                self.request_route += Problem.get_problem().get_request_by_id_customer(metric_MJ.get_id_element())
-                self.route.get_list_id_customers().insert(metric_MJ.get_index(), metric_MJ.get_id_element())
-                self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(metric_MJ.get_id_element()))
+                metric_MJ = self.get_MJ_element(
+                    self.list_best_positions, self.id_depot
+                )
+                self.request_route += Problem.get_problem().get_request_by_id_customer(
+                    metric_MJ.get_id_element()
+                )
+                self.route.get_list_id_customers().insert(
+                    metric_MJ.get_index(), metric_MJ.get_id_element()
+                )
+                self.customers_to_visit.remove(
+                    Problem.get_problem().get_customer_by_id_customer(
+                        metric_MJ.get_id_element()
+                    )
+                )
 
                 if len(self.route.get_list_id_customers()) >= 6:
                     self.route.get_list_id_customers().pop(0)
@@ -130,93 +261,170 @@ class MoleJameson(Heuristic):
 
                     self.route.get_list_id_customers().insert(0, self.id_depot)
                     self.route.get_list_id_customers().append(self.id_depot)
-                    
+
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             for k in range(len(self.customers_to_visit)):
-                if self.capacity_vehicle >= (self.request_route + self.customers_to_visit[k].get_request_customer()):
-                    self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[k].get_id_customer()))
+                if self.capacity_vehicle >= (
+                    self.request_route
+                    + self.customers_to_visit[k].get_request_customer()
+                ):
+                    self.list_best_positions.append(
+                        self.get_position_with_best_cost(
+                            self.route, self.customers_to_visit[k].get_id_customer()
+                        )
+                    )
                 else:
                     self.count_no_feasible += 1
-                    
+
             if self.count_no_feasible == len(self.customers_to_visit):
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().pop(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
                 self.solution.get_list_routes().append(self.route)
-                        
-                #self.route = None
+
+                # self.route = None
                 self.count_vehicles -= 1
-                        
+
                 if self.count_vehicles > 0:
                     self.route = Route()
-                            
-                    self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+
+                    self.customer = self._get_first_element(
+                        self.customers_to_visit, self.first_customer_type, self.id_depot
+                    )
                     self.request_route = self.customer.get_request_customer()
                     self.route.get_list_id_customers().append(self.id_depot)
-                    self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                    self.route.get_list_id_customers().append(
+                        self.customer.get_id_customer()
+                    )
                     self.route.get_list_id_customers().append(self.id_depot)
                     self.route.set_id_depot(self.id_depot)
                     self.customers_to_visit.remove(self.customer)
             else:
-                metric_MJ = self.get_MJ_customer(self.list_best_positions, self.id_depot)
-                self.request_route += Problem.get_problem().get_request_by_id_customer(metric_MJ.get_id_element())
-                self.route.get_list_id_customers().insert(metric_MJ.get_index(), metric_MJ.get_id_element())
-                self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(metric_MJ.get_id_element()))
-                
+                metric_MJ = self.get_MJ_element(
+                    self.list_best_positions, self.id_depot
+                )
+                self.request_route += Problem.get_problem().get_request_by_id_customer(
+                    metric_MJ.get_id_element()
+                )
+                self.route.get_list_id_customers().insert(
+                    metric_MJ.get_index(), metric_MJ.get_id_element()
+                )
+                self.customers_to_visit.remove(
+                    Problem.get_problem().get_customer_by_id_customer(
+                        metric_MJ.get_id_element()
+                    )
+                )
+
                 if len(self.route.get_list_id_customers()) >= 6:
                     self.route.get_list_id_customers().pop(0)
-                    self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
-                            
+                    self.route.get_list_id_customers().pop(
+                        (len(self.route.get_list_id_customers()) - 1)
+                    )
+
                     if len(self.route.get_list_id_customers()) >= 6:
                         self.three_opt.to_optimize(self.route)
-                            
+
                     self.route.get_list_id_customers().insert(0, self.id_depot)
                     self.route.get_list_id_customers().append(self.id_depot)
-                    
+
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             if self.count_no_feasible == len(self.customers_to_visit):
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().pop(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
-                    
-                if Problem.get_problem().get_type_by_id_customer(self.route.get_list_id_customers()[0]) == CustomerType.TC:
-                    self.route = RouteTTRP(self.route.get_list_id_customers(), self.route.get_request_route(), self.route.get_cost_route(), self.route.get_id_depot(), self.list_access_VC, RouteType.PTR)
+
+                if (
+                    Problem.get_problem().get_type_by_id_customer(
+                        self.route.get_list_id_customers()[0]
+                    )
+                    == CustomerType.TC
+                ):
+                    self.route = RouteTTRP(
+                        self.route.get_list_id_customers(),
+                        self.route.get_request_route(),
+                        self.route.get_cost_route(),
+                        self.route.get_id_depot(),
+                        self.list_access_VC,
+                        RouteType.PTR,
+                    )
                 else:
                     if self.exist_TC(self.route):
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=self.list_access_VC, type_route=RouteType.CVR)
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=self.list_access_VC,
+                            type_route=RouteType.CVR,
+                        )
                     else:
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(), id_depot=self.route.get_id_depot(), list_access_vc=self.list_access_VC, type_route=RouteType.PVR)
-                    
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=self.list_access_VC,
+                            type_route=RouteType.PVR,
+                        )
+
                 if len(self.route.get_list_id_customers()) >= 6:
                     self.three_opt.to_optimize(self.route)
-                    
+
                 self.solution.get_list_routes().append(self.route)
-                    
+
                 if self.customers_to_visit:
                     self.route = RouteTTRP()
-                    self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+                    self.customer = self._get_first_element(
+                        self.customers_to_visit, self.first_customer_type, self.id_depot
+                    )
                     self.request_route = self.customer.get_request_customer()
                     self.route.get_list_id_customers().append(self.id_depot)
                     self.route.get_list_id_customers().append(self.id_depot)
-                    #self.route.get_list_id_customers().insert(0, self.id_depot)
-                    self.route.get_list_id_customers().insert(1, self.customer.get_id_customer())
+                    # self.route.get_list_id_customers().insert(0, self.id_depot)
+                    self.route.get_list_id_customers().insert(
+                        1, self.customer.get_id_customer()
+                    )
                     self.route.set_id_depot(self.id_depot)
                     self.customers_to_visit.remove(self.customer)
-                
+
             else:
-                metric_MJ = self.get_MJ_customer(self.list_best_positions, self.id_depot)
-                    
-                self.request_route += Problem.get_problem().get_request_by_id_customer(metric_MJ.get_id_element())
-                self.route.get_list_id_customers().insert(metric_MJ.get_index(), metric_MJ.get_id_element())
-                self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(metric_MJ.get_id_element()))
-                
+                metric_MJ = self.get_MJ_element(
+                    self.list_best_positions, self.id_depot
+                )
+
+                self.request_route += Problem.get_problem().get_request_by_id_customer(
+                    metric_MJ.get_id_element()
+                )
+                self.route.get_list_id_customers().insert(
+                    metric_MJ.get_index(), metric_MJ.get_id_element()
+                )
+                self.customers_to_visit.remove(
+                    Problem.get_problem().get_customer_by_id_customer(
+                        metric_MJ.get_id_element()
+                    )
+                )
+
         return self.route
-    
-    def processing(self, customers_to_visit=None, count_vehicles=None, request_route=None, route=None, id_depot=None, solution=None):
+
+    def processing(
+        self,
+        customers_to_visit=None,
+        count_vehicles=None,
+        request_route=None,
+        route=None,
+        id_depot=None,
+        solution=None,
+    ):
         if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
             if self.route is not None:
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().pop(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
                 self.solution.get_list_routes().append(self.route)
 
@@ -224,10 +432,14 @@ class MoleJameson(Heuristic):
                 self.route = Route()
                 self.metric_MJ = Metric()
 
-                self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+                self.customer = self._get_first_element(
+                    self.customers_to_visit, self.first_customer_type, self.id_depot
+                )
                 self.request_route = self.customer.get_request_customer()
                 self.route.get_list_id_customers().append(self.id_depot)
-                self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                self.route.get_list_id_customers().append(
+                    self.customer.get_id_customer()
+                )
                 self.route.get_list_id_customers().append(self.id_depot)
                 self.route.set_id_depot(self.id_depot)
                 self.customers_to_visit.remove(self.customer)
@@ -236,16 +448,34 @@ class MoleJameson(Heuristic):
                     self.list_best_positions = []
 
                     for i in range(len(self.customers_to_visit)):
-                        self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
+                        self.list_best_positions.append(
+                            self.get_position_with_best_cost(
+                                self.route, self.customers_to_visit[i].get_id_customer()
+                            )
+                        )
 
-                    self.metric_MJ = self.get_MJ_customer(self.list_best_positions, self.id_depot)
-                    self.request_route += Problem.get_problem().get_request_by_id_customer(self.metric_MJ.get_id_element())
-                    self.route.get_list_id_customers().append(self.metric_MJ.get_index(), self.metric_MJ.get_id_element())
-                    self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(self.metric_MJ.get_id_element()))
+                    self.metric_MJ = self.get_MJ_element(
+                        self.list_best_positions, self.id_depot
+                    )
+                    self.request_route += (
+                        Problem.get_problem().get_request_by_id_customer(
+                            self.metric_MJ.get_id_element()
+                        )
+                    )
+                    self.route.get_list_id_customers().append(
+                        self.metric_MJ.get_index(), self.metric_MJ.get_id_element()
+                    )
+                    self.customers_to_visit.remove(
+                        Problem.get_problem().get_customer_by_id_customer(
+                            self.metric_MJ.get_id_element()
+                        )
+                    )
 
                     if len(self.route.get_list_id_customers()) >= 6:
                         self.route.get_list_id_customers().remove(0)
-                        self.route.get_list_id_customers().remove((len(self.route.get_list_id_customers()) - 1))
+                        self.route.get_list_id_customers().remove(
+                            (len(self.route.get_list_id_customers()) - 1)
+                        )
 
                         if len(self.route.get_list_id_customers()) >= 6:
                             self.three_opt.to_optimize(self.route)
@@ -254,10 +484,83 @@ class MoleJameson(Heuristic):
                         self.route.get_list_id_customers().append(self.id_depot)
 
                 self.route.get_list_id_customers().remove(0)
-                self.route.get_list_id_customers().remove((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().remove(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
                 self.solution.get_list_routes().append(self.route)
-                
+
+        elif self.type_problem == ProblemType.SBRP:
+            if self.route is not None:
+                self.route.get_list_bus_stops().pop(0)
+                self.route.get_list_bus_stops().pop(
+                    (len(self.route.get_list_bus_stops()) - 1)
+                )
+                self.route.set_request_route(self.request_route)
+                self.solution.get_list_routes().append(self.route)
+
+            if self.list_bus_stops:
+                self.route = Route()
+                self.metric_MJ = Metric()
+
+                self.bus_stop = self._get_first_element(
+                    self.list_bus_stops, self.first_customer_type, self.id_depot
+                )
+                self.request_route = self.bus_stop.get_capacity_bus_stop()
+                self.route.get_list_bus_stops().append(self.id_depot)
+                self.route.get_list_bus_stops().append(
+                    self.bus_stop
+                )
+                self.route.get_list_bus_stops().append(self.id_depot)
+                self.route.set_id_depot(self.id_depot)
+                self.list_bus_stops.remove(self.bus_stop)
+
+                while self.list_bus_stops:
+                    self.list_best_positions = []
+
+                    for i in range(len(self.list_bus_stops)):
+                        self.list_best_positions.append(
+                            self.get_position_with_best_cost(
+                                self.route, self.list_bus_stops[i].get_id_bus_stop()
+                            )
+                        )
+
+                    self.metric_MJ = self.get_MJ_element(
+                        self.list_best_positions, self.id_depot
+                    )
+                    self.request_route += (
+                        Problem.get_problem().get_request_by_id_bus_stop(
+                            self.metric_MJ.get_id_element()
+                        )
+                    )
+                    self.route.get_list_bus_stops().append(
+                        self.metric_MJ.get_index(), self._get_element_by_id(self.metric_MJ.get_id_element(), self.list_bus_stops)
+                    )
+                    self.list_bus_stops.remove(
+                        Problem.get_problem().get_bus_stop_by_id_bus_stop(
+                            self.metric_MJ.get_id_element()
+                        )
+                    )
+
+                    if len(self.route.get_list_bus_stops()) >= 6:
+                        self.route.get_list_bus_stops().remove(0)
+                        self.route.get_list_bus_stops().remove(
+                            (len(self.route.get_list_bus_stops()) - 1)
+                        )
+
+                        if len(self.route.get_list_bus_stops()) >= 6:
+                            self.three_opt.to_optimize(self.route)
+
+                        self.route.get_list_bus_stops().insert(0, self.id_depot)
+                        self.route.get_list_bus_stops().append(self.id_depot)
+
+                self.route.get_list_bus_stops().remove(0)
+                self.route.get_list_bus_stops().remove(
+                    (len(self.route.get_list_bus_stops()) - 1)
+                )
+                self.route.set_request_route(self.request_route)
+                self.solution.get_list_routes().append(self.route)
+
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             if self.route:
                 self.route.get_list_id_customers().pop(0)
@@ -269,9 +572,13 @@ class MoleJameson(Heuristic):
                 self.route = Route()
                 metric_MJ = Metric()
 
-                customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+                customer = self._get_first_element(
+                    self.customers_to_visit, self.first_customer_type, self.id_depot
+                )
                 self.request_route = customer.get_request_customer()
-                self.route.get_list_id_customers().extend([self.id_depot, customer.get_id_customer(), self.id_depot])
+                self.route.get_list_id_customers().extend(
+                    [self.id_depot, customer.get_id_customer(), self.id_depot]
+                )
                 self.route.set_id_depot(self.id_depot)
                 self.customers_to_visit.remove(customer)
 
@@ -279,16 +586,32 @@ class MoleJameson(Heuristic):
                     list_best_positions = []
 
                     for i in range(len(self.customers_to_visit)):
-                        list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
-                        
-                    metric_MJ = self.get_MJ_customer(list_best_positions, id_depot)
-                    self.request_route += Problem.get_problem().get_request_by_id_customer(metric_MJ.get_id_element())
-                    self.route.get_list_id_customers().insert(metric_MJ.get_index(), metric_MJ.get_id_element())
-                    self.customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(metric_MJ.get_id_element()))
+                        list_best_positions.append(
+                            self.get_position_with_best_cost(
+                                self.route, self.customers_to_visit[i].get_id_customer()
+                            )
+                        )
+
+                    metric_MJ = self.get_MJ_element(list_best_positions, id_depot)
+                    self.request_route += (
+                        Problem.get_problem().get_request_by_id_customer(
+                            metric_MJ.get_id_element()
+                        )
+                    )
+                    self.route.get_list_id_customers().insert(
+                        metric_MJ.get_index(), metric_MJ.get_id_element()
+                    )
+                    self.customers_to_visit.remove(
+                        Problem.get_problem().get_customer_by_id_customer(
+                            metric_MJ.get_id_element()
+                        )
+                    )
 
                     if len(self.route.get_list_id_customers()) >= 6:
                         self.route.get_list_id_customers().pop(0)
-                        self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                        self.route.get_list_id_customers().pop(
+                            (len(self.route.get_list_id_customers()) - 1)
+                        )
 
                         if len(self.route.get_list_id_customers()) >= 6:
                             self.three_opt.to_optimize(self.route)
@@ -297,40 +620,58 @@ class MoleJameson(Heuristic):
                         self.route.get_list_id_customers().append(id_depot)
 
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop(len(self.route.get_list_id_customers()) - 1)
+                self.route.get_list_id_customers().pop(
+                    len(self.route.get_list_id_customers()) - 1
+                )
                 self.route.set_request_route(self.request_route)
 
                 self.solution.get_list_routes().append(self.route)
-                    
+
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
             if route is not None:
                 route.get_list_id_customers().remove(0)
-                route.get_list_id_customers().remove((len(route.get_list_id_customers()) - 1))
+                route.get_list_id_customers().remove(
+                    (len(route.get_list_id_customers()) - 1)
+                )
                 route.set_request_route(request_route)
                 self.solution.get_list_routes().append(route)
-                
+
             if customers_to_visit:
                 route = Route()
                 metric_MJ = Metric()
-                    
-                customer = self._get_first_customer(customers_to_visit, self.first_customer_type, id_depot)
+
+                customer = self._get_first_element(
+                    customers_to_visit, self.first_customer_type, id_depot
+                )
                 requestRoute = customer.get_request_customer()
                 route.get_list_id_customers().append(id_depot)
                 route.get_list_id_customers().append(customer.get_id_customer())
                 route.get_list_id_customers().append(id_depot)
                 route.set_id_depot(id_depot)
                 customers_to_visit.remove(customer)
-                    
+
                 while customers_to_visit:
                     list_best_positions = []
-                        
+
                     for l in range(len(customers_to_visit)):
-                        list_best_positions.append(self.get_position_with_best_cost(route, customers_to_visit.get(l).get_id_customer()))
-                        
-                    metric_MJ = self.get_MJ_customer(list_best_positions, id_depot)
-                    request_route += Problem.get_problem().get_request_by_id_customer(metric_MJ.get_id_element())
-                    route.get_list_id_customers().insert(metric_MJ.get_index(), metric_MJ.get_id_element())
-                    customers_to_visit.remove(Problem.get_problem().get_customer_by_id_customer(metric_MJ.get_id_element()))
+                        list_best_positions.append(
+                            self.get_position_with_best_cost(
+                                route, customers_to_visit.get(l).get_id_customer()
+                            )
+                        )
+
+                    metric_MJ = self.get_MJ_element(list_best_positions, id_depot)
+                    request_route += Problem.get_problem().get_request_by_id_customer(
+                        metric_MJ.get_id_element()
+                    )
+                    route.get_list_id_customers().insert(
+                        metric_MJ.get_index(), metric_MJ.get_id_element()
+                    )
+                    customers_to_visit.remove(
+                        Problem.get_problem().get_customer_by_id_customer(
+                            metric_MJ.get_id_element()
+                        )
+                    )
 
                     if len(route.get_list_id_customers()) >= 6:
                         route.get_list_id_customers().pop(0)
@@ -346,25 +687,50 @@ class MoleJameson(Heuristic):
                     route.get_list_id_customers().pop(-1)
                     route.set_request_route(request_route)
                     self.solution.get_list_routes().append(route)
-                    
+
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             if self.request_route > 0.0:  # cambiar condicion
                 self.route.get_list_id_customers().pop(0)
-                self.route.get_list_id_customers().pop((len(self.route.get_list_id_customers()) - 1))
+                self.route.get_list_id_customers().pop(
+                    (len(self.route.get_list_id_customers()) - 1)
+                )
                 self.route.set_request_route(self.request_route)
 
-                if Problem.get_problem().get_type_by_id_customer(self.route.get_list_id_customers()[0]) == CustomerType.TC:
-                    self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(),
-                                    id_depot=self.route.get_id_depot(), list_access_vc=self.list_access_VC, type_route=RouteType.PTR)
+                if (
+                    Problem.get_problem().get_type_by_id_customer(
+                        self.route.get_list_id_customers()[0]
+                    )
+                    == CustomerType.TC
+                ):
+                    self.route = RouteTTRP(
+                        list_id_customers=self.route.get_list_id_customers(),
+                        request_route=self.route.get_request_route(),
+                        cost_route=self.route.get_cost_route(),
+                        id_depot=self.route.get_id_depot(),
+                        list_access_vc=self.list_access_VC,
+                        type_route=RouteType.PTR,
+                    )
                     # ((RouteTTRP)route).setTypeRoute(RouteType.PTR)
                 else:
                     if self.exist_TC(self.route):
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(),
-                                    id_depot=self.route.get_id_depot(), list_access_vc=self.list_access_VC, type_route=RouteType.CVR)
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=self.list_access_VC,
+                            type_route=RouteType.CVR,
+                        )
                         # ((RouteTTRP)route).setTypeRoute(RouteType.CVR)
                     else:
-                        self.route = RouteTTRP(list_id_customers=self.route.get_list_id_customers(), request_route=self.route.get_request_route(), cost_route=self.route.get_cost_route(),
-                                    id_depot=self.route.get_id_depot(), list_access_vc=self.list_access_VC, type_route=RouteType.PVR)
+                        self.route = RouteTTRP(
+                            list_id_customers=self.route.get_list_id_customers(),
+                            request_route=self.route.get_request_route(),
+                            cost_route=self.route.get_cost_route(),
+                            id_depot=self.route.get_id_depot(),
+                            list_access_vc=self.list_access_VC,
+                            type_route=RouteType.PVR,
+                        )
                         # ((RouteTTRP)route).setTypeRoute(RouteType.PVR)
 
                 # 3opt
@@ -374,7 +740,7 @@ class MoleJameson(Heuristic):
                 self.solution.get_list_routes().append(self.route)
 
         return self.solution
-    
+
     def execute(self):
         if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
             while self.customers_to_visit and (self.count_vehicles > 0):
@@ -382,7 +748,14 @@ class MoleJameson(Heuristic):
                 self.list_best_positions = []
                 self.creating()
             self.processing()
-            
+
+        elif self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+            while self.list_bus_stops and (self.count_vehicles > 0):
+                self.count_no_feasible = 0
+                self.list_best_positions = []
+                self.creating()
+            self.processing()
+
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             self.list_capacities = list(Problem.get_problem().get_list_capacities())
             self.capacity_vehicle = self.list_capacities[0]
@@ -393,76 +766,124 @@ class MoleJameson(Heuristic):
                 self.creating()
 
             self.processing()
-            
+
         elif self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
-            for j in range(self.pos_depot, len(Problem.get_problem().get_list_depots())):
+            for j in range(
+                self.pos_depot, len(Problem.get_problem().get_list_depots())
+            ):
                 if j != self.pos_depot:
-                    self.id_depot = Problem.get_problem().get_list_depots()[j].get_id_depot()
-                    self.customers_to_visit = Problem.get_problem().get_customers_assigned_by_id_depot(self.id_depot, Problem.get_problem().get_list_customers(), Problem.get_problem().get_list_depots())
-                    
-                    self.capacity_vehicle = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_capacity_vehicle()
-                    self.count_vehicles = Problem.get_problem().get_list_depots()[j].get_list_fleets()[0].get_count_vehicles()
-                    
+                    self.id_depot = (
+                        Problem.get_problem().get_list_depots()[j].get_id_depot()
+                    )
+                    self.customers_to_visit = (
+                        Problem.get_problem().get_customers_assigned_by_id_depot(
+                            self.id_depot,
+                            Problem.get_problem().get_list_customers(),
+                            Problem.get_problem().get_list_depots(),
+                        )
+                    )
+
+                    self.capacity_vehicle = (
+                        Problem.get_problem()
+                        .get_list_depots()[j]
+                        .get_list_fleets()[0]
+                        .get_capacity_vehicle()
+                    )
+                    self.count_vehicles = (
+                        Problem.get_problem()
+                        .get_list_depots()[j]
+                        .get_list_fleets()[0]
+                        .get_count_vehicles()
+                    )
+
                     if self.customers_to_visit:
                         self.route = Route()
-                        
-                        self.customer = self._get_first_customer(self.customers_to_visit, self.first_customer_type, self.id_depot)
+
+                        self.customer = self._get_first_element(
+                            self.customers_to_visit,
+                            self.first_customer_type,
+                            self.id_depot,
+                        )
                         self.request_route = self.customer.get_request_customer()
                         self.route.get_list_id_customers().append(self.id_depot)
-                        self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                        self.route.get_list_id_customers().append(
+                            self.customer.get_id_customer()
+                        )
                         self.route.get_list_id_customers().append(self.id_depot)
                         self.route.set_id_depot(self.id_depot)
                         self.customers_to_visit.remove(self.customer)
-                
+
                 while self.customers_to_visit and self.count_vehicles > 0:
                     self.count_no_feasible = 0
                     self.list_best_positions = []
                     self.creating()
                 self.processing()
-                
+
         elif self.type_problem == 4 or self.type_problem == ProblemType.TTRP:
             # boolean isTC = False
-            self.capacity_trailer = Problem.get_problem().get_list_depots()[self.pos_depot].get_list_fleets()[0].get_capacity_trailer()
-            
-            #self.type_customer = None
+            self.capacity_trailer = (
+                Problem.get_problem()
+                .get_list_depots()[self.pos_depot]
+                .get_list_fleets()[0]
+                .get_capacity_trailer()
+            )
+
+            # self.type_customer = None
             self.list_access_VC = []
 
             while self.customers_to_visit:
                 self.list_best_positions = []
-                self.type_customer = Problem.get_problem().get_type_by_id_customer(self.route.get_list_id_customers()[1])
+                self.type_customer = Problem.get_problem().get_type_by_id_customer(
+                    self.route.get_list_id_customers()[1]
+                )
 
                 case = self.type_customer
                 if case == 0:
                     self.count_no_feasible = 0
-                    
+
                     for i in range(len(self.customers_to_visit)):
-                        if (self.capacity_vehicle + self.capacity_trailer) >= (self.request_route + self.customers_to_visit[i].get_request_customer()):
-                            self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
+                        if (self.capacity_vehicle + self.capacity_trailer) >= (
+                            self.request_route
+                            + self.customers_to_visit[i].get_request_customer()
+                        ):
+                            self.list_best_positions.append(
+                                self.get_position_with_best_cost(
+                                    self.route,
+                                    self.customers_to_visit[i].get_id_customer(),
+                                )
+                            )
                         else:
                             self.count_no_feasible += 1
-                    
+
                 elif case == 1:
                     self.count_no_feasible = 0
-                    
+
                     for i in range(len(self.customers_to_visit)):
-                        if self.capacity_vehicle >= (self.request_route + self.customers_to_visit[i].get_request_customer()):
-                            self.list_best_positions.append(self.get_position_with_best_cost(self.route, self.customers_to_visit[i].get_id_customer()))
+                        if self.capacity_vehicle >= (
+                            self.request_route
+                            + self.customers_to_visit[i].get_request_customer()
+                        ):
+                            self.list_best_positions.append(
+                                self.get_position_with_best_cost(
+                                    self.route,
+                                    self.customers_to_visit[i].get_id_customer(),
+                                )
+                            )
                         else:
                             self.count_no_feasible += 1
-                            
+
                 self.creating()
-                
+
             self.processing()
-        
+
         return self.solution
 
-    
     def get_solution_inicial(self):
-        
+
         self.execute()
-        
+
         return self.solution
-    
+
     # Método que devuelve la métrica del cliente con el mejor C1
     def get_position_with_best_cost(self, route, id_customer):
         best_position = 1
@@ -474,7 +895,11 @@ class MoleJameson(Heuristic):
             size_route -= 1
 
         for i in range(1, size_route):
-            current_cost = self.calculate_c1(route.get_list_id_customers()[i - 1], route.get_list_id_customers()[i], id_customer)
+            current_cost = self.calculate_c1(
+                route.get_list_id_customers()[i - 1],
+                route.get_list_id_customers()[i],
+                id_customer,
+            )
 
             if i == 1:
                 best_cost = current_cost
@@ -492,27 +917,41 @@ class MoleJameson(Heuristic):
 
     # Método que calcula la métrica c1
     def calculate_c1(self, previous_element, next_element, current_element):
-        cost_first = Problem.get_problem().get_cost_matrix()[Problem.get_problem().get_pos_element(previous_element), Problem.get_problem().get_pos_element(current_element)]
-        cost_second = Problem.get_problem().get_cost_matrix()[Problem.get_problem().get_pos_element(current_element), Problem.get_problem().get_pos_element(next_element)]
-        cost_third = Problem.get_problem().get_cost_matrix()[Problem.get_problem().get_pos_element(previous_element), Problem.get_problem().get_pos_element(next_element)]
+        cost_first = Problem.get_problem().get_cost_matrix()[
+            Problem.get_problem().get_pos_element(previous_element),
+            Problem.get_problem().get_pos_element(current_element),
+        ]
+        cost_second = Problem.get_problem().get_cost_matrix()[
+            Problem.get_problem().get_pos_element(current_element),
+            Problem.get_problem().get_pos_element(next_element),
+        ]
+        cost_third = Problem.get_problem().get_cost_matrix()[
+            Problem.get_problem().get_pos_element(previous_element),
+            Problem.get_problem().get_pos_element(next_element),
+        ]
 
-        return ((cost_first + cost_second) - (self.parameter_c1 * cost_third))
+        return (cost_first + cost_second) - (self.parameter_c1 * cost_third)
 
     # Método que calcula la métrica c2
     def calculate_c2(self, cost_to_depot, cost_c1):
-        return ((self.parameter_c2 * cost_to_depot) - cost_c1)
+        return (self.parameter_c2 * cost_to_depot) - cost_c1
 
     # Método que devuelve el cliente con el mejor C2
-    def get_MJ_customer(self, list_best_positions, id_depot):
+    def get_MJ_element(self, list_best_positions, id_depot):
         current_value = 0.0
         max_value = 0.0
         position_MJ = 0
 
         for i in range(len(list_best_positions)):
-            best_customer = list_best_positions[i].get_id_element()
-            cost_to_depot = Problem.get_problem().get_cost_matrix()[Problem.get_problem().get_pos_element(id_depot), Problem.get_problem().get_pos_element(best_customer)]
+            best_element = list_best_positions[i].get_id_element()
+            cost_to_depot = Problem.get_problem().get_cost_matrix()[
+                Problem.get_problem().get_pos_element(id_depot),
+                Problem.get_problem().get_pos_element(best_element),
+            ]
 
-            current_value = self.calculate_c2(cost_to_depot, list_best_positions[i].get_insertion_cost())
+            current_value = self.calculate_c2(
+                cost_to_depot, list_best_positions[i].get_insertion_cost()
+            )
 
             if i == 0:
                 max_value = current_value
@@ -529,7 +968,12 @@ class MoleJameson(Heuristic):
         i = 0
 
         while i < len(route.get_list_id_customers()) and not exist:
-            if Problem.get_problem().get_type_by_id_customer(route.get_list_id_customers()[i]) == CustomerType.TC:
+            if (
+                Problem.get_problem().get_type_by_id_customer(
+                    route.get_list_id_customers()[i]
+                )
+                == CustomerType.TC
+            ):
                 exist = True
             else:
                 i += 1

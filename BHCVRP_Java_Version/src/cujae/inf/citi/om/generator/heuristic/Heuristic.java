@@ -6,17 +6,176 @@ import java.util.Random;
 import cujae.inf.citi.om.data.Customer;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
+import cujae.inf.citi.om.data.Depot;
+import cujae.inf.citi.om.data.DepotMDVRP;
+import cujae.inf.citi.om.generator.controller.StrategyHeuristic;
+import cujae.inf.citi.om.generator.solution.Route;
+import cujae.inf.citi.om.generator.solution.RouteTTRP;
 import cujae.inf.citi.om.generator.solution.Solution;
-import cujae.inf.citi.om.matrix.RowCol;
+import java.util.Iterator;
+//import cujae.inf.citi.om.matrix.NumericMatrix;
+import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
+//import cujae.inf.citi.om.matrix.RowCol;
+import libmatrix.cujae.inf.citi.om.matrix.RowCol;
 
-/* Clase abstracta que modela una heurística de construcción*/
+/* Clase abstracta que modela una heurï¿½stica de construcciï¿½n*/
 
 public abstract class Heuristic {
 	
-	/* Método abstracto encargado de generar la solución*/
+        boolean initialized = false;
+    
+	/* Mï¿½todo abstracto encargado de generar la soluciï¿½n*/
 	public abstract Solution getSolutionInicial();
+        
+        // MÃ©todo abstracto para inicializar parÃ¡metros especÃ­ficos de algunas heurÃ­sticas
+        public abstract void initializeSpecifics();
+        
+        public void comunInitialize() {
+            Solution solution = new Solution();
+            ArrayList<Customer> customersToVisit = new ArrayList<Customer>();
+            int idDepot = -1;
+            int posDepot = -1;
+
+            if (
+                Problem.getProblem().getTypeProblem() == ProblemType.CVRP
+                || Problem.getProblem().getTypeProblem() == ProblemType.HFVRP
+                || Problem.getProblem().getTypeProblem() == ProblemType.OVRP
+                || Problem.getProblem().getTypeProblem() == ProblemType.TTRP
+            ){
+                posDepot = 0;
+                idDepot = Problem.getProblem().getListDepots().get(posDepot).getIdDepot();
+                customersToVisit = Problem.getProblem().getListCustomers();
+            }
+            else{
+                int i = 0;
+                boolean found = false;
+
+                ArrayList<Depot> depots = Problem.getProblem().getListDepots();
+
+                while (i < depots.size() && !found){
+                    if ((depots.get(i) instanceof DepotMDVRP) || ((DepotMDVRP)depots.get(i)).getListAssignedCustomers().isEmpty()) {
+                        posDepot = i;
+                        idDepot = depots.get(posDepot).getIdDepot();  // VERIFICAR!!
+                        ArrayList<Customer> customersAssignedByDepot = Problem.getProblem().getCustomersAssignedByIDDepot(idDepot);
+                        customersToVisit = new ArrayList<>(customersAssignedByDepot);
+
+                        found = true;
+                    }   
+                    else {
+                        i += 1;
+                    }
+                }
+            }
+
+            double capacityVehicle = (Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0).getCapacityVehicle());
+            int countVehicles = (Problem.getProblem().getListDepots().get(posDepot).getListFleets().get(0).getCountVehicles());
+
+            Customer customer = new Customer();
+            double requestRoute = 0.0;
+            Route route = new Route();
+
+            ProblemType typeProblem = Problem.getProblem().getTypeProblem();
+
+            if (typeProblem.equals(ProblemType.TTRP) || (typeProblem.ordinal() == 4)) {
+                route = new RouteTTRP();
+            }
+                 
+        }
+        
+        public Solution templateMethod(){
+            comunInitialize();
+            initializeSpecifics();
+            initialized = true;
+            
+            return getSolutionInicial(); 
+        }
+        
+        public Solution execute(){
+            Solution solution = new Solution();
+            
+            if (Problem.getProblem().getTypeProblem().equals(ProblemType.CVRP) || Problem.getProblem().getTypeProblem().ordinal() == 1){
+                processing();
+            }
+            else if (Problem.getProblem().getTypeProblem().equals(ProblemType.HFVRP) || Problem.getProblem().getTypeProblem().ordinal() == 2){
+                processing();
+                ArrayList<Customer> customersToVisit = Problem.getProblem().getListCustomers();
+                
+                if(!customersToVisit.isEmpty())
+		{
+                    Route route = new Route();
+                    double requestRoute = 0.0;
+                    Customer customer = new Customer(); //Esto estÃ¡ mal, xq el customer viene del mÃ©todo initializeSpecifics();
+
+                    ArrayList<Double> listCapacities = new ArrayList<Double>(Problem.getProblem().getListCapacities());
+                    Iterator<Double> iteratorCapVehicle = listCapacities.iterator();
+
+                    while(!customersToVisit.isEmpty())
+                    {
+                        int j = 0;
+                            boolean found = false;	
+
+                            requestRoute = solution.getListRoutes().get(j).getRequestRoute();
+
+                            while((iteratorCapVehicle.hasNext()) && (!found))
+                            {	
+                                    if(iteratorCapVehicle.next() >= (requestRoute + customer.getRequestCustomer()))
+                                    {
+                                            solution.getListRoutes().get(j).setRequestRoute(requestRoute + customer.getRequestCustomer());
+                                            solution.getListRoutes().get(j).getListIdCustomers().add(customer.getIdCustomer());
+                                            customersToVisit.remove(customer);
+
+                                            found = true;
+                                    }
+                                    else
+                                    {
+                                            j++;	
+                                            requestRoute = solution.getListRoutes().get(j).getRequestRoute();
+                                    }	
+                            }
+
+                            if(!found)
+                            {
+                                    route.getListIdCustomers().add(customer.getIdCustomer());
+                                    route.setRequestRoute(route.getRequestRoute() + customer.getRequestCustomer());
+                                    customersToVisit.remove(customer);
+                            }
+
+                            if(!customersToVisit.isEmpty())
+                                    initializeSpecifics();
+                    }
+                
+                }
+            }
+            else if (Problem.getProblem().getTypeProblem().equals(ProblemType.MDVRP) || Problem.getProblem().getTypeProblem().ordinal() == 3){
+                
+            }
+            
+            else if (Problem.getProblem().getTypeProblem().equals(ProblemType.TTRP) || Problem.getProblem().getTypeProblem().ordinal() == 4){
+                
+                
+            }
+            
+            return solution;
+        }
+        
+        public void processing() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }   
+        
+        public void creating(){
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        //----------------------------------------------------------------------------------------------------------//
 	 
-	/* Método que busca un cliente por su identificador*/
+	/* Mï¿½todo que busca un cliente por su identificador*/
 	protected Customer getCustomerByID(int idCustomer, ArrayList<Customer> listCustomers){
 		int i = 0;
 		boolean found = false;
@@ -103,7 +262,7 @@ public abstract class Heuristic {
 		}
 	}
 	
-	/* Método que devuelve el primer cliente a insertar en la ruta cuando es MDVRP*/	
+	/* Mï¿½todo que devuelve el primer cliente a insertar en la ruta cuando es MDVRP*/	
 	private Customer selectFirstCustomerInMDVRP(ArrayList<Customer> CustomersToVisit, FirstCustomerType firstCustomerType, int posMatrixDepot){
 		Customer selectedCustomer = null;
 		int currentIndex = -1;
@@ -145,7 +304,7 @@ public abstract class Heuristic {
 	}
 	
 
-	/* Método que devuelve el primer cliente a insertar en la ruta*/	
+	/* Mï¿½todo que devuelve el primer cliente a insertar en la ruta*/	
 	protected Customer getFirstCustomer(ArrayList<Customer> CustomersToVisit, FirstCustomerType firstCustomerType, int idDepot){ 
 		Random random = new Random ();
 		Customer firstCustomer = null;
@@ -165,6 +324,7 @@ public abstract class Heuristic {
 			default:
 			{
 				posMatrixDepot = Problem.getProblem().getPosElement(idDepot);
+                                System.out.println("Fila" + posMatrixDepot);
 
 				if(Problem.getProblem().getTypeProblem().equals(ProblemType.MDVRP))
 					firstCustomer = selectFirstCustomerInMDVRP(CustomersToVisit, firstCustomerType, posMatrixDepot);
@@ -175,13 +335,21 @@ public abstract class Heuristic {
 					else
 						if(firstCustomerType.equals(FirstCustomerType.FurthestCustomer))
 							rc = Problem.getProblem().getCostMatrix().indexBiggerValue(posMatrixDepot, 0, posMatrixDepot, (CustomersToVisit.size() - 1));
-					
+                                                        
+                                                        /*for(int i = 0; i <= CustomersToVisit.size(); i++)
+                                                            for(int j = 0; j <= CustomersToVisit.size(); j++)
+                                                                System.out.println(m.getItem(i, j));*/
+                                        NumericMatrix m = Problem.getProblem().getCostMatrix();
+                                        System.out.println(m.getItem(rc.getRow(), rc.getCol()));
 					index = rc.getCol();
+                                        System.out.println("Indice"+index);
 					firstCustomer = CustomersToVisit.get(index);
+                                        System.out.println("Id cliente"+firstCustomer.getIdCustomer());
 				}
 			}
 		}
 		
 		return firstCustomer;
 	}
+        
 }

@@ -20,6 +20,11 @@ public class SaveParallel extends Save {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+        
+        @Override
+        public void initializeSpecifics(){
+           
+        }
 
 	public Solution getSolutionInicial() {
 		if(parameterShape <= 0)

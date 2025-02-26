@@ -2,6 +2,7 @@ import random
 from decimal import Decimal, ROUND_UP
 from tools.OrderType import OrderType
 
+
 class Tools:
     @staticmethod
     def round_double(number, decimal_place):
@@ -13,7 +14,12 @@ class Tools:
     def ordinate_method(list_capacities, type_order: OrderType):
         flag = False
 
-        if type_order == 0 or type_order == 1 or type_order == OrderType.Ascending or type_order == OrderType.Descending:
+        if (
+            type_order == 0
+            or type_order == 1
+            or type_order == OrderType.Ascending
+            or type_order == OrderType.Descending
+        ):
             for i in range(len(list_capacities) - 1):
                 min_val = list_capacities[i]
                 pos = i
@@ -31,7 +37,10 @@ class Tools:
                             flag = True
 
                     if flag:
-                        list_capacities[pos], list_capacities[i] = list_capacities[i], min_val
+                        list_capacities[pos], list_capacities[i] = (
+                            list_capacities[i],
+                            min_val,
+                        )
                         flag = False
         elif type_order == 2 or type_order == OrderType.Random:
             list_capacity_order = []
@@ -39,4 +48,3 @@ class Tools:
                 index = random.randint(0, len(list_capacities) - 1)
                 list_capacity_order.append(list_capacities.pop(index))
             list_capacities.extend(list_capacity_order)
-
