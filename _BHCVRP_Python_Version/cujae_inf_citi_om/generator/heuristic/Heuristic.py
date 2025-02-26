@@ -62,11 +62,12 @@ class Heuristic(ABC):
             if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
                 self.list_bus_stops = list(Problem.get_problem().get_list_buses_stop())
                 self.bus_stop = BusStop()
-            elif Problem.get_problem().get_type_problem() == ProblemType.VRPTW:
-                # self.list_time_windows = list(Problem.get_problem().get_list_time_windows())
-                self.time_window = TimeWindow()
+
             else:
                 self.customers_to_visit = list(Problem.get_problem().get_list_customers())
+                if Problem.get_problem().get_type_problem() == ProblemType.VRPTW:
+                    # self.list_time_windows = list(Problem.get_problem().get_list_time_windows())
+                    self.feasible_customers = []
         else:
             i = 0
             self.found = False
@@ -106,6 +107,7 @@ class Heuristic(ABC):
 
         self.customer = Customer()
         self.request_route = 0.0
+        self.time_route = 0.0
         self.route = Route()
 
         self.type_problem = Problem.get_problem().get_type_problem()
@@ -119,7 +121,7 @@ class Heuristic(ABC):
         pass
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem in [0, 3, 5]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5]:
             self.processing(
                 self.customers_to_visit,
                 self.count_vehicles,
@@ -453,6 +455,34 @@ class Heuristic(ABC):
                     )
                     self.customers_to_visit.remove(self.customer)
 
+            elif self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
+
+                if self.feasible_customers:
+                    self.request_route += self.customer.get_request_customer()
+                    self.route.get_list_id_customers().append(
+                        self.customer.get_id_customer()
+                    )
+                    self.customers_to_visit.remove(self.customer)
+                    if not self.customers_to_visit:
+                        self.route.set_request_route(self.request_route)
+                        self.route.set_id_depot(self.id_depot)
+                        self.solution.get_list_routes().append(self.route)
+                else:
+                    self.route.set_request_route(self.request_route)
+                    self.route.set_id_depot(self.id_depot)
+                    self.solution.get_list_routes().append(self.route)
+                    self.route = Route()
+                    # self.route.get_list_id_customers().append(
+                    #     self.customer.get_id_customer()
+                    # )
+                    # self.request_route = self.customer.get_request_customer()
+                    # self.customers_to_visit.remove(self.customer)
+                    self.request_route = 0.0
+                    self.time_route = 0.0
+                    created = True
+
+                return created, self.route
+
             created = True
             return created, self.route
 
@@ -716,6 +746,25 @@ class Heuristic(ABC):
                 first_element = elements_to_visit[index]
 
         return first_element
+
+    def get_feasible_customers(self, current_node_id):
+        feasible_customers = []
+        time_matrix = Problem.get_problem().get_time_matrix()
+
+        for cust in self.customers_to_visit:
+            travel_time = time_matrix[current_node_id, cust.get_id_customer()]
+            arrival_time = self.time_route + travel_time
+            # Si se llega antes del ready_time, se espera
+            effective_time = max(arrival_time, cust.get_time_window().get_initial_node())
+            # Verificamos la ventana de tiempo del cliente
+            if effective_time > cust.get_time_window().get_end_node():
+                continue  # No es factible por ventana de tiempo
+            # Verificamos la capacidad
+            if self.request_route + cust.get_request_customer() > self.capacity_vehicle:
+                continue
+            feasible_customers.append(cust)
+
+        return feasible_customers
 
     """# Cómo usar el patrón Template 
     def execute(self):

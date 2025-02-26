@@ -31,7 +31,19 @@ class NearestNeighborWithRLC(Heuristic):
                     "La lista de candidatos restringidos debe ser menor que la mitad del total de clientes"
                 )
 
-            self.customer = self._get_NN_element(self.customers_to_visit, self.id_depot)
+            if self.type_problem == ProblemType.VRPTW:
+                current_node_id = self.customer.get_id_customer()
+                self.feasible_customers = self.get_feasible_customers(current_node_id)
+                if self.feasible_customers:
+                    self.customer = self._get_NN_element(self.feasible_customers, self.id_depot)
+
+                    time_matrix = Problem.get_problem().get_time_matrix()
+                    current_time = time_matrix[current_node_id, self.customer.get_id_customer()]
+                    customer_ready_time = self.customer.get_time_window().get_initial_node()
+                    customer_service_time = self.customer.get_time_window().get_service_time()
+                    self.time_route = max(current_time, customer_ready_time) + customer_service_time
+            else:
+                self.customer = self._get_NN_element(self.customers_to_visit, self.id_depot)
             if not self.initialized:
                 self.request_route = self.customer.get_request_customer()
                 self.route.get_list_id_customers().append(self.customer.get_id_customer())
