@@ -1,13 +1,9 @@
 from generator.heuristic.Save import Save
-from generator.solution.Route import Route
-from generator.solution.RouteTTRP import RouteTTRP
-from generator.solution.RouteType import RouteType
-from generator.solution.Solution import Solution
+from solution.Route import Route
+from solution.RouteTTRP import RouteTTRP
+from solution.RouteType import RouteType
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from data.Customer import Customer
-from data.DepotMDVRP import DepotMDVRP
-from generator.postoptimization.Operator_3opt import Operator_3opt
 import numpy as np
 
 

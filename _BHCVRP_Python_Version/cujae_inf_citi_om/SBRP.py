@@ -1,8 +1,9 @@
-from tools.LoadFile import LoadFile
+from i_o.input.LoadFile import LoadFile
 from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
-from generator.controller.StrategyHeuristic import StrategyHeuristic
+from controller.StrategyHeuristic import StrategyHeuristic
 from data.Problem import Problem
+from i_o.output.ExportResult import ExportResult
 
 
 def main():
@@ -65,7 +66,7 @@ def main():
         heuristic_type = HeuristicType.CMT
         problem = Problem.get_problem()
         problem.set_type_problem(type_problem=ProblemType.SBRP)
-        Problem.get_problem().set_cost_matrix(StrategyHeuristic.get_strategy_heuristic().fill_cost_matrix(list_distances))
+        Problem.get_problem().set_cost_matrix(StrategyHeuristic.get_strategy_heuristic().fill_cost_matrix_with_list_distances(list_distances))
 
         StrategyHeuristic.get_strategy_heuristic().execute_heuristic(20, heuristic_type)
         result = StrategyHeuristic.get_strategy_heuristic().get_best_solution()
@@ -102,6 +103,97 @@ def main():
         print("------------------------------------------")
 
         file_output.close()
+
+        """# Construir la estructura de datos para exportar
+        if heuristic_type == HeuristicType.SaveSequential or heuristic_type == HeuristicType.SaveParallel or heuristic_type == HeuristicType.MatchingBasedSavingAlgorithm or heuristic_type == HeuristicType.KilbyAlgorithm:
+            data = {
+                "heuristic_type": heuristic_type.name,
+                "total_cost": cost,
+                "execution_time": time,
+                "routes": [
+                    {
+                        "route_id": j + 1,
+                        "bus_stops": [
+                            bus_stop.get_id_bus_stop()
+                            for bus_stop in result.get_list_routes()[j].get_list_bus_stops()
+                        ]
+                    }
+                    for j in range(request_by_route)
+                ]
+            }
+
+            # Exportar a TXT
+            output_text = (
+                " \n"
+                "------------------------------------------\n"
+                f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
+                f"COSTO TOTAL: {cost}\n"
+                f"TOTAL DE RUTAS: {request_by_route}\n"
+                f"TIEMPO DE EJECUCIÓN: {time}\n"
+                " \n"
+            )
+            for j in range(request_by_route):
+                output_text += (
+                    f"R{j + 1}{[bus_stop.get_id_bus_stop() for bus_stop in result.get_list_routes()[j].get_list_bus_stops()]}\n"
+                )
+            output_text += "------------------------------------------\n"
+
+            # Exportar a CSV
+            csv_data = [["Ruta", "Paradas"]] + [
+                [f"R{j + 1}", ", ".join(map(str, [bus_stop.get_id_bus_stop() for bus_stop in
+                                                  result.get_list_routes()[j].get_list_bus_stops()]))]
+                for j in range(request_by_route)
+            ]
+
+        else:
+            data = {
+                "heuristic_type": heuristic_type.name,
+                "total_cost": cost,
+                "execution_time": time,
+                "routes": [
+                    {
+                        "route_id": j + 1,
+                        "bus_stops": [
+                            bus_stop
+                            for bus_stop in result.get_list_routes()[j].get_list_bus_stops()
+                        ]
+                    }
+                    for j in range(request_by_route)
+                ]
+            }
+
+            # Exportar a TXT
+            output_text = (
+                " \n"
+                "------------------------------------------\n"
+                f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
+                f"COSTO TOTAL: {cost}\n"
+                f"TOTAL DE RUTAS: {request_by_route}\n"
+                f"TIEMPO DE EJECUCIÓN: {time}\n"
+                " \n"
+            )
+            for j in range(request_by_route):
+                output_text += (
+                    f"R{j + 1}{[bus_stop for bus_stop in result.get_list_routes()[j].get_list_bus_stops()]}\n"
+                )
+            output_text += "------------------------------------------\n"
+
+            # Exportar a CSV
+            csv_data = [["Ruta", "Paradas"]] + [
+                [f"R{j + 1}", ", ".join(map(str, [bus_stop for bus_stop in
+                                                  result.get_list_routes()[j].get_list_bus_stops()]))]
+                for j in range(request_by_route)
+            ]
+
+        ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+
+        # Exportar a JSON
+        ExportResult.to_json(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
+
+        ExportResult.to_csv(csv_data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv")
+
+        # Exportar a XML
+        ExportResult.to_xml(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")"""
         # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)

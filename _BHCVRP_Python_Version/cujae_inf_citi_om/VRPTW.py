@@ -1,7 +1,7 @@
-from tools.LoadFile import LoadFile
+from i_o.input.LoadFile import LoadFile
 from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
-from generator.controller.StrategyHeuristic import StrategyHeuristic
+from controller.StrategyHeuristic import StrategyHeuristic
 
 
 def main():

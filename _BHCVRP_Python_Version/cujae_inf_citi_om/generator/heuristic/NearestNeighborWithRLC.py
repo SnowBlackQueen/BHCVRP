@@ -1,13 +1,7 @@
 from generator.heuristic.Heuristic import Heuristic
 from data.ProblemType import ProblemType
 from data.Problem import Problem
-from data.Customer import Customer
-from generator.solution.Route import Route
-from data.CustomerType import CustomerType
-from generator.solution.RouteTTRP import RouteTTRP
-from generator.solution.RouteType import RouteType
 from random import Random
-from generator.solution.Solution import Solution
 from exceptions.RLC_Exception import RLC_Exception
 
 

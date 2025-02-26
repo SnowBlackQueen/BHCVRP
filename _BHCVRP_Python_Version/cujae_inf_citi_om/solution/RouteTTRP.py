@@ -1,7 +1,7 @@
 from data.CustomerType import CustomerType
 from data.Problem import Problem
-from generator.solution.Route import Route
-from generator.solution.RouteType import RouteType
+from solution.Route import Route
+from solution.RouteType import RouteType
 from typing import List, Tuple
 from exceptions.CostException import CostException
 

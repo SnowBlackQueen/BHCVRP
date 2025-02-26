@@ -1,5 +1,6 @@
 import time
 import numpy as np
+from scipy.spatial.distance import cdist
 import jpype
 import jpype.imports
 
@@ -10,7 +11,6 @@ from jpype import java
 from jpype.types import *
 
 from factory.methods.FactoryHeuristic import FactoryHeuristic
-from factory.methods.FactoryDistance import FactoryDistance
 from data.Customer import Customer
 from data.CustomerTTRP import CustomerTTRP
 from data.Location import Location
@@ -21,12 +21,10 @@ from data.Problem import Problem
 from data.ProblemType import ProblemType
 from data.Depot import Depot
 from data.TimeWindow import TimeWindow
-from generator.solution.RouteType import RouteType
-from generator.solution.RouteTTRP import RouteTTRP
+from solution.RouteType import RouteType
 from tools.Tools import Tools
 from tools.OrderType import OrderType
-from distance.Distance import Distance
-from factory.interfaces.DistanceType import DistanceType
+from tools.DistanceType import DistanceType
 from generator.heuristic.Heuristic import Heuristic
 
 
@@ -65,12 +63,6 @@ class StrategyHeuristic:
         ifactory_heuristic = FactoryHeuristic()
         heuristic = ifactory_heuristic.create_heuristic(heuristic_type)
         return heuristic
-
-    # Método encargado de crear una distancia
-    def new_distance(self, type_distance):
-        ifactory_distance = FactoryDistance()
-        distance = ifactory_distance.create_distance(type_distance)
-        return distance
 
     # Método encargado de cargar los datos de los clientes con coordenadas
     def load_customer_(
@@ -363,7 +355,7 @@ class StrategyHeuristic:
                 >= Problem.get_problem().get_total_request()):
                 loaded = True
                 Problem.get_problem().set_cost_matrix(
-                    self.fill_cost_matrix(list_distances)
+                    self.fill_cost_matrix_with_list_distances(list_distances)
                 )
                 list_countV = []
                 list_capV = []
@@ -542,7 +534,7 @@ class StrategyHeuristic:
                 )
                 loaded = True
 
-            Problem.get_problem().set_cost_matrix(self.fill_cost_matrix(list_distances))
+            Problem.get_problem().set_cost_matrix(self.fill_cost_matrix_with_list_distances(list_distances))
 
         if type_problem == ProblemType.HFVRP:
             if type_order is None:
@@ -638,7 +630,7 @@ class StrategyHeuristic:
                 distance_type = DistanceType.Euclidean
 
             problem.set_cost_matrix(
-                self.fillCostMatrix(
+                self.fill_cost_matrix(
                     id_customers,
                     axis_X_customers,
                     axis_Y_customers,
@@ -724,74 +716,45 @@ class StrategyHeuristic:
                     loaded = True
 
                 Problem.get_problem().set_cost_matrix(
-                    self.fill_cost_matrix(list_distances)
+                    self.fill_cost_matrix_with_list_distances(list_distances)
                 )
 
         return loaded
 
     # Método encargado de llenar la matriz de costo
-    def fillCostMatrix(
-        self,
-        id_customers,
-        axis_X_customers,
-        axis_Y_customers,
-        id_depots,
-        axis_X_depots,
-        axis_Y_depots,
-        distance_type,
+    def fill_cost_matrix(
+            self,
+            id_customers,
+            axis_X_customers,
+            axis_Y_customers,
+            id_depots,
+            axis_X_depots,
+            axis_Y_depots,
+            distance_type,
     ):
-        size = len(id_customers) + len(id_depots)
-        cost_matrix = np.zeros((size, size))
-        distance = self.new_distance(distance_type)
+        # Convertir las coordenadas de clientes y depósitos en arrays de NumPy
+        customers_locations = np.column_stack((axis_X_customers, axis_Y_customers))
+        depots_locations = np.column_stack((axis_X_depots, axis_Y_depots))
 
-        for i in range(size):
-            if i < len(id_customers):
-                row = Problem.get_problem().get_pos_element(id_customers[i])
-            else:
-                row = Problem.get_problem().get_pos_element(
-                    id_depots[i - len(id_customers)]
-                )
+        # Combinar todas las ubicaciones (clientes + depósitos)
+        all_locations = np.vstack([customers_locations, depots_locations])
 
-            last_customer = 0
-
-            for j in range(i + 1, size):
-                if j < len(id_customers):
-                    col = Problem.get_problem().get_pos_element(id_customers[j])
-                    cost_in_distance = distance.calculate_distance(
-                        axis_X_customers[i],
-                        axis_Y_customers[i],
-                        axis_X_customers[j],
-                        axis_Y_customers[j],
-                    )
-                else:
-                    col = Problem.get_problem().get_pos_element(
-                        id_depots[last_customer]
-                    )
-
-                    if i < len(id_customers):
-                        cost_in_distance = distance.calculate_distance(
-                            axis_X_customers[i],
-                            axis_Y_customers[i],
-                            axis_X_depots[last_customer],
-                            axis_Y_depots[last_customer],
-                        )
-                    else:
-                        cost_in_distance = distance.calculate_distance(
-                            axis_X_depots[i - len(id_customers)],
-                            axis_Y_depots[i - len(id_customers)],
-                            axis_X_depots[last_customer],
-                            axis_Y_depots[last_customer],
-                        )
-
-                    last_customer += 1
-
-                cost_matrix[row, col] = cost_in_distance
-                cost_matrix[col, row] = cost_in_distance
+        # Calcular la matriz de distancias usando cdist
+        if distance_type == DistanceType.Euclidean:
+            cost_matrix = cdist(all_locations, all_locations, metric='euclidean')
+        elif distance_type == DistanceType.Manhattan:
+            cost_matrix = cdist(all_locations, all_locations, metric='cityblock')
+        elif distance_type == DistanceType.Chebyshev:
+            cost_matrix = cdist(all_locations, all_locations, metric='chebyshev')
+        elif distance_type == DistanceType.Haversine:
+            cost_matrix = cdist(all_locations, all_locations, metric='haversine')
+        else:
+            raise ValueError(f"Tipo de distancia no soportado: {distance_type}")
 
         return cost_matrix
 
     # Método encargado de llenar la matriz de costo usando listas de distancias
-    def fill_cost_matrix(self, list_distances):
+    def fill_cost_matrix_with_list_distances(self, list_distances):
         size = len(list_distances)
         cost_matrix = np.array(list_distances).reshape(size, size)
 
@@ -1025,7 +988,7 @@ class StrategyHeuristic:
             ):
                 loaded = True
                 Problem.get_problem().set_cost_matrix(
-                    self.fill_cost_matrix(list_distances)
+                    self.fill_cost_matrix_with_list_distances(list_distances)
                 )
 
                 list_count_v = []
@@ -1125,7 +1088,7 @@ class StrategyHeuristic:
             ):
                 loaded = True
                 Problem.get_problem().set_cost_matrix(
-                    self.fill_cost_matrix(list_distances)
+                    self.fill_cost_matrix_with_list_distances(list_distances)
                 )
                 Problem.get_problem().set_time_matrix(self.fill_time_matrix(list_distances, Problem.get_problem().get_vehicle_speed()))
 
@@ -1218,7 +1181,7 @@ class StrategyHeuristic:
             ):
                 loaded = True
                 Problem.get_problem().set_cost_matrix(
-                    self.fill_cost_matrix(list_distances)
+                    self.fill_cost_matrix_with_list_distances(list_distances)
                 )
 
                 list_count_v = [count_vehicles]

@@ -1,13 +1,11 @@
 from generator.heuristic.Save import Save
 from data.Problem import Problem
-from data.Customer import Customer
 from data.Depot import Depot
-from generator.solution.Route import Route
-from generator.solution.Solution import Solution
-from typing import List, Tuple, Dict
+from solution.Route import Route
+from typing import List, Tuple
 from data.ProblemType import ProblemType
 import numpy as np
-from generator.solution.RouteType import RouteType
+from solution.RouteType import RouteType
 
 
 class MatchingBasedSavingAlgorithm(Save):

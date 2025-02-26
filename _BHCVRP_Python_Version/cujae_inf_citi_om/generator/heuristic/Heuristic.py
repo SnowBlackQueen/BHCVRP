@@ -8,13 +8,14 @@ from random import Random
 from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.BusStop import BusStop
+from data.TimeWindow import TimeWindow
 from data.Problem import Problem
 from data.ProblemType import ProblemType
 from data.DepotMDVRP import DepotMDVRP
-from generator.solution.Solution import Solution
-from generator.solution.Route import Route
-from generator.solution.RouteType import RouteType
-from generator.solution.RouteTTRP import RouteTTRP
+from solution.Solution import Solution
+from solution.Route import Route
+from solution.RouteType import RouteType
+from solution.RouteTTRP import RouteTTRP
 from generator.heuristic.Metric import Metric
 from generator.heuristic.FirstElementType import FirstElementType
 
@@ -52,6 +53,7 @@ class Heuristic(ABC):
             or Problem.get_problem().get_type_problem() == ProblemType.OVRP
             or Problem.get_problem().get_type_problem() == ProblemType.TTRP
             or Problem.get_problem().get_type_problem() == ProblemType.SBRP
+            or Problem.get_problem().get_type_problem() == ProblemType.VRPTW
         ):
             self.pos_depot = 0
             self.id_depot = (
@@ -60,6 +62,9 @@ class Heuristic(ABC):
             if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
                 self.list_bus_stops = list(Problem.get_problem().get_list_buses_stop())
                 self.bus_stop = BusStop()
+            elif Problem.get_problem().get_type_problem() == ProblemType.VRPTW:
+                # self.list_time_windows = list(Problem.get_problem().get_list_time_windows())
+                self.time_window = TimeWindow()
             else:
                 self.customers_to_visit = list(Problem.get_problem().get_list_customers())
         else:
@@ -461,7 +466,7 @@ class Heuristic(ABC):
         id_depot=None,
         solution=None,
     ):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 0:
             cv = int(count_vehicles)
             while customers_to_visit and cv > 0:
                 self.initialize_specifics()  # Para que customer sea tratado según la variante

@@ -1,5 +1,5 @@
 from typing import List
-from postoptimization.StepOptimization import StepOptimization
+from generator.postoptimization.StepOptimization import StepOptimization
 from solution.Route import Route
 
 

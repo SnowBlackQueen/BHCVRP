@@ -3,16 +3,13 @@ from data.Problem import Problem
 from generator.heuristic.Metric import Metric
 from data.Customer import Customer
 from data.BusStop import BusStop
-from generator.solution.Route import Route
+from solution.Route import Route
 from generator.postoptimization.Operator_3opt import Operator_3opt
 from data.CustomerType import CustomerType
-from generator.solution.Solution import Solution
 from data.ProblemType import ProblemType
-from data.DepotMDVRP import DepotMDVRP
 from random import Random
-from generator.solution.RouteTTRP import RouteTTRP
-from generator.solution.RouteType import RouteType
-from data.CustomerTTRP import CustomerTTRP
+from solution.RouteTTRP import RouteTTRP
+from solution.RouteType import RouteType
 from generator.heuristic.FirstElementType import FirstElementType
 
 

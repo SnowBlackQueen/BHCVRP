@@ -1,10 +1,8 @@
 from generator.heuristic.Heuristic import Heuristic
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from generator.solution.RouteType import RouteType
-from generator.solution.Solution import Solution
+from solution.RouteType import RouteType
 import numpy as np
-from generator.postoptimization.Operator_3opt import Operator_3opt
 from generator.heuristic.Save import Save
 from random import Random
 

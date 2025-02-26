@@ -4,9 +4,9 @@ from generator.heuristic.Heuristic import Heuristic
 from data.Problem import Problem
 from data.ProblemType import ProblemType
 from data.CustomerType import CustomerType
-from generator.solution.Route import Route
-from generator.solution.RouteTTRP import RouteTTRP
-from generator.solution.RouteType import RouteType
+from solution.Route import Route
+from solution.RouteTTRP import RouteTTRP
+from solution.RouteType import RouteType
 from generator.postoptimization.Operator_3opt import Operator_3opt
 
 
@@ -142,7 +142,7 @@ class Save(Heuristic):
                 route.list_bus_stops.append(element)
 
             else:
-                route.set_request_route(element.get_capacity_bus_stop())
+                route.set_request_route(element.get_request_customer())
                 route.set_id_depot(
                     Problem.get_problem().get_id_depot_by_id_customer(
                         element.get_id_customer()

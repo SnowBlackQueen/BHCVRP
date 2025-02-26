@@ -1,15 +1,9 @@
 from generator.heuristic.Heuristic import Heuristic
-from generator.solution.Solution import Solution
 from data.ProblemType import ProblemType
 from data.Problem import Problem
-from data.DepotMDVRP import DepotMDVRP
 from data.Customer import Customer
 from data.BusStop import BusStop
-from generator.solution.Route import Route
 from random import Random
-from data.CustomerType import CustomerType
-from generator.solution.RouteType import RouteType
-from generator.solution.RouteTTRP import RouteTTRP
 
 
 class RandomMethod(Heuristic):
@@ -25,10 +19,14 @@ class RandomMethod(Heuristic):
                 self.list_bus_stops.remove(self.bus_stop)
         else:
             self.customer = self._get_random_customer(self.customers_to_visit)
+            if self.type_problem == ProblemType.VRPTW:
+                self.time_window = self.list_time_windows[self.customer.get_id_customer()]
             if not self.initialized:
                 self.request_route = self.customer.get_request_customer()
                 self.route.get_list_id_customers().append(self.customer.get_id_customer())
                 self.customers_to_visit.remove(self.customer)
+                if self.type_problem == ProblemType.VRPTW:
+                    self.list_time_windows.remove(self.time_window)
 
     def get_solution_inicial(self):
         self.execute()
@@ -57,3 +55,4 @@ class RandomMethod(Heuristic):
         # customer = list_customers[13]
 
         return bus_stop
+

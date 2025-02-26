@@ -4,14 +4,10 @@ from data.ProblemType import ProblemType
 from generator.heuristic.Metric import Metric
 from data.CustomerType import CustomerType
 from generator.heuristic.FirstElementType import FirstElementType
-from generator.solution.Solution import Solution
-from data.DepotMDVRP import DepotMDVRP
-from data.Customer import Customer
-from generator.solution.Route import Route
+from solution.Route import Route
 from generator.postoptimization.Operator_3opt import Operator_3opt
-from generator.solution.RouteTTRP import RouteTTRP
-from generator.solution.RouteType import RouteType
-from data.FleetTTRP import FleetTTRP
+from solution.RouteTTRP import RouteTTRP
+from solution.RouteType import RouteType
 
 
 class MoleJameson(Heuristic):
