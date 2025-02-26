@@ -1,6 +1,5 @@
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from generator.solution import RouteType
 from exceptions.CostException import CostException
 
 

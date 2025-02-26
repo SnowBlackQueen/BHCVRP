@@ -24,10 +24,25 @@
 - Construction heuristics:
 - [X] Kilby insertion.
 - [X] Matching-based Saving Algorithm.
+- [ ] Fisher and Jaikumar.
 
 
 - Variants of VRP:
 - [X] School Bus Routing Problem (SBRP).
-- [ ] Vehicle Routing Problem with Time Windows (VRPTW).
-- [ ] Open Vehicle Routing Problem (OVRP).
+- [X] Vehicle Routing Problem with Time Windows (VRPTW).
+- [X] Open Vehicle Routing Problem (OVRP).
+
+- Distance type:
+- [X] Approximates (Euclidean, Manhattan, Chebyshev and Haversine)
+- [ ] Reals with OSRM
+
+- Load files in:
+- [X] TXT
+- [ ] JSON
+
+- Export results in:
+- [X] TXT
+- [X] JSON
+- [X] CSV
+- [X] XML
 

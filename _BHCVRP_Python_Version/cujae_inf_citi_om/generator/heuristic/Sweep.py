@@ -1,14 +1,9 @@
 from generator.heuristic.Heuristic import Heuristic
 from data.Customer import Customer
 from data.BusStop import BusStop
-from generator.solution.Solution import Solution
 from data.Problem import Problem
 from data.ProblemType import ProblemType
-from data.DepotMDVRP import DepotMDVRP
-from generator.solution.Route import Route
 from random import Random
-from data.CustomerType import CustomerType
-from generator.solution.RouteType import RouteType
 
 
 class Sweep(Heuristic):

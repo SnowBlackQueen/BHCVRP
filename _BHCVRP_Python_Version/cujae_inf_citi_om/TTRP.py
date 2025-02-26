@@ -1,19 +1,17 @@
-import sys
-import os
-import sys
-from tools.LoadFile import LoadFile
+from i_o.input.LoadFile import LoadFile
 from data.ProblemType import ProblemType
 from factory.interfaces.HeuristicType import HeuristicType
-from generator.controller.StrategyHeuristic import StrategyHeuristic
-from factory.interfaces.DistanceType import DistanceType
+from controller.StrategyHeuristic import StrategyHeuristic
+from tools.DistanceType import DistanceType
+from i_o.output.ExportResult import ExportResult
 
 
 def main():
     try:
-        file_output_stream = open(
+        """file_output_stream = open(
             "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\Instancia_TTRP_1\\Resultado_Matching_1.txt",
             "w",
-        )
+        )"""
         # sys.stdout = file_output_stream
 
         path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\TTRP\\TTRP_1.txt"
@@ -97,7 +95,7 @@ def main():
                 )
                 time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
-                print(" ")
+                """print(" ")
                 print("------------------------------------------")
                 print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
                 print("COSTO TOTAL: " + str(cost))
@@ -112,7 +110,68 @@ def main():
                         + str(result.get_list_routes()[j].get_list_id_customers())
                     )
 
-                print("------------------------------------------")
+                print("------------------------------------------")"""
+
+                # Para formato TXT
+                # Construir la cadena de texto con el formato de los prints
+                output_text = (
+                    " \n"
+                    "------------------------------------------\n"
+                    f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
+                    f"COSTO TOTAL: {cost}\n"
+                    f"TOTAL DE RUTAS: {request_by_route}\n"
+                    f"TIEMPO DE EJECUCIÓN: {time}\n"
+                    " \n"
+                )
+
+                # Agregar las rutas al texto
+                for j in range(request_by_route):
+                    output_text += (
+                        f"R{j + 1}{result.get_list_routes()[j].get_list_id_customers()}\n"
+                    )
+
+                output_text += "------------------------------------------\n"
+
+                # Exportar resultados en diferentes formatos
+                ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+
+                # Para formato JSON y XML
+                # Recopilar resultados en un diccionario
+                results = {
+                    "heuristic_type": heuristic_type.name,
+                    "total_cost": cost,
+                    "total_routes": request_by_route,
+                    "execution_time": time,
+                    "routes": [
+                        {
+                            "route_id": j + 1,
+                            "customers": result.get_list_routes()[j].get_list_id_customers()
+                        }
+                        for j in range(request_by_route)
+                    ]
+                }
+
+                ExportResult.to_json(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
+                ExportResult.to_xml(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")
+
+                # Para formato CSV
+                # Crear una lista de listas para el CSV
+                csv_data = [
+                    ["Tipo de heurística", heuristic_type.name],
+                    ["Costo total", cost],
+                    ["Tiempo de ejecución", time],
+                    ["Ruta", "Clientes"]  # Encabezado de las rutas
+                ]
+
+                # Agregar las rutas
+                for j in range(request_by_route):
+                    csv_data.append([f"R{j + 1}", result.get_list_routes()[j].get_list_id_customers()])
+
+                # Exportar a CSV
+                ExportResult.to_csv(
+                    csv_data,
+                    "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv"
+                )
 
         else:
             if StrategyHeuristic.get_strategy_heuristic().load_problem(
@@ -140,7 +199,7 @@ def main():
                 )
                 time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
-                print(" ")
+                """print(" ")
                 print("------------------------------------------")
                 print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
                 print("COSTO TOTAL: " + str(cost))
@@ -159,7 +218,68 @@ def main():
                 print("------------------------------------------")
 
         file_output_stream.close()
-        # sys.stdout = sys.__stdout__
+        # sys.stdout = sys.__stdout__"""
+
+                # Para formato TXT
+                # Construir la cadena de texto con el formato de los prints
+                output_text = (
+                    " \n"
+                    "------------------------------------------\n"
+                    f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
+                    f"COSTO TOTAL: {cost}\n"
+                    f"TOTAL DE RUTAS: {request_by_route}\n"
+                    f"TIEMPO DE EJECUCIÓN: {time}\n"
+                    " \n"
+                )
+
+                # Agregar las rutas al texto
+                for j in range(request_by_route):
+                    output_text += (
+                        f"R{j + 1}{result.get_list_routes()[j].get_list_id_customers()}\n"
+                    )
+
+                output_text += "------------------------------------------\n"
+
+                # Exportar resultados en diferentes formatos
+                ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+
+                # Para formato JSON y XML
+                # Recopilar resultados en un diccionario
+                results = {
+                    "heuristic_type": heuristic_type.name,
+                    "total_cost": cost,
+                    "total_routes": request_by_route,
+                    "execution_time": time,
+                    "routes": [
+                        {
+                            "route_id": j + 1,
+                            "customers": result.get_list_routes()[j].get_list_id_customers()
+                        }
+                        for j in range(request_by_route)
+                    ]
+                }
+
+                ExportResult.to_json(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
+                ExportResult.to_xml(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")
+
+                # Para formato CSV
+                # Crear una lista de listas para el CSV
+                csv_data = [
+                    ["Tipo de heurística", heuristic_type.name],
+                    ["Costo total", cost],
+                    ["Tiempo de ejecución", time],
+                    ["Ruta", "Clientes"]  # Encabezado de las rutas
+                ]
+
+                # Agregar las rutas
+                for j in range(request_by_route):
+                    csv_data.append([f"R{j + 1}", result.get_list_routes()[j].get_list_id_customers()])
+
+                # Exportar a CSV
+                ExportResult.to_csv(
+                    csv_data,
+                    "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv"
+                )
 
     except IOError as e:
         print(e)

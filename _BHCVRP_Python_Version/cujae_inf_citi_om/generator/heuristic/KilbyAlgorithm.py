@@ -2,11 +2,9 @@ from generator.heuristic.Heuristic import Heuristic
 from data.Problem import Problem
 from data.ProblemType import ProblemType
 from generator.heuristic.Metric import Metric
-from data.CustomerType import CustomerType
-from generator.solution.Solution import Solution
-from generator.solution.Route import Route
-from generator.solution.RouteType import RouteType
-from generator.solution.RouteTTRP import RouteTTRP
+from solution.Route import Route
+from solution.RouteType import RouteType
+from solution.RouteTTRP import RouteTTRP
 from data.Customer import Customer
 from data.CustomerType import CustomerType
 from data.CustomerTTRP import CustomerTTRP

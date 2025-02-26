@@ -1,6 +1,6 @@
 from typing import List
 import numpy as np
-from postoptimization.StepOptimization import StepOptimization
+from generator.postoptimization.StepOptimization import StepOptimization
 from solution.Route import Route
 
 

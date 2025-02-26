@@ -129,7 +129,8 @@ class Route:
                 customer_ini = customer_next
                 pos_customer_ini = pos_customer_next
 
-            cost_route += cost_matrix[pos_customer_ini][depot_index]
+            if Problem.get_problem().get_type_problem() is not ProblemType.OVRP:
+                cost_route += cost_matrix[pos_customer_ini][depot_index]
 
         self.set_cost_route(cost_route)
         return cost_route

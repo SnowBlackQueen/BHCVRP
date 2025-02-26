@@ -1,6 +1,6 @@
 import random
 from generator.postoptimization.StepOptimization import StepOptimization
-from generator.solution.Route import Route
+from solution.Route import Route
 from data.Problem import  Problem
 from data.ProblemType import ProblemType
 
