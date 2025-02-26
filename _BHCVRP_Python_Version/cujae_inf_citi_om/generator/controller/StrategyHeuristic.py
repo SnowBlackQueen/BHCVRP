@@ -20,6 +20,7 @@ from data.FleetTTRP import FleetTTRP
 from data.Problem import Problem
 from data.ProblemType import ProblemType
 from data.Depot import Depot
+from data.TimeWindow import TimeWindow
 from generator.solution.RouteType import RouteType
 from generator.solution.RouteTTRP import RouteTTRP
 from tools.Tools import Tools
@@ -801,6 +802,17 @@ class StrategyHeuristic:
 
         return cost_matrix
 
+    def fill_time_matrix(self, list_distances, vehicle_speed):
+        size = len(list_distances)
+        time_matrix = np.array(list_distances).reshape(size, size)
+
+        for i in range(size):
+            for j in range(len(list_distances[i])):
+                travel_time = list_distances[i][j] / vehicle_speed
+                time_matrix[i, j] = travel_time
+
+        return time_matrix
+
     # Esta función es para adaptar la respuesta que da BHAVRP.
     """ def adapt(self, listClusters):
         depots = []
@@ -1023,6 +1035,107 @@ class StrategyHeuristic:
                 list_cap_v.append(capacity_vehicles)
             else:
                 print("Total demand exceeds total capacity")
+
+        return loaded
+
+    # Método para verificar si se puede cargar VRPTW
+    def load_vrptw(
+        self,
+        id_customers,
+        request_customers,
+        id_depots,
+        count_vehicles,
+        capacity_vehicles,
+        list_distances,
+        axis_X_customers,
+        axis_Y_customers,
+        axis_X_depots,
+        axis_Y_depots,
+        initial_nodes,
+        end_nodes,
+        service_times,
+        type_problem,
+    ):
+
+        loaded = False
+
+        Problem.get_problem().set_type_problem(type_problem)
+
+        if (
+            (id_customers is not None and id_customers)
+            and (request_customers is not None and request_customers)
+            and (id_depots is not None and id_depots)
+            and (count_vehicles is not None and count_vehicles)
+            and (capacity_vehicles is not None and capacity_vehicles)
+            and (list_distances is not None and list_distances)
+            and (axis_X_customers is not None and axis_X_customers)
+            and (axis_Y_customers is not None and axis_Y_customers)
+            and (axis_X_depots is not None and axis_X_depots)
+            and (axis_Y_depots is not None and axis_Y_depots)
+            and (initial_nodes is not None and initial_nodes)
+            and (end_nodes is not None and end_nodes)
+            and (service_times is not None and service_times)
+        ):
+
+            list_customers = []
+            list_depots = []
+
+            for i in range(len(id_customers)):
+                customer = Customer()
+                customer.set_id_customer(id_customers[i])
+                customer.set_request_customer(request_customers[i])
+
+                location_customer = Location()
+                location_customer.set_axis_x(axis_X_customers[i])
+                location_customer.set_axis_y(axis_Y_customers[i])
+                customer.set_location_customer(location_customer)
+
+                time_window = TimeWindow()
+                time_window.set_initial_node(initial_nodes[i])
+                time_window.set_end_node(end_nodes[i])
+                time_window.set_service_time(service_times[i])
+
+                customer.set_time_window(time_window)
+
+                list_customers.append(customer)
+
+            depot = DepotMDVRP()
+            depot.set_id_depot(id_depots[0])
+            location_depot = Location()
+            location_depot.set_axis_x(axis_X_depots[0])
+            location_depot.set_axis_y(axis_Y_depots[0])
+            depot.set_location_depot(location_depot)
+
+            fleet = Fleet()
+            fleet.set_count_vehicles(count_vehicles[0])
+            fleet.set_capacity_vehicle(capacity_vehicles[0])
+
+            list_fleets = []
+            list_fleets.append(fleet)
+            depot.set_list_fleets(list_fleets)
+
+            list_depots.append(depot)
+
+            Problem.get_problem().set_list_customers(list_customers)
+            Problem.get_problem().set_list_depots(list_depots)
+
+            if (
+                Problem.get_problem().get_total_capacity()
+                >= Problem.get_problem().get_total_request()
+            ):
+                loaded = True
+                Problem.get_problem().set_cost_matrix(
+                    self.fill_cost_matrix(list_distances)
+                )
+                Problem.get_problem().set_time_matrix(self.fill_time_matrix(list_distances, Problem.get_problem().get_vehicle_speed()))
+
+                list_count_v = []
+                list_cap_v = []
+
+                list_count_v.append(count_vehicles)
+                list_cap_v.append(capacity_vehicles)
+            else:
+                print("Total demand exceeds total capacity") # WithoutCapacityException?
 
         return loaded
 

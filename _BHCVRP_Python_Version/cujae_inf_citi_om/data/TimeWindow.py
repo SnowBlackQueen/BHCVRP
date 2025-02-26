@@ -47,3 +47,9 @@ class TimeWindow:
             self._service_time = service_time
         else:
             raise ServiceTimeException("El tiempo de servicio no puede ser negativo")
+
+    def calculate_exit_time(self, travel_time, arrive_time):
+        return max(travel_time, arrive_time) + self._service_time
+
+    def verify_tw(self, arrive_time):
+        return arrive_time <= self._end_node

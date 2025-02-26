@@ -6,7 +6,6 @@ from data.Customer import Customer
 from data.CustomerTTRP import CustomerTTRP
 from data.Depot import Depot
 from data.BusStop import BusStop
-from data.TimeWindow import TimeWindow
 from data.ProblemType import ProblemType
 from exceptions.RequestException import RequestException
 from exceptions.WithoutCapacityException import WithoutCapacityException
@@ -26,8 +25,7 @@ class Problem:
         self._list_capacities: List[float] = None
         self._maximum_walk_distance = None
         self._list_buses_stop: List[BusStop] = []
-        self._list_time_windows: List[TimeWindow] = []
-        self._vehicle_speed = None
+        self._vehicle_speed = 5 * 60 / 3.6 # según OR-Tools
         self.set_time_matrix(time_matrix=None)
 
     @staticmethod  # Método que implementa el Patrón Singleton
@@ -111,12 +109,6 @@ class Problem:
             self._vehicle_speed = vehicle_speed
         else:
             raise VehicleSpeedException("La velocidad del vehículo no puede ser negativa")
-
-    def get_list_time_windows(self) -> List[TimeWindow]:
-        return self._list_time_windows
-
-    def set_list_time_windows(self, list_time_windows: List[TimeWindow]):
-        self._list_time_windows = list_time_windows
 
     # Método para obtener la lista de id de los clientes
     def get_list_id_customers(self):
