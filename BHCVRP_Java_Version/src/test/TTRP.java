@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import cujae.inf.citi.om.i_o.input.LoadFile;
 
 /**
  *
@@ -63,7 +64,8 @@ public class TTRP {
                     loadFile.loadCustomersTTRP(idCustomers, axisXCustomers, axisYCustomers, requestCustomers, typeCustomers);
                     loadFile.loadDepotsTTRP(idDepots, axisXDepots, axisYDepots);
 
-                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances);
+                    DistanceType distanceType = DistanceType.Euclidean;
+                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances, distanceType);
 
                     ArrayList<ArrayList<Integer>> idAssignedCustomers = new ArrayList<ArrayList<Integer>>();
                     idAssignedCustomers.add(idCustomers);

@@ -1,4 +1,4 @@
-package test;
+package cujae.inf.citi.om.i_o.input;
 
 import java.util.ArrayList;
 

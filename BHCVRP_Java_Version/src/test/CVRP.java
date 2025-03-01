@@ -5,12 +5,14 @@
 package test;
 
 import cujae.inf.citi.om.factory.interfaces.HeuristicType;
-import cujae.inf.citi.om.generator.controller.StrategyHeuristic;
-import cujae.inf.citi.om.generator.solution.Solution;
+import cujae.inf.citi.om.controller.StrategyHeuristic;
+import cujae.inf.citi.om.solution.Solution;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import cujae.inf.citi.om.data.ProblemType;
+import cujae.inf.citi.om.i_o.input.LoadFile;
+import cujae.inf.ic.om.factory.DistanceType;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
@@ -23,15 +25,15 @@ public class CVRP {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException 
+    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Instancia_CVRP_4/Resultado_SaveSequential21.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Resultado_CVRPc141_C5.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
         
-            String pathFiles = "modified-cvrp//CVRP_4";
+            String pathFiles = "D:/Escuela/BHCVRP_Python_Version/Resultados/HFVRP/C1_4_1.txt";
             //int totalInstances = 5;
             LoadFile loadFile = new LoadFile();
 
@@ -57,10 +59,11 @@ public class CVRP {
                 loadFile.loadCustomers(idCustomers, axisXCustomers, axisYCustomers, requestCustomers);
                 loadFile.loadDepots(idDepots, axisXDepots, axisYDepots);
 
-                loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances);
+                DistanceType distanceType = DistanceType.Euclidean;
+                loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances, distanceType);
 
 
-                HeuristicType heuristicType = HeuristicType.SaveSequential;
+                HeuristicType heuristicType = HeuristicType.CMT;
 
                 if(StrategyHeuristic.getStrategyHeuristic().loadCVRP(idCustomers, requestCustomers, idDepots, countVehicles.get(0), capacityVehicles.get(0), listDistances, axisXCustomers, axisYCustomers, axisXDepots, axisYDepots, ProblemType.CVRP))
                         {
@@ -76,7 +79,7 @@ public class CVRP {
                                 System.out.println("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristicType);
                                 System.out.println("COSTO TOTAL: " + cost);
                                 System.out.println("TOTAL DE RUTAS: " + requestByRoute);
-                                //System.out.println("TIEMPO DE EJECUCIÓN: " + time);
+                                System.out.println("TIEMPO DE EJECUCIÓN: " + time);
                                 System.out.println(" ");
                                 for(int j = 0; j < requestByRoute; j++)
                                     System.out.println("R" + (j+1) + result.getListRoutes().get(j).getListIdCustomers());

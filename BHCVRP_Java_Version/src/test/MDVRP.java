@@ -12,11 +12,12 @@ import cujae.inf.citi.om.factory.interfaces.HeuristicType;
 import cujae.inf.citi.om.controller.StrategyHeuristic;
 import cujae.inf.citi.om.solution.Solution;
 import cujae.inf.citi.om.tools.OrderType;
+import cujae.inf.citi.om.i_o.input.LoadFile;
 		
 public class MDVRP
 {
     public static void main(String arg[]) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, 
-                                        InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+                                        InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception
     {
     	try {
             FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p16/Resultado_CMT_20.txt");
@@ -51,8 +52,9 @@ public class MDVRP
 			loadFile.loadCustomers(idCustomers, axisXCustomers, axisYCustomers, requestCustomers);
 			loadFile.loadDepots(idDepots, axisXDepots, axisYDepots);
 
-			loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, 
-                                listDistances);
+			DistanceType distanceType = DistanceType.Euclidean;
+                        loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, 
+                                listDistances, distanceType);
 			
                         HeuristicType heuristicType = HeuristicType.CMT;
 /*			FleetAux fleet = loadFile.loadCountVehiclesFleet();
