@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 //import cujae.inf.citi.om.matrix.NumericMatrix;
 import java.util.HashMap;
-import libmatrix.cujae.inf.citi.om.matrix.NumericArray;
-import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
+import cujae.inf.ic.om.matrix.NumericArray;
+import cujae.inf.ic.om.matrix.NumericMatrix;
 
 public class Problem {
 	

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cujae.inf.citi.om.generator.solution.Route;
+import cujae.inf.citi.om.solution.Route;
 
 /* Clase que implementa el operador 3-opt */
 

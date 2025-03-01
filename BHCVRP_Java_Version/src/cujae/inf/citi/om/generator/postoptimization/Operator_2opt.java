@@ -4,7 +4,7 @@
  */
 package cujae.inf.citi.om.generator.postoptimization;
 
-import cujae.inf.citi.om.generator.solution.Route;
+import cujae.inf.citi.om.solution.Route;
 import java.util.ArrayList;
 import java.util.Collections;
 

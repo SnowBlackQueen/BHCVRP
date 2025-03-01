@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import cujae.inf.citi.om.data.CustomerType;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
-import cujae.inf.citi.om.factory.interfaces.AssignmentType;
-import cujae.inf.citi.om.factory.interfaces.DistanceType;
+import cujae.inf.ic.om.factory.interfaces.AssignmentType;
+import cujae.inf.ic.om.factory.DistanceType;
 import cujae.inf.citi.om.factory.interfaces.HeuristicType;
-import cujae.inf.citi.om.generator.controller.StrategyHeuristic;
-import cujae.inf.citi.om.generator.solution.Solution;
-import cujae.inf.citi.om.heuristic.controller.Controller;
-import cujae.inf.citi.om.heuristic.output.Cluster;
+import cujae.inf.citi.om.controller.StrategyHeuristic;
+import cujae.inf.citi.om.solution.Solution;
 import cujae.inf.citi.om.tools.OrderType;
 		
 public class MDVRP
@@ -21,13 +19,13 @@ public class MDVRP
                                         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
     	try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p18/Resultado_SaveSequential21.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p16/Resultado_CMT_20.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
 
             
-            String pathFiles = "C-mdvrp//p18"; 
+            String pathFiles = "C-mdvrp//p16"; 
 		//int totalInstances = 5;
 		LoadFile loadFile = new LoadFile();
 
@@ -56,7 +54,7 @@ public class MDVRP
 			loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, 
                                 listDistances);
 			
-                        HeuristicType heuristicType = HeuristicType.SaveSequential;
+                        HeuristicType heuristicType = HeuristicType.CMT;
 /*			FleetAux fleet = loadFile.loadCountVehiclesFleet();
 			int countCustomers = loadFile.loadCountCustomers();
 	    	int countDepots = loadFile.loadCountDepots();
@@ -67,7 +65,7 @@ public class MDVRP
                     if(StrategyHeuristic.getStrategyHeuristic().loadProblem(idCustomers, requestCustomers, idDepots, 
                             countVehicles.get(0), capacityVehicles.get(0), listDistances,
                             axisXCustomers, axisYCustomers, axisXDepots, axisYDepots, ProblemType.MDVRP, 
-                            AssignmentType.Sweep))
+                            AssignmentType.BestNearest))
                     {
                             StrategyHeuristic.getStrategyHeuristic().executeHeuristic(20, heuristicType);
                             Solution result = StrategyHeuristic.getStrategyHeuristic().getBestSolution();
@@ -81,6 +79,7 @@ public class MDVRP
                             System.out.println("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristicType);
                             System.out.println("COSTO TOTAL: " + cost);
                             System.out.println("TOTAL DE RUTAS: " + requestByRoute);
+                            System.out.println("TIEMPO DE EJECUCIÓN: " + time);
                             System.out.println(" ");
                             for(int j = 0; j < requestByRoute; j++)
                                 System.out.println("R" + (j+1) + result.getListRoutes().get(j).getListIdCustomers());

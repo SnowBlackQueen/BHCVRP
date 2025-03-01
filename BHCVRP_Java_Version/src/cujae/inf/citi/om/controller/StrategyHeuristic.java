@@ -1,4 +1,4 @@
-package cujae.inf.citi.om.generator.controller;
+package cujae.inf.citi.om.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -15,18 +15,23 @@ import cujae.inf.citi.om.data.Location;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.factory.interfaces.*;
-import cujae.inf.citi.om.factory.methods.FactoryDistance;
 import cujae.inf.citi.om.factory.methods.FactoryHeuristic;
-import cujae.inf.citi.om.distance.Distance;
 import cujae.inf.citi.om.generator.heuristic.Heuristic;
-import cujae.inf.citi.om.generator.solution.RouteTTRP;
-import cujae.inf.citi.om.generator.solution.RouteType;
-import cujae.inf.citi.om.generator.solution.Solution;
-import cujae.inf.citi.om.heuristic.controller.Controller;
-import cujae.inf.citi.om.heuristic.output.Cluster;
-//import cujae.inf.citi.om.matrix.NumericMatrix;
-import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
+import cujae.inf.citi.om.service.OSRMService;
+import cujae.inf.citi.om.solution.RouteTTRP;
+import cujae.inf.citi.om.solution.RouteType;
+import cujae.inf.citi.om.solution.Solution;
+import cujae.inf.ic.om.controller.Controller;
+import cujae.inf.ic.om.problem.output.Cluster;
+import cujae.inf.ic.om.factory.interfaces.AssignmentType;
+import cujae.inf.ic.om.matrix.NumericMatrix;
 import cujae.inf.citi.om.tools.*;
+import cujae.inf.ic.om.distance.IDistance;
+import cujae.inf.ic.om.factory.DistanceType;
+import cujae.inf.ic.om.factory.interfaces.IFactoryDistance;
+import cujae.inf.ic.om.factory.methods.FactoryDistance;
+import cujae.inf.ic.om.factory.DistanceType;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,19 +85,6 @@ public class StrategyHeuristic {
 		Heuristic heuristic = iFactoryHeuristic.createHeuristic(heuristicType);
 		return heuristic;
 	}
-	/* M�todo encargado de crear una distancia*/
-	private Distance newDistance(DistanceType typeDistance) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		IFactoryDistance iFactoryDistance = new FactoryDistance();
-		Distance distance = iFactoryDistance.createDistance(typeDistance);
-		return distance;
-	}
-
-	//	/* M�todo encargado de crear una m�todo de asignaci�n*/
-	//	private Assignment newAssignment(AssignmentType typeAssignment) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-	//		IFactoryAssignment iFactoryAssigned = new FactoryAssignment();
-	//		Assignment assignment = iFactoryAssigned.createAssignment(typeAssignment);
-	//		return assignment;
-	//	}
 
 	/* M�todo encargado de cargar los datos de los clientes con coordenadas*/
 	private ArrayList<Customer> loadCustomer(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers){
@@ -571,7 +563,8 @@ public class StrategyHeuristic {
 					listCapV.add(capacityVehicles);
 				}
 				
-				if(Controller.getController().loadProblem(idCustomers, requestCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listCountV, listCapV, listDistances))
+				
+                                if(Controller.getController().loadProblem(idCustomers, requestCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listCountV, listDistances))
 				{
 					Controller.getController().executeAssignment(typeAssignment);
 					adapt(Controller.getController().getSolution().getClusters());
@@ -833,7 +826,7 @@ public class StrategyHeuristic {
 	}
 
 	/* M�todo encargado de cargar los datos del problema con coordenadas y asignaci�n predeterminada*/
-	public boolean loadProblem(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Integer> typeCustomers, ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ArrayList<ArrayList<Integer>> idAssignedCustomers, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles, ArrayList<Integer> countTrailers, ArrayList<Double> capacityTrailers, ProblemType typeProblem, DistanceType typeDistance)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+	public boolean loadProblem(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Integer> typeCustomers, ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ArrayList<ArrayList<Integer>> idAssignedCustomers, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles, ArrayList<Integer> countTrailers, ArrayList<Double> capacityTrailers, ProblemType typeProblem, DistanceType typeDistance)throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception{
 		boolean loaded = false;
 
 		if((idCustomers != null && !idCustomers.isEmpty()) && (requestCustomers != null && !requestCustomers.isEmpty()) && (axisXCustomers != null && !axisXCustomers.isEmpty()) && (axisYCustomers != null && !axisYCustomers.isEmpty()) && (idDepots != null && !idDepots.isEmpty()) && (axisXDepots != null && !axisXDepots.isEmpty()) && (axisYDepots != null && !axisYDepots.isEmpty()) && (idAssignedCustomers != null && !idAssignedCustomers.isEmpty()) && (countVehicles != null && !countVehicles.isEmpty()) && (capacityVehicles != null && !capacityVehicles.isEmpty()) && (typeProblem.ordinal() >= 0 && typeProblem.ordinal() <= 5))
@@ -895,11 +888,12 @@ public class StrategyHeuristic {
 		return loaded;
 	}
 
-	/* Metodo encargado de llenar la matriz de costo*/
-	private NumericMatrix fillCostMatrix(ArrayList<Integer> idCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, DistanceType typeDistance) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+	/* Metodo encargado de llenar la matriz de costo con la distancia aproximada deseada*/
+	private NumericMatrix fillCostMatrix(ArrayList<Integer> idCustomers, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Integer> idDepots, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, DistanceType typeDistance) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception{
 		int size = idCustomers.size() + idDepots.size(); 
 		NumericMatrix costMatrix = new NumericMatrix(size, size);
-		Distance distance = newDistance(typeDistance);
+		//Distance distance = newDistance(typeDistance);
+                IDistance distance = newDistance(typeDistance);
 
 		int row = -1;
 		int col = -1;
@@ -941,7 +935,7 @@ public class StrategyHeuristic {
 		return costMatrix;
 	}
 
-	/* M�todo encargado de llenar la matriz de costo usando listas de distancias*/
+	/* M�todo encargado de llenar la matriz de costo usando listas de distancias (aproximadas)*/
 	private NumericMatrix fillCostMatrix(ArrayList<ArrayList<Double>> listDistances) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		int size = listDistances.size(); 
 		NumericMatrix costMatrix = new NumericMatrix(size, size);
@@ -964,6 +958,58 @@ public class StrategyHeuristic {
 		return costMatrix;
 	}
 
+        /* M�todo encargado de llenar la matriz de costo usando datos reales.*/
+	public NumericMatrix fillCostMatrixReal(ArrayList<Customer> customers, ArrayList<Depot> depots) throws IOException, InterruptedException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		int totalCustomers = customers.size();
+		int totalDepots = depots.size();
+		NumericMatrix costMatrix = new NumericMatrix(totalCustomers + totalDepots, totalCustomers + totalDepots);
+		double cost = 0.0;
+
+		// Llenar la matriz con distancias obtenidas de la API OSRM
+		for (int i = 0; i < (totalCustomers + totalDepots); i++) {
+			double axisXIni = 0.0;
+			double axisYIni = 0.0;
+
+			// Obtener las coordenadas del punto inicial (cliente o dep�sito)
+			if (i < totalCustomers) {
+				axisXIni = customers.get(i).getLocationCustomer().getAxisX();
+				axisYIni = customers.get(i).getLocationCustomer().getAxisY();
+			} else {
+				axisXIni = depots.get(i - totalCustomers).getLocationDepot().getAxisX();
+				axisYIni = depots.get(i - totalCustomers).getLocationDepot().getAxisY();
+			}
+
+			for (int j = 0; j < (totalCustomers + totalDepots); j++) {
+				double axisXEnd = 0.0;
+				double axisYEnd = 0.0;
+
+				// Obtener las coordenadas del punto final (cliente o dep�sito)
+				if (j < totalCustomers) {
+					axisXEnd = customers.get(j).getLocationCustomer().getAxisX();
+					axisYEnd = customers.get(j).getLocationCustomer().getAxisY();
+				} else {
+					axisXEnd = depots.get(j - totalCustomers).getLocationDepot().getAxisX();
+					axisYEnd = depots.get(j - totalCustomers).getLocationDepot().getAxisY();
+				}
+
+				// Evitar calcular la distancia de un punto consigo mismo
+				if (i == j) {
+					costMatrix.setItem(i, j, Double.POSITIVE_INFINITY);
+				} else {
+					// Llamar al servicio OSRM para obtener la distancia entre los puntos
+					try {
+						cost = OSRMService.calculateDistance(axisXIni, axisYIni, axisXEnd, axisYEnd);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					costMatrix.setItem(i, j, cost);
+					costMatrix.setItem(j, i, cost); // Como la distancia es sim�trica
+				}
+			}
+		}
+		return costMatrix;
+	}
+        
 	/* M�todo encargado de ejecutar una heur�stica de construcci�n*/
 	public void executeHeuristic(int countExecution, HeuristicType heuristicType) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		if(calculateTime == true)
@@ -1097,6 +1143,13 @@ public class StrategyHeuristic {
 				costDepot += bestSolution.getListRoutes().get(i).getCostRoute();
 
 		return Tools.roundDouble(costDepot, 2);
+	}
+        
+        /* M�todo encargado de crear una distancia.*/
+	private IDistance newDistance(DistanceType distanceType) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		IFactoryDistance iFactoryDistance = new FactoryDistance();
+		IDistance distance = (IDistance) iFactoryDistance.createDistance(distanceType);
+		return distance;
 	}
 
 	/*Metodo que restaura los par�metros globales de la clase Strategy*/

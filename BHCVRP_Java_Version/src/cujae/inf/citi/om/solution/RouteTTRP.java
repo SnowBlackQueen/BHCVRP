@@ -1,4 +1,4 @@
-package cujae.inf.citi.om.generator.solution;
+package cujae.inf.citi.om.solution;
 
 import java.util.ArrayList;
 

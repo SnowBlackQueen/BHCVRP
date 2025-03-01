@@ -1,4 +1,4 @@
-package cujae.inf.citi.om.generator.solution;
+package cujae.inf.citi.om.solution;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class Solution {
 		this.listRoutes = listRoutes;
 	}
 	
-	/* Método que calcula el costo total de la solución */
+	/* Mï¿½todo que calcula el costo total de la soluciï¿½n */
 	public Double calculateCost(){
 		double totalCost = 0.0;
 
@@ -45,7 +45,7 @@ public class Solution {
 		return totalCost;	
 	}
 	
-	/* Método que devuelve el costo total de la solución */
+	/* Mï¿½todo que devuelve el costo total de la soluciï¿½n */
 	public Double getCostSolution(){
 		double costSolution = 0.0;
 		

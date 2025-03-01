@@ -4,6 +4,6 @@ package cujae.inf.citi.om.data;
 
 public enum ProblemType {
 	
-	CVRP, HFVRP, MDVRP, OVRP, TTRP, SBRP;
+	CVRP, HFVRP, MDVRP, OVRP, TTRP, SBRP, VRPTW;
 }
 

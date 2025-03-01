@@ -7,10 +7,10 @@ import cujae.inf.citi.om.data.CustomerTTRP;
 import cujae.inf.citi.om.data.CustomerType;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
-import cujae.inf.citi.om.generator.solution.Route;
-import cujae.inf.citi.om.generator.solution.RouteTTRP;
-import cujae.inf.citi.om.generator.solution.RouteType;
-import cujae.inf.citi.om.matrix.NumericMatrix;
+import cujae.inf.citi.om.solution.Route;
+import cujae.inf.citi.om.solution.RouteTTRP;
+import cujae.inf.citi.om.solution.RouteType;
+import cujae.inf.ic.om.matrix.NumericMatrix;
 
 public abstract class Save extends Heuristic{
 

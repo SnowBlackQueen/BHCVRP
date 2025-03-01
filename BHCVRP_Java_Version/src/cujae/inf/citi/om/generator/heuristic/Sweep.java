@@ -1,5 +1,9 @@
 package cujae.inf.citi.om.generator.heuristic;
 
+import cujae.inf.citi.om.solution.RouteType;
+import cujae.inf.citi.om.solution.Solution;
+import cujae.inf.citi.om.solution.RouteTTRP;
+import cujae.inf.citi.om.solution.Route;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -11,7 +15,6 @@ import cujae.inf.citi.om.data.DepotMDVRP;
 import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
-import cujae.inf.citi.om.generator.solution.*;
 
 public class Sweep extends Heuristic{
 
