@@ -1,14 +1,21 @@
+import io
 from typing import List
+from io import FileIO
+from io import StringIO
+from scipy.spatial.distance import cdist
+import numpy as np
+
 import re
 import json
-import numpy as np
-from scipy.spatial.distance import cdist
 from data.CustomerType import CustomerType
 from data.BusStop import BusStop
 from data.Location import Location
 from data.Problem import Problem
+from data.Customer import Customer
 from data.Depot import Depot
 from data.Fleet import Fleet
+from tools.DistanceType import DistanceType
+from service.OSRMService import OSRMService
 
 class LoadFile:
     def __init__(self):
@@ -152,7 +159,7 @@ class LoadFile:
 
         return distance"""
 
-    """def fill_list_distances(
+    def fill_list_distances(
         self,
         id_customers,
         axis_x_customers,
@@ -161,73 +168,100 @@ class LoadFile:
         axis_x_depots,
         axis_y_depots,
         list_distances,
+        distance_type
     ):
-        total_customers = len(id_customers)
-        total_depots = len(id_depots)
-        for i in range(total_customers):
-            distances_from_customers = [
-                self.calculate_distance(
-                    axis_x_customers[j],
-                    axis_y_customers[j],
-                    axis_x_customers[i],
-                    axis_y_customers[i],
-                )
-                for j in range(total_customers)
-            ]
-            for k in range(total_depots):
-                distances_from_customers.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_customers[i],
-                        axis_y_customers[i],
-                    )
-                )
-            list_distances.append(distances_from_customers)
+        # Crear una instancia de OSRMService
+        osrm_service = OSRMService()
 
-        for i in range(total_depots):
-            distances_from_customers = [
-                self.calculate_distance(
-                    axis_x_customers[j],
-                    axis_y_customers[j],
-                    axis_x_depots[i],
-                    axis_y_depots[i],
-                )
-                for j in range(total_customers)
-            ]
-            for k in range(total_depots):
-                distances_from_customers.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_depots[i],
-                        axis_y_depots[i],
-                    )
-                )
-            list_distances.append(distances_from_customers)"""
-
-    def fill_list_distances(self,
-            id_customers,
-            axis_x_customers,
-            axis_y_customers,
-            id_depots,
-            axis_x_depots,
-            axis_y_depots,
-            list_distances,
-    ):
         # Convertir las coordenadas de clientes y depósitos en arrays de NumPy
-        customers_locations = np.column_stack((axis_x_customers, axis_y_customers))
-        depots_locations = np.column_stack((axis_x_depots, axis_y_depots))
+        customers_coords = np.array(list(zip(axis_x_customers, axis_y_customers)))
+        depots_coords = np.array(list(zip(axis_x_depots, axis_y_depots)))
 
-        # Combinar todas las ubicaciones (clientes + depósitos)
-        all_locations = np.vstack([customers_locations, depots_locations])
+        # Calcular las distancias según el tipo de distancia
+        if distance_type == DistanceType.Real:
+            # Calcular distancias reales usando OSRMService
+            for i in range(len(customers_coords)):
+                distances_from_customers = []
+                for j in range(len(customers_coords)):
+                    if i == j:
+                        distances_from_customers.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            customers_coords[i][0], customers_coords[i][1],
+                            customers_coords[j][0], customers_coords[j][1]
+                        )
+                        distances_from_customers.append(distance)
 
-        # Calcular la matriz de distancias usando cdist
-        distance_matrix = cdist(all_locations, all_locations, metric='euclidean')
+                for j in range(len(depots_coords)):
+                    distance = osrm_service.calculate_distance(
+                        customers_coords[i][0], customers_coords[i][1],
+                        depots_coords[j][0], depots_coords[j][1]
+                    )
+                    distances_from_customers.append(distance)
 
-        # Llenar list_distances con las distancias calculadas
-        for i in range(len(all_locations)):
-            list_distances.append(distance_matrix[i].tolist())
+                list_distances.append(distances_from_customers)
+
+            for i in range(len(depots_coords)):
+                distances_from_depots = []
+                for j in range(len(customers_coords)):
+                    distance = osrm_service.calculate_distance(
+                        depots_coords[i][0], depots_coords[i][1],
+                        customers_coords[j][0], customers_coords[j][1]
+                    )
+                    distances_from_depots.append(distance)
+
+                for j in range(len(depots_coords)):
+                    if i == j:
+                        distances_from_depots.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            depots_coords[i][0], depots_coords[i][1],
+                            depots_coords[j][0], depots_coords[j][1]
+                        )
+                        distances_from_depots.append(distance)
+
+                list_distances.append(distances_from_depots)
+
+        else:
+            # Calcular distancias usando métricas tradicionales (Euclidean, Haversine, etc.)
+            if distance_type == DistanceType.Euclidean:
+                distance_type = 'euclidean'
+            elif distance_type == DistanceType.Haversine:
+                distance_type = 'haversine'
+            elif distance_type == DistanceType.Chebyshev:
+                distance_type = 'chebyshev'
+            elif distance_type == DistanceType.Manhattan:
+                distance_type = 'cityblock'
+
+            # Calcular las distancias entre clientes
+            customer_to_customer_distances = cdist(customers_coords, customers_coords, metric=distance_type)
+
+            # Calcular las distancias entre clientes y depósitos
+            customer_to_depot_distances = cdist(customers_coords, depots_coords, metric=distance_type)
+
+            # Calcular las distancias entre depósitos
+            depot_to_depot_distances = cdist(depots_coords, depots_coords, metric=distance_type)
+
+            # Combinar las distancias en una sola lista
+            for i in range(len(customers_coords)):
+                # Distancias entre clientes
+                distances_from_customers = customer_to_customer_distances[i].tolist()
+
+                # Distancias entre el cliente actual y los depósitos
+                distances_from_customers.extend(customer_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_customers)
+
+            for i in range(len(depots_coords)):
+                # Distancias entre el depósito actual y los clientes
+                distances_from_depots = customer_to_depot_distances[:, i].tolist()
+
+                # Distancias entre depósitos
+                distances_from_depots.extend(depot_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_depots)
 
     def load_count_vehicles_fleet(self, instance_file):
         fleet = FleetAux()
@@ -395,51 +429,100 @@ class LoadFile:
         self,
         id_bus_stops, axis_x_bus_stops, axis_y_bus_stops,
         id_depots, axis_x_depots, axis_y_depots,
-        list_distances,
+        list_distances, distance_type
     ):
-        total_bus_stops = len(id_bus_stops)
-        total_depots = len(id_depots)
-        for i in range(total_bus_stops):
-            distances_from_bus_stops = [
-                self.calculate_distance(
-                    axis_x_bus_stops[j],
-                    axis_y_bus_stops[j],
-                    axis_x_bus_stops[i],
-                    axis_y_bus_stops[i],
-                )
-                for j in range(total_bus_stops)
-            ]
-            for k in range(total_depots):
-                distances_from_bus_stops.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_bus_stops[i],
-                        axis_y_bus_stops[i],
-                    )
-                )
-            list_distances.append(distances_from_bus_stops)
+        # Crear una instancia de OSRMService
+        osrm_service = OSRMService()
 
-        for i in range(total_depots):
-            distances_from_bus_stops = [
-                self.calculate_distance(
-                    axis_x_bus_stops[j],
-                    axis_y_bus_stops[j],
-                    axis_x_depots[i],
-                    axis_y_depots[i],
-                )
-                for j in range(total_bus_stops)
-            ]
-            for k in range(total_depots):
-                distances_from_bus_stops.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_depots[i],
-                        axis_y_depots[i],
+        # Convertir las coordenadas de paradas de autobús y depósitos en arrays de NumPy
+        bus_stops_coords = np.array(list(zip(axis_x_bus_stops, axis_y_bus_stops)))
+        depots_coords = np.array(list(zip(axis_x_depots, axis_y_depots)))
+
+        # Calcular las distancias según el tipo de distancia
+        if distance_type == DistanceType.Real:
+            # Calcular distancias reales usando OSRMService
+            for i in range(len(bus_stops_coords)):
+                distances_from_bus_stops = []
+                for j in range(len(bus_stops_coords)):
+                    if i == j:
+                        distances_from_bus_stops.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            bus_stops_coords[i][0], bus_stops_coords[i][1],
+                            bus_stops_coords[j][0], bus_stops_coords[j][1]
+                        )
+                        distances_from_bus_stops.append(distance)
+
+                for j in range(len(depots_coords)):
+                    distance = osrm_service.calculate_distance(
+                        bus_stops_coords[i][0], bus_stops_coords[i][1],
+                        depots_coords[j][0], depots_coords[j][1]
                     )
-                )
-            list_distances.append(distances_from_bus_stops)
+                    distances_from_bus_stops.append(distance)
+
+                list_distances.append(distances_from_bus_stops)
+
+            for i in range(len(depots_coords)):
+                distances_from_depots = []
+                for j in range(len(bus_stops_coords)):
+                    distance = osrm_service.calculate_distance(
+                        depots_coords[i][0], depots_coords[i][1],
+                        bus_stops_coords[j][0], bus_stops_coords[j][1]
+                    )
+                    distances_from_depots.append(distance)
+
+                for j in range(len(depots_coords)):
+                    if i == j:
+                        distances_from_depots.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            depots_coords[i][0], depots_coords[i][1],
+                            depots_coords[j][0], depots_coords[j][1]
+                        )
+                        distances_from_depots.append(distance)
+
+                list_distances.append(distances_from_depots)
+
+        else:
+            # Calcular distancias usando métricas tradicionales (Euclidean, Haversine, etc.)
+            if distance_type == DistanceType.Euclidean:
+                distance_type = 'euclidean'
+            elif distance_type == DistanceType.Haversine:
+                distance_type = 'haversine'
+            elif distance_type == DistanceType.Chebyshev:
+                distance_type = 'chebyshev'
+            elif distance_type == DistanceType.Manhattan:
+                distance_type = 'cityblock'
+
+            # Calcular las distancias entre paradas de autobús
+            bus_stop_to_bus_stop_distances = cdist(bus_stops_coords, bus_stops_coords, metric=distance_type)
+
+            # Calcular las distancias entre paradas de autobús y depósitos
+            bus_stop_to_depot_distances = cdist(bus_stops_coords, depots_coords, metric=distance_type)
+
+            # Calcular las distancias entre depósitos
+            depot_to_depot_distances = cdist(depots_coords, depots_coords, metric=distance_type)
+
+            # Combinar las distancias en una sola lista
+            for i in range(len(bus_stops_coords)):
+                # Distancias entre paradas de autobús
+                distances_from_bus_stops = bus_stop_to_bus_stop_distances[i].tolist()
+
+                # Distancias entre la parada de autobús actual y los depósitos
+                distances_from_bus_stops.extend(bus_stop_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_bus_stops)
+
+            for i in range(len(depots_coords)):
+                # Distancias entre el depósito actual y las paradas de autobús
+                distances_from_depots = bus_stop_to_depot_distances[:, i].tolist()
+
+                # Distancias entre depósitos
+                distances_from_depots.extend(depot_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_depots)
 
 
 class CustomerAux:

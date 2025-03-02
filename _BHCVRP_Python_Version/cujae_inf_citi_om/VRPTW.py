@@ -3,6 +3,7 @@ from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
 from controller.StrategyHeuristic import StrategyHeuristic
 from i_o.output.ExportResult import ExportResult
+from tools.DistanceType import DistanceType
 
 
 def main():
@@ -43,6 +44,7 @@ def main():
         )
         load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
 
+        distance_type = DistanceType.Euclidean
         load_file.fill_list_distances(
             id_customers,
             axis_x_customers,
@@ -51,11 +53,12 @@ def main():
             axis_x_depots,
             axis_y_depots,
             list_distances,
+            distance_type
         )
 
         load_file.is_load_time_windows(initial_nodes, end_nodes, service_times)
 
-        heuristic_type = HeuristicType.RandomMethod
+        heuristic_type = HeuristicType.SaveParallel
 
         if StrategyHeuristic.get_strategy_heuristic().load_vrptw(
             id_customers,
@@ -83,7 +86,7 @@ def main():
             )
             time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
-            """print(" ")
+            print(" ")
             print("------------------------------------------")
             # print("INSTANCIA: P" + (i + 1))
             print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
@@ -100,13 +103,14 @@ def main():
                 # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
             print("------------------------------------------")
 
-        file_output.close()"""
+        #file_output.close()"""
 
-            # Para formato TXT
+            """# Para formato TXT
             # Construir la cadena de texto con el formato de los prints
             output_text = (
                 " \n"
                 "------------------------------------------\n"
+                f"DISTANCIA: {distance_type.name}\n"
                 f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
                 f"COSTO TOTAL: {cost}\n"
                 f"TOTAL DE RUTAS: {request_by_route}\n"
@@ -128,6 +132,7 @@ def main():
             # Para formato JSON y XML
             # Recopilar resultados en un diccionario
             results = {
+                "distance_type": distance_type.name,
                 "heuristic_type": heuristic_type.name,
                 "total_cost": cost,
                 "total_routes": request_by_route,
@@ -147,6 +152,7 @@ def main():
             # Para formato CSV
             # Crear una lista de listas para el CSV
             csv_data = [
+                ["Tipo de distancia", distance_type.name],
                 ["Tipo de heurística", heuristic_type.name],
                 ["Costo total", cost],
                 ["Tiempo de ejecución", time],
@@ -161,7 +167,7 @@ def main():
             ExportResult.to_csv(
                 csv_data,
                 "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv"
-            )
+            )"""
 
         # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:

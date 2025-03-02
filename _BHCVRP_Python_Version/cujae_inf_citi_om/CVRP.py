@@ -3,6 +3,7 @@ from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
 from controller.StrategyHeuristic import StrategyHeuristic
 from i_o.output.ExportResult import ExportResult
+from tools.DistanceType import DistanceType
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
         )"""
         # sys.stdout = file_output
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\CVRP_p14"
+        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\CVRP\\CVRP_1"
         # total_instances = 5
         load_file = LoadFile()
 
@@ -40,6 +41,7 @@ def main():
         )
         load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
 
+        distance_type = DistanceType.Euclidean
         load_file.fill_list_distances(
             id_customers,
             axis_x_customers,
@@ -48,6 +50,7 @@ def main():
             axis_x_depots,
             axis_y_depots,
             list_distances,
+            distance_type
         )
 
         heuristic_type = HeuristicType.SaveParallel
@@ -80,6 +83,7 @@ def main():
             output_text = (
                 " \n"
                 "------------------------------------------\n"
+                f"DISTANCIA: {distance_type.name}\n"
                 f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
                 f"COSTO TOTAL: {cost}\n"
                 f"TOTAL DE RUTAS: {request_by_route}\n"
@@ -101,6 +105,7 @@ def main():
             # Para formato JSON y XML
             # Recopilar resultados en un diccionario
             results = {
+                "distance_type": distance_type.name,
                 "heuristic_type": heuristic_type.name,
                 "total_cost": cost,
                 "total_routes": request_by_route,
@@ -120,6 +125,7 @@ def main():
             # Para formato CSV
             # Crear una lista de listas para el CSV
             csv_data = [
+                ["Tipo de distancia", distance_type.name],
                 ["Tipo de heurística", heuristic_type.name],
                 ["Costo total", cost],
                 ["Tiempo de ejecución", time],
