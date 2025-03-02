@@ -26,6 +26,15 @@ public class Route {
 		idDepot = -1;
 	}
 	
+        public Route(ArrayList<Integer> listIdCustomers, double requestRoute, double costRoute, int idDepot, ArrayList<Integer> listAccessVC) {
+		super();
+		this.listIdCustomers = new ArrayList<Integer>(listIdCustomers);
+		this.requestRoute = requestRoute;
+		this.costRoute = 0.0;
+		this.idDepot = idDepot;
+                listAccessVC = new ArrayList<Integer>();
+	}
+        
 	public Route(ArrayList<Integer> listIdCustomers, double requestRoute, double costRoute, int idDepot, ArrayList<Integer> listAccessVC, ArrayList<BusStop> listBusStops) {
 		super();
 		this.listIdCustomers = new ArrayList<Integer>(listIdCustomers);

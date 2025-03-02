@@ -4,6 +4,7 @@ package cujae.inf.citi.om.data;
 
 import cujae.inf.citi.om.exceptions.DistanceNotAccessibleException;
 import cujae.inf.citi.om.exceptions.ItemNotFoundException;
+import cujae.inf.citi.om.exceptions.VehicleSpeedException;
 import java.util.ArrayList;
 
 //import cujae.inf.citi.om.matrix.NumericMatrix;
@@ -17,11 +18,13 @@ public class Problem {
 	private ArrayList<Depot> listDepots;
 	private ProblemType typeProblem;
 	private NumericMatrix costMatrix;
+        private NumericMatrix timeMatrix;
 	
 	private static Problem problem = null;
 	private ArrayList<Double> listCapacities = null;
         private ArrayList<BusStop> listBusesStop;
         private double maximumWalkDistance;
+        private float vehicleSpeed = (float) 83.33;
 	
 	private Problem() {
 		super();
@@ -29,6 +32,7 @@ public class Problem {
 		listDepots = new ArrayList<Depot>();
                 listBusesStop = new ArrayList<BusStop>();
 		costMatrix = new NumericMatrix();
+                timeMatrix = new NumericMatrix();
 	}
 
 	/* M�todo que implementa el Patr�n Singleton*/
@@ -112,6 +116,14 @@ public class Problem {
 		this.costMatrix = costMatrix;
 	}
 	
+        public NumericMatrix getTimeMatrix() {
+		return timeMatrix;
+	}
+
+	public void setTimeMatrix(NumericMatrix timeMatrix) {
+		this.timeMatrix = timeMatrix;
+	}
+        
 	public ArrayList<Double> getListCapacities() {
 		return listCapacities;
 	}
@@ -132,6 +144,19 @@ public class Problem {
                 throw new DistanceNotAccessibleException("La distancia a recorrer no es accesible. Debe ser mayor que 0");
             }  
                 
+        }
+        
+        public float getVehicleSpeed(){
+            return vehicleSpeed;
+        }
+        
+        public void setVehicleSpeed(float vehicleSpeed) throws VehicleSpeedException{
+            if (vehicleSpeed > 0){
+                this.vehicleSpeed = vehicleSpeed;
+            }
+            else {
+                throw new VehicleSpeedException("La velocidad del vehículo debe ser mayor que 0");
+            }  
         }
         
         public ArrayList<BusStop> getListBusesStop(){

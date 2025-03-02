@@ -12,9 +12,9 @@ import cujae.inf.citi.om.exceptions.TimeWindowException;
  * @author kmych
  */
 public class TimeWindow {
-    private float initialNode;
-    private float endNode;
-    private float serviceTime;
+    private double initialNode;
+    private double endNode;
+    private double serviceTime;
     
     public TimeWindow(){
         super();
@@ -24,11 +24,11 @@ public class TimeWindow {
         
     }
     
-    public float getInitialNode(){
+    public double getInitialNode(){
         return initialNode;
     }
     
-    public void setInitialNode(float initialNode) throws TimeWindowException{
+    public void setInitialNode(double initialNode) throws TimeWindowException{
         if(initialNode >= 0){
             this.initialNode = initialNode;
         }
@@ -36,11 +36,11 @@ public class TimeWindow {
             throw new TimeWindowException("El nodo inicial debe ser mayor que cero.");   
     }
     
-    public float getEndNode(){
+    public double getEndNode(){
         return initialNode;
     }
     
-    public void setEndNode(float endNode) throws TimeWindowException{
+    public void setEndNode(double endNode) throws TimeWindowException{
         if(endNode >= 0){
             this.endNode = endNode;
         }
@@ -48,11 +48,11 @@ public class TimeWindow {
             throw new TimeWindowException("El nodo final debe ser mayor que cero.");     
     }
     
-    public float getServiceTime(){
+    public double getServiceTime(){
         return initialNode;
     }
     
-    public void setServiceTime(float serviceTime) throws ServiceTimeException{
+    public void setServiceTime(double serviceTime) throws ServiceTimeException{
         if(serviceTime >= 0){
             this.serviceTime = serviceTime;
         }
@@ -60,11 +60,11 @@ public class TimeWindow {
             throw new ServiceTimeException("El tiempo de servicio tiene que ser mayor que cero.");
     }
     
-    public float calculateExitTime(float travelTime, float arrivalTime){
+    public double calculateExitTime(double travelTime, double arrivalTime){
         return 0; //max(travel_time, arrive_time) + serviceTime
     }
     
-    public boolean verifyTW(float arriveTime){
+    public boolean verifyTW(double arriveTime){
         return arriveTime <= this.endNode;
     }
 }

@@ -507,5 +507,16 @@ public class LoadFile {
 		IDistance distance = (IDistance) iFactoryDistance.createDistance(distanceType);
 		return distance;
 	}
+
+    public void isLoadTimeWindows(ArrayList<Double> initialNodes, ArrayList<Double> endNodes, ArrayList<Double> serviceTimes){
+        int totalCustomers = loadTotalCustomers();
+        int totalDepots = loadTotalDepots();
+        for (int i = totalDepots + 1; i <= totalCustomers + totalDepots; i++) {
+            String[] tokens = instanceFile.get(i).split("\\s+");
+            initialNodes.add(Double.parseDouble(tokens[4]));
+            endNodes.add(Double.parseDouble(tokens[5]));
+            serviceTimes.add(Double.parseDouble(tokens[6]));
+        }
+    }
 }
         

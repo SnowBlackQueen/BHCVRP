@@ -7,6 +7,7 @@ public class Customer {
 	protected int idCustomer;
 	protected double requestCustomer;
 	protected Location locationCustomer;
+        protected TimeWindow timeWindow;
 
 	public Customer() {
 		super();
@@ -18,6 +19,15 @@ public class Customer {
 		this.idCustomer = idCustomer;
 		this.requestCustomer = requestCustomer;
 		this.locationCustomer = locationCustomer;
+	}
+        
+        public Customer(int idCustomer, double requestCustomer,
+			Location locationCustomer, TimeWindow timeWindow) {
+		super();
+		this.idCustomer = idCustomer;
+		this.requestCustomer = requestCustomer;
+		this.locationCustomer = locationCustomer;
+                this.timeWindow = timeWindow;
 	}
 
 	public int getIdCustomer() {
@@ -43,4 +53,12 @@ public class Customer {
 	public void setLocationCustomer(Location locationCustomer) {
 		this.locationCustomer = locationCustomer;
 	}
+        
+        public TimeWindow getTimeWindow(){
+            return timeWindow;
+        }
+        
+        public void setTimeWindow(TimeWindow timeWindow){
+            this.timeWindow = timeWindow;
+        }
 }

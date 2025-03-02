@@ -14,6 +14,9 @@ import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.data.Location;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
+import cujae.inf.citi.om.data.TimeWindow;
+import cujae.inf.citi.om.exceptions.ServiceTimeException;
+import cujae.inf.citi.om.exceptions.TimeWindowException;
 import cujae.inf.citi.om.factory.interfaces.*;
 import cujae.inf.citi.om.factory.methods.FactoryHeuristic;
 import cujae.inf.citi.om.generator.heuristic.Heuristic;
@@ -1164,4 +1167,134 @@ public class StrategyHeuristic {
 	public static void destroyStrategy() {
 		strategyHeuristic = null;
 	}
+
+    public boolean loadVRPTW(ArrayList<Integer> idCustomers, ArrayList<Double> requestCustomers, ArrayList<Integer> idDepots, ArrayList<Integer> countVehicles, ArrayList<Double> capacityVehicles, ArrayList<ArrayList<Double>> listDistances, ArrayList<Double> axisXCustomers, ArrayList<Double> axisYCustomers, ArrayList<Double> axisXDepots, ArrayList<Double> axisYDepots, ArrayList<Double> initialNodes, ArrayList<Double> endNodes, ArrayList<Double> serviceTimes, ProblemType problemType) throws TimeWindowException, ServiceTimeException {
+        boolean loaded = false;
+
+        Problem.getProblem().setTypeProblem(problemType);
+
+        if (
+            (idCustomers != null && !idCustomers.isEmpty()) &&
+            (requestCustomers != null && !requestCustomers.isEmpty()) &&
+            (idDepots != null && !idDepots.isEmpty()) &&
+            (countVehicles != null && !countVehicles.isEmpty()) &&
+            (capacityVehicles != null && !capacityVehicles.isEmpty()) &&
+            (listDistances != null && !listDistances.isEmpty()) &&
+            (axisXCustomers != null && !axisXCustomers.isEmpty()) &&
+            (axisYCustomers != null && !axisYCustomers.isEmpty()) &&
+            (axisXDepots != null && !axisXDepots.isEmpty()) &&
+            (axisYDepots != null && !axisYDepots.isEmpty()) &&
+            (initialNodes != null && !initialNodes.isEmpty()) &&
+            (endNodes != null && !endNodes.isEmpty()) &&
+            (serviceTimes != null && !serviceTimes.isEmpty())
+        ) {
+            ArrayList<Customer> listCustomers = new ArrayList<>();
+            ArrayList<Depot> listDepots = new ArrayList<>();
+
+            // Crear y configurar los clientes
+            for (int i = 0; i < idCustomers.size(); i++) {
+                Customer customer = new Customer();
+                customer.setIdCustomer(idCustomers.get(i));
+                customer.setRequestCustomer(requestCustomers.get(i));
+
+                Location locationCustomer = new Location();
+                locationCustomer.setAxisX(axisXCustomers.get(i));
+                locationCustomer.setAxisY(axisYCustomers.get(i));
+                customer.setLocationCustomer(locationCustomer);
+
+                TimeWindow timeWindow = new TimeWindow();
+                timeWindow.setInitialNode(initialNodes.get(i));
+                timeWindow.setEndNode(endNodes.get(i));
+                timeWindow.setServiceTime(serviceTimes.get(i));
+
+                customer.setTimeWindow(timeWindow);
+
+                listCustomers.add(customer);
+            }
+
+            // Crear y configurar el depósito
+            Depot depot = new Depot();
+            depot.setIdDepot(idDepots.get(0));
+
+            Location locationDepot = new Location();
+            locationDepot.setAxisX(axisXDepots.get(0));
+            locationDepot.setAxisY(axisYDepots.get(0));
+            depot.setLocationDepot(locationDepot);
+
+            Fleet fleet = new Fleet();
+            fleet.setCountVehicles(countVehicles.get(0));
+            fleet.setCapacityVehicle(capacityVehicles.get(0));
+
+            ArrayList<Fleet> listFleets = new ArrayList<>();
+            listFleets.add(fleet);
+            depot.setListFleets(listFleets);
+
+            listDepots.add(depot);
+
+            // Configurar la lista de clientes y depósitos en el problema
+            Problem.getProblem().setListCustomers(listCustomers);
+            Problem.getProblem().setListDepots(listDepots);
+
+            // Verificar si la capacidad total es suficiente para la demanda total
+            if (Problem.getProblem().getTotalCapacity() >= Problem.getProblem().getTotalRequest()) {
+                loaded = true;
+
+                // Configurar la matriz de costos y la matriz de tiempos
+                Problem.getProblem().setCostMatrix(fillCostMatrixWithListDistances(listDistances));
+                Problem.getProblem().setTimeMatrix(fillTimeMatrix(listDistances, Problem.getProblem().getVehicleSpeed()));
+
+                ArrayList<Integer> listCountV = new ArrayList<>();
+                ArrayList<Double> listCapV = new ArrayList<>();
+
+                listCountV.add(countVehicles.get(0));
+                listCapV.add(capacityVehicles.get(0));
+            } else {
+                System.out.println("Total demand exceeds total capacity"); // Sin excepción de capacidad
+            }
+        }
+
+        return loaded;
+    }
+    
+    /**
+     * Método encargado de llenar la matriz de costo usando listas de distancias.
+     *
+     * @param listDistances Lista de listas que contiene las distancias entre los puntos.
+     * @return Una matriz de costos (NumericMatrix) basada en las distancias proporcionadas.
+     */
+    public NumericMatrix fillCostMatrixWithListDistances(ArrayList<ArrayList<Double>> listDistances) {
+        int size = listDistances.size();
+        NumericMatrix costMatrix = new NumericMatrix(size, size);
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < listDistances.get(i).size(); j++) {
+                double costInDistance = listDistances.get(i).get(j);
+                costMatrix.setItem(i, j, costInDistance);
+            }
+        }
+
+        return costMatrix;
+    }
+
+    /**
+     * Método encargado de llenar la matriz de tiempos usando listas de distancias y la velocidad del vehículo.
+     *
+     * @param listDistances Lista de listas que contiene las distancias entre los puntos.
+     * @param vehicleSpeed  Velocidad del vehículo para calcular el tiempo de viaje.
+     * @return Una matriz de tiempos (NumericMatrix) basada en las distancias y la velocidad proporcionadas.
+     */
+    public NumericMatrix fillTimeMatrix(ArrayList<ArrayList<Double>> listDistances, float vehicleSpeed) {
+        int size = listDistances.size();
+        NumericMatrix timeMatrix = new NumericMatrix(size, size);
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < listDistances.get(i).size(); j++) {
+                double travelTime = listDistances.get(i).get(j) / vehicleSpeed;
+                timeMatrix.setItem(i, j, travelTime);
+            }
+        }
+
+        return timeMatrix;
+    }
+    
 }
