@@ -619,4 +619,38 @@ public class Problem {
             return count;
 
         }
+
+    public int getPosElement(BusStop busStop) {
+        int i = 0;
+        boolean found = false;
+        int posElement = -1;
+        int countCustomers = listCustomers.size();
+        int countDepots = listDepots.size();
+        int countBusStops = listBusesStop.size();
+        int idElement = Integer.parseInt(busStop.getIdBusStop());
+        
+        // Buscar en la lista de depósitos
+        while (i < countDepots && !found) {
+            if (listDepots.get(i).getIdDepot() == idElement) {
+                posElement = i + countBusStops;
+                found = true;
+            } else {
+                i++;
+            }
+        }
+
+        i = 0;
+        // Buscar en la lista de paradas de autobús
+        while (i < countBusStops && !found) {
+            if (listBusesStop.get(i).getIdBusStop().equals(busStop.getIdBusStop())) {
+                posElement = i;
+                found = true;
+            } else {
+                i++;
+            }
+        }  
+        
+        return posElement;        
+    } 
+        
 }
