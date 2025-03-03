@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resultado><heuristica>SaveParallel</heuristica><costo_total>593.12</costo_total><tiempo_ejecucion>0.061095476150512695</tiempo_ejecucion><rutas><ruta id="1"><clientes>45, 33, 39, 30, 34, 21, 29, 20, 35, 36, 3, 28, 31</clientes></ruta><ruta id="2"><clientes>38, 10, 49, 9, 50, 16, 2, 22, 8, 26, 7, 43, 24, 23</clientes></ruta><ruta id="3"><clientes>4, 17, 37, 15, 44, 42, 19, 40, 41, 13, 25, 14, 6</clientes></ruta><ruta id="4"><clientes>27, 48, 1, 32, 11, 5, 12, 18, 47, 46</clientes></ruta></rutas></resultado>

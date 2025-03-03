@@ -14,6 +14,9 @@ from data.Problem import Problem
 from data.Customer import Customer
 from data.Depot import Depot
 from data.Fleet import Fleet
+from data.TimeWindow import TimeWindow
+from data.FleetTTRP import FleetTTRP
+from data.CustomerTTRP import CustomerTTRP
 from tools.DistanceType import DistanceType
 from service.OSRMService import OSRMService
 
@@ -227,7 +230,7 @@ class LoadFile:
             if distance_type == DistanceType.Euclidean:
                 distance_type = 'euclidean'
             elif distance_type == DistanceType.Haversine:
-                distance_type = 'haversine'
+                distance_type = 'ha'
             elif distance_type == DistanceType.Chebyshev:
                 distance_type = 'chebyshev'
             elif distance_type == DistanceType.Manhattan:
@@ -524,6 +527,281 @@ class LoadFile:
                 # Agregar a la lista de distancias
                 list_distances.append(distances_from_depots)
 
+    def load_cvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = [data['capacity_vehicles']]
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_hfvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_mdvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_ttrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos y remolques
+            capacity_vehicle = data['capacity_vehicle']
+            capacity_trailer = [data['capacity_trailer']]
+            count_vehicles = data['count_vehicles']
+            count_trailers = [data['count_trailers']]
+
+            # Crear la flota de vehículos y remolques
+            fleet = FleetTTRP(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicle, count_trailers=count_trailers, capacity_trailer=capacity_trailer)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = CustomerTTRP(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request'],
+                    type_customer=customer_data['type_customer']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_vrptw_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                time_window = TimeWindow(initial_node= customer_data['initial_node'], end_node= customer_data['end_node'], service_time= customer_data['service_time'])
+
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request'],
+                    time_window= time_window
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
 
 class CustomerAux:
     def __init__(self):

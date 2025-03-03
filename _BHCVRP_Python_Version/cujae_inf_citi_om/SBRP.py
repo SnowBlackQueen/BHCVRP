@@ -14,8 +14,8 @@ def main():
         )
         # sys.stdout = file_output
 
-        path_file_original_instance = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\instance-4_B-80_P-800_D-1_MW-10_MBC-15_MVC-25_BSS.json"
-        path_file_solution_BSS = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\BSS_solution-11_B-74_P-800_S-METAHEURISTIC_A-MH_GENETIC_BSS.json"
+        path_file_original_instance = "instances\\sbrp\\instance-4_B-80_P-800_D-1_MW-10_MBC-15_MVC-25_BSS.json"
+        path_file_solution_BSS = "instances\\sbrp\\BSS_solution-11_B-74_P-800_S-METAHEURISTIC_A-MH_GENETIC_BSS.json"
 
         # total_instances = 5
         load_file = LoadFile()
@@ -185,15 +185,15 @@ def main():
                 for j in range(request_by_route)
             ]
 
-        ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+        ExportResult.to_txt(output_text, "results\\sbrp\\resultado.txt")
 
         # Exportar a JSON
-        ExportResult.to_json(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
+        ExportResult.to_json(data, "results\\sbrp\\resultado.json")
 
-        ExportResult.to_csv(csv_data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv")
+        ExportResult.to_csv(csv_data, "results\\sbrp\\resultado.csv")
 
         # Exportar a XML
-        ExportResult.to_xml(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")"""
+        ExportResult.to_xml(data, "results\\sbrp\\resultado.xml")"""
         # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)

@@ -1,0 +1,139 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "KilbyAlgorithm",
+    "total_cost": 1180.4,
+    "total_routes": 16,
+    "execution_time": 8.875380754470825,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                4,
+                18,
+                25
+            ]
+        },
+        {
+            "route_id": 2,
+            "customers": [
+                17,
+                37,
+                15
+            ]
+        },
+        {
+            "route_id": 3,
+            "customers": [
+                19,
+                41,
+                13,
+                40
+            ]
+        },
+        {
+            "route_id": 4,
+            "customers": [
+                42,
+                44,
+                45
+            ]
+        },
+        {
+            "route_id": 5,
+            "customers": [
+                27,
+                32,
+                6,
+                1,
+                48,
+                24
+            ]
+        },
+        {
+            "route_id": 6,
+            "customers": [
+                47,
+                14,
+                23,
+                26,
+                43
+            ]
+        },
+        {
+            "route_id": 7,
+            "customers": [
+                46,
+                8,
+                31
+            ]
+        },
+        {
+            "route_id": 8,
+            "customers": [
+                12,
+                11,
+                7
+            ]
+        },
+        {
+            "route_id": 9,
+            "customers": [
+                30,
+                34,
+                10,
+                50,
+                39
+            ]
+        },
+        {
+            "route_id": 10,
+            "customers": [
+                49,
+                33
+            ]
+        },
+        {
+            "route_id": 11,
+            "customers": [
+                9
+            ]
+        },
+        {
+            "route_id": 12,
+            "customers": [
+                38,
+                5,
+                16
+            ]
+        },
+        {
+            "route_id": 13,
+            "customers": [
+                20,
+                35,
+                3,
+                36
+            ]
+        },
+        {
+            "route_id": 14,
+            "customers": [
+                2,
+                22,
+                28
+            ]
+        },
+        {
+            "route_id": 15,
+            "customers": [
+                29
+            ]
+        },
+        {
+            "route_id": 16,
+            "customers": [
+                21
+            ]
+        }
+    ]
+}

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resultado><heuristica>CMT</heuristica><costo_total>910.96</costo_total><tiempo_ejecucion>0.09383010864257812</tiempo_ejecucion><rutas><ruta id="1"><clientes>43, 7, 23, 24, 48, 26, 8, 27, 6</clientes></ruta><ruta id="2"><clientes>13, 40, 41, 19, 25, 42, 4, 18, 14, 44, 17, 47, 37, 15, 45, 12, 33, 46, 5, 10, 49</clientes></ruta><ruta id="3"><clientes>36, 39, 30, 34, 9, 21, 50, 31, 38, 16, 29, 28, 11, 35, 2, 22, 20, 1, 3, 32</clientes></ruta></rutas></resultado>

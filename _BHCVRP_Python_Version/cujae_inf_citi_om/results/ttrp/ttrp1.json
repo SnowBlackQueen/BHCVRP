@@ -1,0 +1,109 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "KilbyAlgorithm",
+    "total_cost": 1208.06,
+    "total_routes": 10,
+    "execution_time": 1.2687246799468994,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                2,
+                11,
+                38,
+                16,
+                5
+            ]
+        },
+        {
+            "route_id": 2,
+            "customers": [
+                4,
+                47,
+                12,
+                17,
+                37,
+                14
+            ]
+        },
+        {
+            "route_id": 3,
+            "customers": [
+                1,
+                27,
+                6,
+                8,
+                23,
+                31,
+                26,
+                29
+            ]
+        },
+        {
+            "route_id": 4,
+            "customers": [
+                3,
+                32,
+                22,
+                28,
+                20,
+                48,
+                10
+            ]
+        },
+        {
+            "route_id": 5,
+            "customers": [
+                46,
+                18,
+                7,
+                9,
+                49,
+                36
+            ]
+        },
+        {
+            "route_id": 6,
+            "customers": [
+                21,
+                50,
+                34,
+                30,
+                35,
+                39
+            ]
+        },
+        {
+            "route_id": 7,
+            "customers": [
+                13,
+                25,
+                24,
+                43
+            ]
+        },
+        {
+            "route_id": 8,
+            "customers": [
+                15,
+                45,
+                33
+            ]
+        },
+        {
+            "route_id": 9,
+            "customers": [
+                19,
+                41,
+                42,
+                40
+            ]
+        },
+        {
+            "route_id": 10,
+            "customers": [
+                44
+            ]
+        }
+    ]
+}
