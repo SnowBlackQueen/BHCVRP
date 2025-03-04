@@ -3,6 +3,9 @@ from data.ProblemType import ProblemType
 from data.Problem import Problem
 from solution.Solution import Solution
 from solution.Route import Route
+from data.CustomerType import CustomerType
+from solution.RouteType import RouteType
+from solution.RouteTTRP import RouteTTRP
 
 
 class FisherJaikumar(Heuristic):
@@ -21,6 +24,17 @@ class FisherJaikumar(Heuristic):
             self.assigned_customers = {i: [] for i in range(self.num_vehicles)}  # Diccionario para almacenar clientes asignados a cada vehículo
         else:
             self.vehicle_capacity = Problem.get_problem().get_list_depots()[0].get_list_fleets()[0].get_capacity_vehicle()  # Capacidad homogénea
+
+        if self.type_problem == ProblemType.TTRP:
+            self.trailer_capacity = None  # Capacidad de los remolques
+            self.num_trailers = None  # Número de remolques
+
+            # Obtener las capacidades de los camiones y remolques
+            self.trailer_capacity = Problem.get_problem().get_list_depots()[0].get_list_fleets()[0].get_capacity_trailer()
+            self.num_trailers = Problem.get_problem().get_list_depots()[0].get_list_fleets()[0].get_count_trailers()
+
+            # Inicializar diccionario para almacenar clientes asignados a cada vehículo
+            self.assigned_customers = {i: [] for i in range(self.num_vehicles + self.num_trailers)}
 
         self.seed_points = self.creating()  # Seleccionar puntos semilla
 
@@ -45,7 +59,7 @@ class FisherJaikumar(Heuristic):
             # Seleccionar los primeros `num_vehicles` clientes como puntos semilla
             return sorted_customers[:self.num_vehicles]
 
-        if self.type_problem == ProblemType.HFVRP:
+        elif self.type_problem == ProblemType.HFVRP:
             # Ordenar vehículos por capacidad (de mayor a menor)
             sorted_vehicles = sorted(range(self.num_vehicles), key=lambda i: self.vehicle_capacity[i], reverse=True)
 
@@ -56,6 +70,29 @@ class FisherJaikumar(Heuristic):
                 self.assigned_customers[sorted_vehicles[i]].append(sorted_customers[i])
 
             return seed_points
+
+        elif self.type_problem == ProblemType.TTRP:
+            # Seleccionar los primeros `num_vehicles` clientes TC como puntos semilla para camiones
+            tc_customers = [c for c in sorted_customers if c.get_type_customer() == CustomerType.TC or c.get_type_customer() == 1]
+            seed_points_tc = tc_customers[:self.num_vehicles]
+
+            # Seleccionar los primeros `num_trailers` clientes VC como puntos semilla para remolques
+            vc_customers = [c for c in sorted_customers if c.get_type_customer() == CustomerType.VC or c.get_type_customer() == 0]
+            seed_points_vc = vc_customers[:self.num_trailers]
+
+            # Combinar los puntos semilla para camiones y remolques
+            seed_points = seed_points_tc + seed_points_vc
+
+            # Asignar los puntos semilla a los vehículos correspondientes
+            for i, customer in enumerate(seed_points):
+                if i < self.num_vehicles:
+                    self.assigned_customers[i].append(customer)  # Asignar a camiones
+                else:
+                    self.assigned_customers[i].append(customer)  # Asignar a remolques
+
+            return seed_points
+
+
 
     def processing(
         self,
@@ -95,7 +132,7 @@ class FisherJaikumar(Heuristic):
                     if total_demand + customer.get_request_customer() <= self.vehicle_capacity:
                         self.assigned_customers[best_vehicle].append(customer)
 
-        if self.type_problem == ProblemType.HFVRP:
+        elif self.type_problem == ProblemType.HFVRP:
             # Asignar cada cliente al vehículo más cercano (en términos de costo) que tenga suficiente capacidad
             customers = Problem.get_problem().get_list_customers()
             cost_matrix = Problem.get_problem().get_cost_matrix()
@@ -119,9 +156,43 @@ class FisherJaikumar(Heuristic):
                 if best_vehicle != -1:
                     self.assigned_customers[best_vehicle].append(customer)
 
+        elif self.type_problem == ProblemType.TTRP:
+            # Asignar cada cliente al vehículo más cercano (en términos de costo) que tenga suficiente capacidad
+            customers = Problem.get_problem().get_list_customers()
+            cost_matrix = Problem.get_problem().get_cost_matrix()
+
+            for customer in customers:
+                if customer in self.seed_points:
+                    continue  # Los puntos semilla ya están asignados
+
+                min_cost = float('inf')
+                best_vehicle = -1
+
+                for i, seed in enumerate(self.seed_points):
+                    cost = cost_matrix.item(customer.get_id_customer(), seed.get_id_customer())
+                    if cost < min_cost:
+                        # Verificar que la capacidad del vehículo no se exceda
+                        if customer.get_type_customer() == CustomerType.TC:
+                            # Cliente TC solo puede ser asignado a camiones
+                            if i < self.num_vehicles:
+                                total_demand = sum(c.get_request_customer() for c in self.assigned_customers[i])
+                                if total_demand + customer.get_request_customer() <= self.vehicle_capacity:
+                                    min_cost = cost
+                                    best_vehicle = i
+                        else:
+                            # Cliente VC puede ser asignado a camiones con remolques
+                            if i < self.num_vehicles + self.num_trailers:
+                                total_demand = sum(c.get_request_customer() for c in self.assigned_customers[i])
+                                if total_demand + customer.get_request_customer() <= self.vehicle_capacity + self.trailer_capacity:
+                                    min_cost = cost
+                                    best_vehicle = i
+
+                if best_vehicle != -1:
+                    self.assigned_customers[best_vehicle].append(customer)
+
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP:
             # Resolver el problema de enrutamiento para cada vehículo
             depot = Problem.get_problem().get_list_depots()[0]  # Único depósito
             cost_matrix = Problem.get_problem().get_cost_matrix()
@@ -130,9 +201,21 @@ class FisherJaikumar(Heuristic):
                 if not customers:
                     continue  # Si no hay clientes asignados, pasar al siguiente vehículo
 
-                # Crear una ruta para el vehículo
-                route = Route()
-                route.set_id_depot(depot.get_id_depot())
+                if self.type_problem == ProblemType.TTRP:
+                    # Crear una ruta para el vehículo
+                    route = RouteTTRP()
+                    route.set_id_depot(depot.get_id_depot())
+
+                    # Determinar el tipo de ruta (PVR, PTR o CVR)
+                    if vehicle_id < self.num_vehicles:
+                        route.set_type_route(RouteType.PVR.value)  # Ruta de camión
+                    else:
+                        route.set_type_route(RouteType.PTR.value)  # Ruta de camión con remolque
+
+                else:
+                    # Crear una ruta para el vehículo
+                    route = Route()
+                    route.set_id_depot(depot.get_id_depot())
 
                 # Iniciar desde el depósito
                 current_node = depot.get_id_depot()
