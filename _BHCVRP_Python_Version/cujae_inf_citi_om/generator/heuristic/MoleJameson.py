@@ -69,7 +69,7 @@ class MoleJameson(Heuristic):
     def creating(
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP:
             for i in range(len(self.customers_to_visit)):
                 if self.capacity_vehicle >= (
                     self.request_route
@@ -514,7 +514,7 @@ class MoleJameson(Heuristic):
         id_depot=None,
         solution=None,
     ):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP:
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP:
             if self.route is not None:
                 self.route.get_list_id_customers().pop(0)
                 self.route.get_list_id_customers().pop(
@@ -913,7 +913,7 @@ class MoleJameson(Heuristic):
         return self.solution
 
     def execute(self):
-        if self.type_problem in [0, 3, 6] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.VRPTW:
+        if self.type_problem in [0, 3, 6] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.VRPTW:
             while self.customers_to_visit and (self.count_vehicles > 0):
                 self.count_no_feasible = 0
                 self.list_best_positions = []

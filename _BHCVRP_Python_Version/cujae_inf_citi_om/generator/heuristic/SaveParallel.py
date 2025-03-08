@@ -56,6 +56,7 @@ class SaveParallel(Save):
         if (
             self.type_problem in [0, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
             or self.type_problem == ProblemType.VRPTW
@@ -283,6 +284,7 @@ class SaveParallel(Save):
         if (
             self.type_problem in [0, 2, 3, 4, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.TTRP
             or self.type_problem == ProblemType.SBRP
@@ -391,7 +393,7 @@ class SaveParallel(Save):
                 self.is_open = True
 
     def execute(self):
-        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == 6 or self.type_problem == ProblemType.VRPTW:
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == 6 or self.type_problem == ProblemType.VRPTW:
             while (
                 self.counter < self.iterations
                 and len(self.list_routes) > 1
@@ -702,23 +704,6 @@ class SaveParallel(Save):
                         join = True
 
         return join
-
-    def get_time_route(self, list_id):
-        local_list_id = list_id.copy()
-        time_route = 0.0
-        local_list_id.insert(0, self.id_depot)
-        for index, id in enumerate(local_list_id):
-            if index == len(local_list_id) - 1:
-                break
-            time_matrix = Problem.get_problem().get_time_matrix()
-            next_id = local_list_id[index + 1]
-            current_time = time_matrix[id, next_id]
-            customer = Problem.get_problem().get_customer_by_id_customer(next_id)
-            customer_ready_time = customer.get_time_window().get_initial_node()
-            customer_service_time = customer.get_time_window().get_service_time()
-            time_route = max(current_time, customer_ready_time) + customer_service_time
-
-        return time_route
 
     # Método que indica si dos rutas son compatibles
     def compatible_routes(self, route_ini, route_end):

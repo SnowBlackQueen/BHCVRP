@@ -36,6 +36,14 @@ class FisherJaikumar(Heuristic):
             # Inicializar diccionario para almacenar clientes asignados a cada vehículo
             self.assigned_elements = {i: [] for i in range(self.num_vehicles + self.num_trailers)}
 
+        self.depots = Problem.get_problem().get_list_depots()  # Lista de depósitos
+
+        if self.type_problem == ProblemType.MDVRP:
+            # Inicializar diccionario para almacenar clientes asignados a cada vehículo por depósito
+            self.assigned_elements = {
+                depot.get_id_depot(): {i: [] for i in range(depot.get_list_fleets()[0].get_count_vehicles())} for depot
+                in self.depots}
+
         self.seed_points = self.creating()  # Seleccionar puntos semilla
 
 
@@ -59,7 +67,7 @@ class FisherJaikumar(Heuristic):
             # Ordenar clientes por demanda (de mayor a menor)
             sorted_elements = sorted(elements, key=lambda c: c.get_request_customer(), reverse=True)
 
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
             # Seleccionar los primeros `num_vehicles` clientes como puntos semilla
             return sorted_elements[:self.num_vehicles]
 
@@ -96,6 +104,23 @@ class FisherJaikumar(Heuristic):
 
             return seed_points
 
+        elif self.type_problem == ProblemType.MDVRP:
+            seed_points = []
+            for depot in self.depots:
+                # Obtener los clientes asignados a este depósito
+                depot_customers = Problem.get_problem().get_customers_assigned_by_id_depot(
+                    depot.get_id_depot(), elements, self.depots
+                )
+                # Seleccionar los primeros `num_vehicles` clientes como puntos semilla para este depósito
+                depot_seed_points = sorted(depot_customers, key=lambda c: c.get_request_customer(), reverse=True)[:depot.get_list_fleets()[0].get_count_vehicles()]
+                seed_points.extend(depot_seed_points)
+
+                # Asignar los puntos semilla a los vehículos correspondientes
+                for i, customer in enumerate(depot_seed_points):
+                    self.assigned_elements[depot.get_id_depot()][i].append(customer)
+
+            return seed_points
+
 
 
     def processing(
@@ -107,7 +132,7 @@ class FisherJaikumar(Heuristic):
         id_depot=None,
         solution=None,
     ):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
             if self.type_problem == ProblemType.SBRP or self.type_problem == 5:
                 elements = Problem.get_problem().get_list_buses_stop()
             else:
@@ -205,9 +230,39 @@ class FisherJaikumar(Heuristic):
                 if best_vehicle != -1:
                     self.assigned_elements[best_vehicle].append(element)
 
+        elif self.type_problem == ProblemType.MDVRP:
+            # Asignar cada cliente al vehículo más cercano (en términos de costo) que tenga suficiente capacidad
+            customers = Problem.get_problem().get_list_customers()
+            cost_matrix = Problem.get_problem().get_cost_matrix()
+
+            for depot in self.depots:
+                depot_customers = Problem.get_problem().get_customers_assigned_by_id_depot(
+                    depot.get_id_depot(), customers, self.depots
+                )
+                for customer in depot_customers:
+                    if customer in self.seed_points:
+                        continue  # Los puntos semilla ya están asignados
+
+                    min_cost = float('inf')
+                    best_vehicle = -1
+
+                    for i, seed in enumerate(self.seed_points):
+                        if seed.get_id_depot() == depot.get_id_depot():
+                            cost = cost_matrix.item(customer.get_id_customer(), seed.get_id_customer())
+                            if cost < min_cost:
+                                # Verificar que la capacidad del vehículo no se exceda
+                                total_demand = sum(
+                                    c.get_request_customer() for c in self.assigned_elements[depot.get_id_depot()][i])
+                                if total_demand + customer.get_request_customer() <= self.vehicle_capacity:
+                                    min_cost = cost
+                                    best_vehicle = i
+
+                    if best_vehicle != -1:
+                        self.assigned_elements[depot.get_id_depot()][best_vehicle].append(customer)
+
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 1, 3, 4, 5, 6]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 1, 3, 4, 5, 6]:
             # Resolver el problema de enrutamiento para cada vehículo
             depot = Problem.get_problem().get_list_depots()[0]  # Único depósito
             cost_matrix = Problem.get_problem().get_cost_matrix()
@@ -283,6 +338,33 @@ class FisherJaikumar(Heuristic):
 
                 # Añadir la ruta a la solución
                 self.solution.get_list_routes().append(route)
+
+        elif self.type_problem == ProblemType.MDVRP:
+            # Resolver el problema de enrutamiento para cada vehículo en cada depósito
+            cost_matrix = Problem.get_problem().get_cost_matrix()
+
+            for depot in self.depots:
+                for vehicle_id, customers in self.assigned_elements[depot.get_id_depot()].items():
+                    if not customers:
+                        continue  # Si no hay clientes asignados, pasar al siguiente vehículo
+
+                    # Crear una ruta para el vehículo
+                    route = Route()
+                    route.set_id_depot(depot.get_id_depot())
+
+                    # Iniciar desde el depósito
+                    current_node = depot.get_id_depot()
+                    remaining_customers = customers.copy()
+
+                    while remaining_customers:
+                        # Seleccionar el cliente más cercano usando RLC
+                        nearest_customer = self._get_NN_element(remaining_customers, current_node)
+                        route.get_list_id_customers().append(nearest_customer.get_id_customer())
+                        current_node = nearest_customer.get_id_customer()
+                        remaining_customers.remove(nearest_customer)
+
+                    # Añadir la ruta a la solución
+                    self.solution.get_list_routes().append(route)
 
     def _get_NN_element(self, list_elements, reference):
         # Método copiado de NearestNeighborWithRLC

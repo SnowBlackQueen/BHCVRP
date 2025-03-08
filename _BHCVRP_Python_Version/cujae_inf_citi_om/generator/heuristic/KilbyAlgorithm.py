@@ -70,6 +70,7 @@ class KilbyAlgorithm(Heuristic):
         if (
             self.type_problem in [0, 1, 2, 3, 4, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.TTRP
@@ -363,7 +364,7 @@ class KilbyAlgorithm(Heuristic):
             print("termina processing")
 
     def execute(self):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
             if self.type_problem == ProblemType.SBRP:
                 if self.list_bus_stops:
                     self.list_kilby_costs = []
@@ -747,6 +748,7 @@ class KilbyAlgorithm(Heuristic):
         while i < len(list_element) and not found:
             if (
                 Problem.get_problem().get_type_problem() == ProblemType.CVRP
+                or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.MDVRP
@@ -829,6 +831,7 @@ class KilbyAlgorithm(Heuristic):
             ):  # this loop started at 1, had to change it
                 if (
                     Problem.get_problem().get_type_problem() == ProblemType.CVRP
+                    or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.MDVRP

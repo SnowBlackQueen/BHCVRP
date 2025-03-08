@@ -49,6 +49,7 @@ class Heuristic(ABC):
 
         if (
             Problem.get_problem().get_type_problem() == ProblemType.CVRP
+            or Problem.get_problem().get_type_problem() == ProblemType.OVRP
             or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
             or Problem.get_problem().get_type_problem() == ProblemType.OVRP
             or Problem.get_problem().get_type_problem() == ProblemType.TTRP
@@ -121,7 +122,7 @@ class Heuristic(ABC):
         pass
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5]:
             self.processing(
                 self.customers_to_visit,
                 self.count_vehicles,
@@ -285,7 +286,7 @@ class Heuristic(ABC):
             created = True  # Indicate that a route was created
             return created, self.route
         else:
-            if self.type_problem == ProblemType.CVRP or self.type_problem == 0:
+            if self.type_problem == ProblemType.CVRP or self.type_problem == 0 or self.type_problem == ProblemType.OVRP:
                 if (
                     self.request_route + self.customer.get_request_customer()
                     <= self.capacity_vehicle
@@ -496,7 +497,7 @@ class Heuristic(ABC):
         id_depot=None,
         solution=None,
     ):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 0:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 0:
             cv = int(count_vehicles)
             while customers_to_visit and cv > 0:
                 self.initialize_specifics()  # Para que customer sea tratado según la variante
@@ -766,53 +767,19 @@ class Heuristic(ABC):
 
         return feasible_customers
 
-    """# Cómo usar el patrón Template 
-    def execute(self):
-        self.step1()
-        self.step2()
-        self.step3()
-        self.common_step()
+    def get_time_route(self, list_id):
+        local_list_id = list_id.copy()
+        time_route = 0.0
+        local_list_id.insert(0, self.id_depot)
+        for index, id in enumerate(local_list_id):
+            if index == len(local_list_id) - 1:
+                break
+            time_matrix = Problem.get_problem().get_time_matrix()
+            next_id = local_list_id[index + 1]
+            current_time = time_matrix[id, next_id]
+            customer = Problem.get_problem().get_customer_by_id_customer(next_id)
+            customer_ready_time = customer.get_time_window().get_initial_node()
+            customer_service_time = customer.get_time_window().get_service_time()
+            time_route = max(current_time, customer_ready_time) + customer_service_time
 
-    @abstractmethod
-    def step1(self):
-        pass
-
-    @abstractmethod
-    def step2(self):
-        pass
-
-    @abstractmethod
-    def step3(self):
-        pass
-
-    def common_step(self):
-        print("Executing common step")
-
-    class HeuristicA(Heuristic):
-        def step1(self):
-            print("HeuristicA Step 1")
-
-        def step2(self):
-            print("HeuristicA Step 2")
-
-        def step3(self):
-            print("HeuristicA Step 3")
-
-    class HeuristicB(Heuristic):
-        def step1(self):
-            print("HeuristicB Step 1")
-
-        def step2(self):
-            print("HeuristicB Step 2")
-
-        def step3(self):
-            print("HeuristicB Step 3")
-
-    # Example usage
-    heuristic_a = HeuristicA()
-    heuristic_a.execute()
-
-    heuristic_b = HeuristicB()
-    heuristic_b.execute() 
-    
-    # Aquí empieza el código original"""
+        return time_route

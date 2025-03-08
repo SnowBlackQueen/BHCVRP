@@ -53,6 +53,7 @@ class CMT(Heuristic):
         if (
             self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
@@ -157,6 +158,7 @@ class CMT(Heuristic):
         if (
             self.type_problem in [0, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
             or self.type_problem == ProblemType.VRPTW
@@ -348,7 +350,7 @@ class CMT(Heuristic):
             return self.solution
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 6]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 6]:
             while self.customers_to_visit:
                 self.list_candidate_routes = self._do_first_phase(
                     self.customers_to_visit,
@@ -560,7 +562,7 @@ class CMT(Heuristic):
             route.set_id_depot(id_depot)
             list_elements.remove(root_customer)
 
-        if type_problem in [ProblemType.CVRP, ProblemType.SBRP, ProblemType.MDVRP, ProblemType.VRPTW]:
+        if type_problem in [ProblemType.CVRP, ProblemType.OVRP, ProblemType.SBRP, ProblemType.MDVRP, ProblemType.VRPTW]:
             if not list_elements:
                 list_routes.append(route)
             else:

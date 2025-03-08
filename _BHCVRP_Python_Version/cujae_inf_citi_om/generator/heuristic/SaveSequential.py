@@ -52,6 +52,7 @@ class SaveSequential(Save):
         if (
             self.type_problem in [0, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
             or self.type_problem == ProblemType.VRPTW
@@ -272,6 +273,7 @@ class SaveSequential(Save):
         if (
             self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.SBRP
@@ -312,7 +314,7 @@ class SaveSequential(Save):
                 is_factible = None
 
                 if (
-                    self.type_problem == ProblemType.CVRP
+                    self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP
                     or self.type_problem == ProblemType.MDVRP
                     or self.type_problem == ProblemType.SBRP
                     or self.type_problem == ProblemType.VRPTW
@@ -525,7 +527,7 @@ class SaveSequential(Save):
                 # self.solution.get_list_routes().append(self.current_route)
 
     def execute(self):
-        if self.type_problem in [0, 3, 4, 6] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW:
+        if self.type_problem in [0, 3, 4, 6] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW:
             while self.list_routes:
                 self.index = self.random.randint(0, len(self.list_routes) - 1)
                 self.current_route = self.list_routes.pop(self.index)

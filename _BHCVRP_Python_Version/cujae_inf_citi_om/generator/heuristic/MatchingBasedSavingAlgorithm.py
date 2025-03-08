@@ -35,7 +35,7 @@ class MatchingBasedSavingAlgorithm(Save):
         # self.routes = []
 
     def get_solution_inicial(self):
-        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
             if self.type_problem == ProblemType.SBRP:
                 self.list_routes = self.match_based_savings_algorithm(self.list_bus_stops, self.depots)
             else:
@@ -161,6 +161,7 @@ class MatchingBasedSavingAlgorithm(Save):
                     or self.type_problem == 1
                     or self.type_problem == 4
                     or self.type_problem == ProblemType.CVRP
+                    or self.type_problem == ProblemType.OVRP
                     or self.type_problem == ProblemType.HFVRP
                     or self.type_problem == ProblemType.TTRP
                 ):
@@ -197,6 +198,7 @@ class MatchingBasedSavingAlgorithm(Save):
         if (
             self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
