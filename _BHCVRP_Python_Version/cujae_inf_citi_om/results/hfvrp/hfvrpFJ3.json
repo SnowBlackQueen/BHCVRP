@@ -1,0 +1,42 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "FisherJaikumar",
+    "total_cost": 727.75,
+    "total_routes": 1,
+    "execution_time": 0.06030583381652832,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                19,
+                72,
+                49,
+                24,
+                23,
+                1,
+                22,
+                2,
+                21,
+                20,
+                11,
+                17,
+                16,
+                18,
+                3,
+                4,
+                6,
+                7,
+                8,
+                5,
+                15,
+                14,
+                10,
+                12,
+                25,
+                13,
+                9,
+                71
+            ]
+        }
+    ]
+}
