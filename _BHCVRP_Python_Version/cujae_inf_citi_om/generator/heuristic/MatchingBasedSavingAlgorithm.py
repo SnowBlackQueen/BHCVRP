@@ -35,7 +35,7 @@ class MatchingBasedSavingAlgorithm(Save):
         # self.routes = []
 
     def get_solution_inicial(self):
-        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+        if self.type_problem == 0 or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
             if self.type_problem == ProblemType.SBRP:
                 self.list_routes = self.match_based_savings_algorithm(self.list_bus_stops, self.depots)
             else:
@@ -195,14 +195,12 @@ class MatchingBasedSavingAlgorithm(Save):
         self, elements, depots: List[Depot]
     ) -> List[Route]:
         if (
-            self.type_problem == 0
-            or self.type_problem == 1
-            or self.type_problem == 2
-            or self.type_problem == 5
+            self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
             """Solve CVRP using matching-based savings algorithm."""
             if self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
@@ -247,20 +245,43 @@ class MatchingBasedSavingAlgorithm(Save):
                             maximum_distance=None,
                         )
                     else:
-                        merged_route = Route(
-                            list_id_customers=route1.list_id_customers
-                            + route2.list_id_customers,
-                            request_route=combined_demand,
-                            cost_route=route1.cost_route + route2.cost_route - saving,
-                            id_depot=depots[0]._id_depot,
-                            list_access_vc=None,
-                            maximum_distance=None,
-                        )
+                        tw_flag = True
+                        if self.type_problem == ProblemType.VRPTW:
+                            local_r1_ids = route1.get_list_id_customers().copy()
+                            local_r2_ids = route2.get_list_id_customers().copy()
+                            for id_customer in local_r2_ids:
+                                self.time_route = self.get_time_route(local_r1_ids)
+                                self.feasible_customers = self.get_feasible_customers(
+                                    local_r1_ids[-1])
+                                fc_ids = [fc.get_id_customer() for fc in self.feasible_customers]
+                                if id_customer in fc_ids:
+                                    time_matrix = Problem.get_problem().get_time_matrix()
+                                    current_time = time_matrix[
+                                        local_r1_ids[-1], id_customer]
+                                    customer = Problem.get_problem().get_customer_by_id_customer(id_customer)
+                                    customer_ready_time = customer.get_time_window().get_initial_node()
+                                    customer_service_time = customer.get_time_window().get_service_time()
+                                    self.time_route = max(current_time, customer_ready_time) + customer_service_time
+                                else:
+                                    tw_flag = False
+                                    break
+                        if tw_flag:
+                            merged_route = Route(
+                                list_id_customers=route1.list_id_customers
+                                + route2.list_id_customers,
+                                request_route=combined_demand,
+                                cost_route=route1.cost_route + route2.cost_route - saving,
+                                id_depot=depots[0]._id_depot,
+                                list_access_vc=None,
+                                maximum_distance=None,
+                            )
+                        else:
+                            continue
                     # merged_route.get_cost_single_route()
 
-                    # Remove old routes and add the new merged route
                     self.list_routes.remove(route1)
                     self.list_routes.remove(route2)
+
 
                     if self.type_problem == ProblemType.SBRP:
                         if len(merged_route.get_list_bus_stops()) >= 6:

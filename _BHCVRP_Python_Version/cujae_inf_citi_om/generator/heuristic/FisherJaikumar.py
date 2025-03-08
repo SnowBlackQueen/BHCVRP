@@ -59,7 +59,7 @@ class FisherJaikumar(Heuristic):
             # Ordenar clientes por demanda (de mayor a menor)
             sorted_elements = sorted(elements, key=lambda c: c.get_request_customer(), reverse=True)
 
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem in [0, 3, 5]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
             # Seleccionar los primeros `num_vehicles` clientes como puntos semilla
             return sorted_elements[:self.num_vehicles]
 
@@ -107,7 +107,7 @@ class FisherJaikumar(Heuristic):
         id_depot=None,
         solution=None,
     ):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem in [0, 3, 5]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 5, 6]:
             if self.type_problem == ProblemType.SBRP or self.type_problem == 5:
                 elements = Problem.get_problem().get_list_buses_stop()
             else:
@@ -207,7 +207,7 @@ class FisherJaikumar(Heuristic):
 
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP or self.type_problem == ProblemType.SBRP or self.type_problem in [0, 1, 3, 4, 5]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.HFVRP or self.type_problem == ProblemType.TTRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 1, 3, 4, 5, 6]:
             # Resolver el problema de enrutamiento para cada vehículo
             depot = Problem.get_problem().get_list_depots()[0]  # Único depósito
             cost_matrix = Problem.get_problem().get_cost_matrix()
@@ -236,16 +236,48 @@ class FisherJaikumar(Heuristic):
                 current_node = depot.get_id_depot()
                 remaining_elements = elements.copy()
 
+                if self.type_problem == ProblemType.VRPTW:
+                    nearest_element = self._get_NN_element(remaining_elements, current_node)
+                    route.get_list_id_customers().append(nearest_element.get_id_customer())
+                    current_node = nearest_element.get_id_customer()
+
                 while remaining_elements:
                     # Seleccionar el cliente más cercano usando RLC
                     nearest_element = self._get_NN_element(remaining_elements, current_node)
 
                     if self.type_problem == ProblemType.SBRP or self.type_problem == 5:
-                        route.get_list_bus_stops().append(nearest_element.get_id_bus_stop())
-                        current_node = nearest_element.get_id_bus_stop()
+                        if self.capacity_vehicle >= (route.get_request_route() + nearest_element.get_capacity_bus_stop()):
+                            route.get_list_bus_stops().append(nearest_element.get_id_bus_stop())
+                            current_node = nearest_element.get_id_bus_stop()
+                        else:
+                            route = Route()
+                            route.get_list_bus_stops().append(nearest_element.get_id_bus_stop())
+                            current_node = nearest_element.get_id_bus_stop()
                     else:
-                        route.get_list_id_customers().append(nearest_element.get_id_customer())
-                        current_node = nearest_element.get_id_customer()
+                        if self.capacity_vehicle >= (route.get_request_route() + nearest_element.get_request_customer()):
+                            tw_flag = True
+                            if self.type_problem == ProblemType.VRPTW:
+                                self.time_route = self.get_time_route(route.get_list_id_customers())
+                                self.feasible_customers = self.get_feasible_customers(
+                                    route.get_list_id_customers()[-1])
+                                if nearest_element in self.feasible_customers:
+                                    time_matrix = Problem.get_problem().get_time_matrix()
+                                    current_time = time_matrix[
+                                        route.get_list_id_customers()[
+                                            -1], nearest_element.get_id_customer()]
+                                    customer_ready_time = nearest_element.get_time_window().get_initial_node()
+                                    customer_service_time = nearest_element.get_time_window().get_service_time()
+                                    self.time_route = max(current_time, customer_ready_time) + customer_service_time
+                                else:
+                                    tw_flag = False
+                                    nearest_element = self._get_NN_element(remaining_elements, current_node)
+                            if tw_flag:
+                                route.get_list_id_customers().append(nearest_element.get_id_customer())
+                                current_node = nearest_element.get_id_customer()
+                        else:
+                            route = Route()
+                            route.get_list_id_customers().append(nearest_element.get_id_customer())
+                            current_node = nearest_element.get_id_customer()
 
                     remaining_elements.remove(nearest_element)
 
