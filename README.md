@@ -24,7 +24,7 @@
 - Construction heuristics:
 - [X] Kilby insertion.
 - [X] Matching-based Saving Algorithm.
-- [ ] Fisher and Jaikumar.
+- [X] Fisher and Jaikumar.
 
 
 - Variants of VRP:
@@ -34,11 +34,11 @@
 
 - Distance type:
 - [X] Approximates (Euclidean, Manhattan, Chebyshev and Haversine)
-- [ ] Reals with OSRM
+- [X] Reals with OSRM
 
 - Load files in:
 - [X] TXT
-- [ ] JSON
+- [X] JSON
 
 - Export results in:
 - [X] TXT
