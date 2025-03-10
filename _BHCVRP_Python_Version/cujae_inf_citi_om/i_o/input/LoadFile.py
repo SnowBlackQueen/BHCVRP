@@ -385,7 +385,7 @@ class LoadFile:
                 capacity_bus_stop=bus_stop_data['total_passengers_assigned'],
                 # Assuming capacity is the same as total passengers assigned
                 location_bus_stop=location,
-                list_customers=[passenger['passenger_id'] for passenger in bus_stop_data['passenger_list']]
+                list_customers=bus_stop_data['passengers'] #
             )
 
             # Step 4: Add the BusStop instance to the Problem instance

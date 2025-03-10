@@ -3,19 +3,30 @@ from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
 from controller.StrategyHeuristic import StrategyHeuristic
 from data.Problem import Problem
+from tools.DistanceType import DistanceType
 from i_o.output.ExportResult import ExportResult
+import os
 
 
 def main():
     try:
-        file_output = open(
+        """file_output = open(
             "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\Resultado_BSS_Random1.txt",
             "w",
         )
-        # sys.stdout = file_output
+        # sys.stdout = file_output"""
 
-        path_file_original_instance = "instances\\sbrp\\instance-4_B-80_P-800_D-1_MW-10_MBC-15_MVC-25_BSS.json"
-        path_file_solution_BSS = "instances\\sbrp\\BSS_solution-11_B-74_P-800_S-METAHEURISTIC_A-MH_GENETIC_BSS.json"
+        path_file_original_instance = "instances\\sbrp\\instance_1\\instance-1_B-10_P-100_D-1_MW-20_MBC-15_MVC-25_BSS.json"
+        path_file_solution_BSS = "instances\\sbrp\\instance_1\\BSS_solution-110_B-10_P-100_S-metaheuristic_A-evolution_estrategic_BSS.json.json"
+
+        path_file_result = "results\\sbrp\\inst1_R1"
+        file_extension = os.path.splitext(path_file_original_instance)[1].lower()
+
+        # total_instances = 5
+        load_file = LoadFile()
+
+        distance_type = DistanceType.Euclidean
+        heuristic_type = HeuristicType.RandomMethod
 
         # total_instances = 5
         load_file = LoadFile()
@@ -37,7 +48,6 @@ def main():
             axis_x_depots.append(axis_x)
             axis_y_depots.append(axis_y)
 
-
         list_distances = []
 
         bus_stops = load_file.load_bus_stops_from_json(path_file_solution_BSS)
@@ -56,14 +66,11 @@ def main():
             axis_x_bus_stops.append(axis_x)
             axis_y_bus_stops.append(axis_y)
 
-
-
         load_file.fill_list_distances(
             id_bus_stops, axis_x_bus_stops, axis_y_bus_stops,
             id_depots, axis_x_depots, axis_y_depots,
-            list_distances)
+            list_distances, distance_type)
 
-        heuristic_type = HeuristicType.CMT
         problem = Problem.get_problem()
         problem.set_type_problem(type_problem=ProblemType.SBRP)
         Problem.get_problem().set_cost_matrix(StrategyHeuristic.get_strategy_heuristic().fill_cost_matrix_with_list_distances(list_distances))
@@ -74,7 +81,7 @@ def main():
         request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
         time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
-        print(" ")
+        """print(" ")
         print("------------------------------------------")
         # print("INSTANCIA: P" + (i + 1))
         print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
@@ -102,9 +109,9 @@ def main():
                 # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
         print("------------------------------------------")
 
-        file_output.close()
+        file_output.close()"""
 
-        """# Construir la estructura de datos para exportar
+        # Construir la estructura de datos para exportar
         if heuristic_type == HeuristicType.SaveSequential or heuristic_type == HeuristicType.SaveParallel or heuristic_type == HeuristicType.MatchingBasedSavingAlgorithm or heuristic_type == HeuristicType.KilbyAlgorithm:
             data = {
                 "heuristic_type": heuristic_type.name,
@@ -185,15 +192,19 @@ def main():
                 for j in range(request_by_route)
             ]
 
-        ExportResult.to_txt(output_text, "results\\sbrp\\resultado.txt")
+        full_path = f"{path_file_result}.txt"
+        ExportResult.to_txt(output_text, full_path)
 
         # Exportar a JSON
-        ExportResult.to_json(data, "results\\sbrp\\resultado.json")
+        full_path = f"{path_file_result}.json"
+        ExportResult.to_json(data, full_path)
 
-        ExportResult.to_csv(csv_data, "results\\sbrp\\resultado.csv")
+        full_path = f"{path_file_result}.csv"
+        ExportResult.to_csv(csv_data, full_path)
 
         # Exportar a XML
-        ExportResult.to_xml(data, "results\\sbrp\\resultado.xml")"""
+        full_path = f"{path_file_result}.xml"
+        ExportResult.to_xml(data, full_path)
         # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)
