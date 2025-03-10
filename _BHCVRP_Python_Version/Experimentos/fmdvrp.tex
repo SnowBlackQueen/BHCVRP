@@ -1,0 +1,75 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{graphicx}
+\usepackage{lscape}
+\title{Output tables for 1xN statistical comparisons.}
+\author{}
+\date{\today}
+\begin{document}
+\begin{landscape}
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+
+\section{Average rankings of Friedman test}
+
+
+Average ranks obtained by each method in the Friedman test.
+
+\begin{table}[!htp]
+\centering
+\begin{tabular}{|c|c|}\hline
+Algorithm&Ranking\\\hline
+Random&7.5\\NN&7.625\\Sweep&7.75\\SaveSeq&5\\SaveParall&2.625\\MJ&1\\CMT&2.375\\Kilby&5.75\\SaveMatch&7\\FJ&8.375\\\hline\end{tabular}
+\caption{Average Rankings of the algorithms (Friedman)}
+\end{table}
+
+Friedman statistic (distributed according to chi-square with 9 degrees of freedom): 54.709091. \newline P-value computed by Friedman Test: 0.\newline
+
+
+\newpage
+
+\section{Post hoc comparison (Friedman)}
+
+
+P-values obtained in by applying post hoc methods over the results of Friedman procedure.
+
+\begin{table}[!htp]
+\centering\footnotesize
+\begin{tabular}{ccccccc}
+$i$&algorithm&$z=(R_0 - R_i)/SE$&$p$&Holm &Finner&Li\\
+\hline9&FJ&4.871765&0.000001&0.005556&0.005683&0.033488\\8&Sweep&4.458903&0.000008&0.00625&0.011334&0.033488\\7&NN&4.376331&0.000012&0.007143&0.016952&0.033488\\6&Random&4.293759&0.000018&0.008333&0.022539&0.033488\\5&SaveMatch&3.96347&0.000074&0.01&0.028094&0.033488\\4&Kilby&3.137747&0.001703&0.0125&0.033617&0.033488\\3&SaveSeq&2.642313&0.008234&0.016667&0.039109&0.033488\\2&SaveParall&1.07344&0.283074&0.025&0.04457&0.033488\\1&CMT&0.908295&0.363722&0.05&0.05&0.05\\\hline
+\end{tabular}
+\caption{Post Hoc comparison Table for $\alpha=0.05$ (FRIEDMAN)}
+\end{table}Holm's procedure rejects those hypotheses that have an unadjusted p-value $\le0.025$.
+
+Finner's procedure rejects those hypotheses that have an unadjusted p-value $\le0.04457$.
+
+Li's procedure rejects those hypotheses that have an unadjusted p-value $\le0.033488$.
+
+
+\newpage
+
+\section{Adjusted P-Values (Friedman)}
+
+
+Adjusted P-values obtained through the application of the post hoc methods (Friedman).
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{cccc}
+i&algorithm&unadjusted $p$&$p_{Holm}$\\
+\hline1&FJ&0.000001&0.00001\\2&Sweep&0.000008&0.000066\\3&NN&0.000012&0.000084\\4&Random&0.000018&0.000105\\5&SaveMatch&0.000074&0.000369\\6&Kilby&0.001703&0.00681\\7&SaveSeq&0.008234&0.024703\\8&SaveParall&0.283074&0.566148\\9&CMT&0.363722&0.566148\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (I)}
+\end{table}
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{ccccc}
+i&algorithm&unadjusted $p$&$p_{Finner}$&$p_{Li}$\\
+\hline1&FJ&0.000001&0.00001&0.000002\\2&Sweep&0.000008&0.000037&0.000013\\3&NN&0.000012&0.000037&0.000019\\4&Random&0.000018&0.00004&0.000028\\5&SaveMatch&0.000074&0.000133&0.000116\\6&Kilby&0.001703&0.002553&0.002669\\7&SaveSeq&0.008234&0.010574&0.012776\\8&SaveParall&0.283074&0.312285&0.307906\\9&CMT&0.363722&0.363722&0.363722\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (II)}
+\end{table}
+
+\newpage
+\end{landscape}\end{document}
