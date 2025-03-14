@@ -19,11 +19,11 @@ Average ranks obtained by each method in the Friedman test.
 \centering
 \begin{tabular}{|c|c|}\hline
 Algorithm&Ranking\\\hline
-Random&8.2188\\NN&6.8594\\Sweep&7.9844\\SaveSeq&3.1562\\SaveParall&2.0312\\MJ&2.0625\\CMT&3.0938\\Kilby&6\\SaveMatch&5.5938\\\hline\end{tabular}
+BHCVRP-Java-anterior&2\\BHCVRP-Java-actual&1.875\\BHCVRP-Python-actual&2.125\\\hline\end{tabular}
 \caption{Average Rankings of the algorithms (Friedman)}
 \end{table}
 
-Friedman statistic (distributed according to chi-square with 8 degrees of freedom): 207.15625. \newline P-value computed by Friedman Test: 0.\newline
+Friedman statistic (distributed according to chi-square with 2 degrees of freedom): 0.875. \newline P-value computed by Friedman Test: 0.645649.\newline
 
 
 \newpage
@@ -35,12 +35,18 @@ P-values obtained in by applying post hoc methods over the results of Friedman p
 
 \begin{table}[!htp]
 \centering\footnotesize
-\begin{tabular}{cccc}
-$i$&algorithm&$z=(R_0 - R_i)/SE$&$p$\\
-\hline8&Random&9.037422&0\\7&Sweep&8.695096&0\\6&NN&7.051928&0\\5&Kilby&5.79673&0\\4&SaveMatch&5.203364&0\\3&SaveSeq&1.643168&0.100348\\2&CMT&1.551881&0.120691\\1&MJ&0.045644&0.963594\\\hline
+\begin{tabular}{ccccccc}
+$i$&algorithm&$z=(R_0 - R_i)/SE$&$p$&Holm &Finner&Li\\
+\hline2&BHCVRP-Python-actual&0.935414&0.349575&0.025&0.025321&0.018948\\1&BHCVRP-Java-anterior&0.467707&0.639994&0.05&0.05&0.05\\\hline
 \end{tabular}
 \caption{Post Hoc comparison Table for $\alpha=0.05$ (FRIEDMAN)}
-\end{table}
+\end{table}Holm's procedure rejects those hypotheses that have an unadjusted p-value $\le0.025$.
+
+Finner's procedure rejects those hypotheses that have an unadjusted p-value $\le0.025321$.
+
+Li's procedure rejects those hypotheses that have an unadjusted p-value $\le0.018948$.
+
+
 \newpage
 
 \section{Adjusted P-Values (Friedman)}
@@ -50,17 +56,17 @@ Adjusted P-values obtained through the application of the post hoc methods (Frie
 
 \begin{table}[!htp]
 \centering\small
-\begin{tabular}{ccc}
-i&algorithm&unadjusted $p$\\
-\hline1&Random&0\\2&Sweep&0\\3&NN&0\\4&Kilby&0\\5&SaveMatch&0\\6&SaveSeq&0.100348\\7&CMT&0.120691\\8&MJ&0.963594\\\hline
+\begin{tabular}{cccc}
+i&algorithm&unadjusted $p$&$p_{Holm}$\\
+\hline1&BHCVRP-Python-actual&0.349575&0.69915\\2&BHCVRP-Java-anterior&0.639994&0.69915\\\hline
 \end{tabular}
 \caption{Adjusted $p$-values (FRIEDMAN) (I)}
 \end{table}
 \begin{table}[!htp]
 \centering\small
-\begin{tabular}{ccc}
-i&algorithm&unadjusted $p$\\
-\hline1&Random&0\\2&Sweep&0\\3&NN&0\\4&Kilby&0\\5&SaveMatch&0\\6&SaveSeq&0.100348\\7&CMT&0.120691\\8&MJ&0.963594\\\hline
+\begin{tabular}{ccccc}
+i&algorithm&unadjusted $p$&$p_{Finner}$&$p_{Li}$\\
+\hline1&BHCVRP-Python-actual&0.349575&0.576947&0.49265\\2&BHCVRP-Java-anterior&0.639994&0.639994&0.639994\\\hline
 \end{tabular}
 \caption{Adjusted $p$-values (FRIEDMAN) (II)}
 \end{table}

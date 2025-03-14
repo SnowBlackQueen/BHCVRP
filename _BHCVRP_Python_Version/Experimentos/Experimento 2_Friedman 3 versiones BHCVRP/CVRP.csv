@@ -1,0 +1,8 @@
+Problema,BHCVRP_Java_anterior,BHCVRP_Java_actual,BHCVRP_Python_actual
+Random,6.875,6.75,6.375
+NN,5,5.375,5.25
+Sweep,2.625,2.5,2.875
+SaveSeq,1,1.375,1.875
+SaveParall,2.625,2.5,2.375
+MJ,4.125,3.625,2.875
+CMT,5.75,5.875,6.375
