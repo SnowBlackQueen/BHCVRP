@@ -6,14 +6,16 @@ package test;
 
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.factory.interfaces.HeuristicType;
-import cujae.inf.citi.om.generator.controller.StrategyHeuristic;
-import cujae.inf.citi.om.generator.solution.Solution;
+import cujae.inf.citi.om.controller.StrategyHeuristic;
+import cujae.inf.citi.om.solution.Solution;
 import cujae.inf.citi.om.tools.OrderType;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import cujae.inf.citi.om.i_o.input.LoadFile;
+import cujae.inf.ic.om.factory.DistanceType;
 
 /**
  *
@@ -24,15 +26,15 @@ public class HFVRP {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException 
+    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_p14/Resultado_NN20.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_1/Resultado_SS_1.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
 
-            String pathFiles = "modified-hfvrp//HFVRP_p14";
+            String pathFiles = "modified-hfvrp//HFVRP_1";
                 //int totalInstances = 5;
                 LoadFile loadFile = new LoadFile();
 
@@ -58,17 +60,18 @@ public class HFVRP {
                     loadFile.loadCustomers(idCustomers, axisXCustomers, axisYCustomers, requestCustomers);
                     loadFile.loadDepots(idDepots, axisXDepots, axisYDepots);
 
-                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances);
+                    DistanceType distanceType = DistanceType.Euclidean;
+                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances, distanceType);
 
                     ProblemType typeProblem = ProblemType.HFVRP;
                     OrderType orderType = OrderType.Descending;
-                    HeuristicType heuristicType = HeuristicType.NearestNeighborWithRLC;
+                    HeuristicType heuristicType = HeuristicType.SaveSequential;
 
                     if(StrategyHeuristic.getStrategyHeuristic().loadHFVRP(idCustomers, requestCustomers, idDepots, 
                             countVehicles.get(0), capacityVehicles.get(0), listDistances, 
                             axisXCustomers, axisYCustomers, axisXDepots, axisYDepots, typeProblem, orderType))
                     {
-                                    StrategyHeuristic.getStrategyHeuristic().executeHeuristic(100, heuristicType);
+                                    StrategyHeuristic.getStrategyHeuristic().executeHeuristic(20, heuristicType);
                                     Solution result = StrategyHeuristic.getStrategyHeuristic().getBestSolution();
                                     double cost = StrategyHeuristic.getStrategyHeuristic().getTotalCostSolution();
                                     int requestByRoute = StrategyHeuristic.getStrategyHeuristic().getRequestByRoute().size();
@@ -82,7 +85,6 @@ public class HFVRP {
                                     System.out.println("COSTO TOTAL: " + cost);
                                     System.out.println("TOTAL DE RUTAS: " + requestByRoute);
                                     System.out.println("TIEMPO DE EJECUCIÓN: " + time + " milisegundos");
-                                    //System.out.println("TIEMPO DE EJECUCIÓN: " + time);
                                     System.out.println(" ");
                                     for(int j = 0; j < requestByRoute; j++)
                                         System.out.println("R" + (j+1) + result.getListRoutes().get(j).getListIdCustomers());

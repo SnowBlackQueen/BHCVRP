@@ -1,6 +1,7 @@
 from generator.heuristic.Heuristic import Heuristic
 from data.ProblemType import ProblemType
 from data.Problem import Problem
+from data.DepotMDVRP import DepotMDVRP
 from data.Customer import Customer
 from data.BusStop import BusStop
 from random import Random
@@ -18,20 +19,40 @@ class RandomMethod(Heuristic):
                 self.route.get_list_bus_stops().append(self.bus_stop.get_id_bus_stop())
                 self.list_bus_stops.remove(self.bus_stop)
         else:
-            self.customer = self._get_random_customer(self.customers_to_visit)
             if self.type_problem == ProblemType.VRPTW:
-                self.time_window = self.list_time_windows[self.customer.get_id_customer()]
+                current_node_id = self.customer.get_id_customer()
+                self.feasible_customers = self.get_feasible_customers(current_node_id)
+                if self.feasible_customers:
+                    self.customer = self._get_random_customer(self.feasible_customers)
+
+                    time_matrix = Problem.get_problem().get_time_matrix()
+                    current_time = time_matrix[current_node_id, self.customer.get_id_customer()]
+                    customer_ready_time = self.customer.get_time_window().get_initial_node()
+                    customer_service_time = self.customer.get_time_window().get_service_time()
+                    self.time_route = max(current_time, customer_ready_time) + customer_service_time
+            else:
+                self.customer = self._get_random_customer(self.customers_to_visit)
             if not self.initialized:
-                self.request_route = self.customer.get_request_customer()
-                self.route.get_list_id_customers().append(self.customer.get_id_customer())
-                self.customers_to_visit.remove(self.customer)
                 if self.type_problem == ProblemType.VRPTW:
-                    self.list_time_windows.remove(self.time_window)
+                    self.request_route = self.customer.get_request_customer()
+                    self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                    self.customers_to_visit.remove(self.customer)
+
+
+                else:
+                    self.request_route = self.customer.get_request_customer()
+                    self.route.get_list_id_customers().append(self.customer.get_id_customer())
+                    self.customers_to_visit.remove(self.customer)
+
+
+
 
     def get_solution_inicial(self):
         self.execute()
 
         return self.solution
+
+
 
     # Método que devuelve un cliente de la lista de forma aleatoria
     def _get_random_customer(self, list_customers):

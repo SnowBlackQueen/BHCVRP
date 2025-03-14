@@ -22,14 +22,40 @@ class SaveSequential(Save):
         self.no_extreme = -1
         self.exist_save = False
 
+        """if self.type_problem == ProblemType.VRPTW:
+            self.index = self.random.randint(0, len(self.list_routes) - 1)
+            self.current_route = self.list_routes.pop(self.index)
+            self.ext_inic = self.current_route.get_list_id_customers()[0]
+            self.ext_end = self.current_route.get_list_id_customers()[-1]
+            position = Problem.get_problem().get_pos_element(self.ext_inic)
+            
+            # NECESITO A PARTIR DE LA POSICIÓN EN LA MATRIZ DE AHORROS ENCONTRAR A QUE CLIENTE PERTENECE
+
+            current_node_id = self.current_route.list_id_customers[0]
+            self.feasible_customers = self.get_feasible_customers(current_node_id)
+
+            self.list_routes = self.create_initial_routes(self.feasible_customers)
+            self.cant_customers = len(self.feasible_customers)
+            self.save_matrix = np.zeros((self.cant_customers, self.cant_customers))
+            self.save_matrix = self.fill_save_matrix(self.id_depot, self.feasible_customers)
+
+            if self.feasible_customers:
+                time_matrix = Problem.get_problem().get_time_matrix()
+                current_time = time_matrix[current_node_id, self.customer.get_id_customer()]
+                customer_ready_time = self.customer.get_time_window().get_initial_node()
+                customer_service_time = self.customer.get_time_window().get_service_time()
+                self.time_route = max(current_time, customer_ready_time) + customer_service_time"""
+
     def creating(
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         if (
-            self.type_problem in [0, 2, 3, 5]
+            self.type_problem in [0, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
             if self.type_problem == 2 or self.type_problem == ProblemType.MDVRP:
                 row_matrix = Problem.get_problem().get_pos_element_by_id_depot(
@@ -245,18 +271,39 @@ class SaveSequential(Save):
         solution=None,
     ):
         if (
-            self.type_problem in [0, 1, 2, 3, 5]
+            self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
             if self.save_value == -np.inf:
                 self.exist_save = False
                 return
             else:
+                tw_flag = True
                 if self.type_problem == ProblemType.SBRP:
                     pos_route = self.get_position_route(self.list_routes, self.list_bus_stops[self.max_save[1]].get_id_bus_stop())
+                elif self.type_problem == ProblemType.VRPTW:
+                    current_node_id = self.current_route.get_list_id_customers()[-1]
+                    self.customer = Problem.get_problem().get_customer_by_id_customer(self.customers_to_visit[self.max_save[1]].get_id_customer())
+                    ctv_aux = self.customers_to_visit
+                    self.customers_to_visit = [customer for customer in self.customers_to_visit if customer.get_id_customer() not in self.current_route.get_list_id_customers()]
+                    self.feasible_customers = self.get_feasible_customers(current_node_id)
+                    self.customers_to_visit = ctv_aux
+                    tw_flag = False
+                    for customer in self.feasible_customers:
+                        if customer.get_id_customer() == self.customers_to_visit[self.max_save[1]].get_id_customer():
+                            tw_flag = True
+
+                    pos_route = self.get_position_route(
+                        self.list_routes,
+                        self.customers_to_visit[self.max_save[1]].get_id_customer(),
+                    )
+
+
                 else:
                     pos_route = self.get_position_route(
                         self.list_routes,
@@ -267,9 +314,10 @@ class SaveSequential(Save):
                 is_factible = None
 
                 if (
-                    self.type_problem == ProblemType.CVRP
+                    self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP
                     or self.type_problem == ProblemType.MDVRP
                     or self.type_problem == ProblemType.SBRP
+                    or self.type_problem == ProblemType.VRPTW
                 ):
                     is_factible = self.checking_merge(
                         self.current_route,
@@ -278,6 +326,8 @@ class SaveSequential(Save):
                         0.0,
                         self.position_save,
                     )
+                    if is_factible == 0 and tw_flag == False:
+                        is_factible = -1
                 elif self.type_problem == ProblemType.HFVRP:
                     is_factible = self.checking_merge(
                         self.current_route,
@@ -296,6 +346,13 @@ class SaveSequential(Save):
                             self.current_route.list_bus_stops = (save_route.get_list_bus_stops() + self.current_route.get_list_bus_stops())
                             self.ext_inic = self.list_bus_stops[self.max_save[1]].get_id_bus_stop()
                     else:
+                        if self.type_problem == ProblemType.VRPTW:
+                            time_matrix = Problem.get_problem().get_time_matrix()
+                            current_time = time_matrix[current_node_id, self.customer.get_id_customer()]
+                            customer_ready_time = self.customer.get_time_window().get_initial_node()
+                            customer_service_time = self.customer.get_time_window().get_service_time()
+                            self.time_route = max(current_time, customer_ready_time) + customer_service_time
+
                         if self.position_save:
                             self.current_route.get_list_id_customers().extend(
                                 save_route.get_list_id_customers()
@@ -470,7 +527,7 @@ class SaveSequential(Save):
                 # self.solution.get_list_routes().append(self.current_route)
 
     def execute(self):
-        if self.type_problem in [0, 3, 4] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.SBRP:
+        if self.type_problem in [0, 3, 4, 6] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW:
             while self.list_routes:
                 self.index = self.random.randint(0, len(self.list_routes) - 1)
                 self.current_route = self.list_routes.pop(self.index)
@@ -502,6 +559,7 @@ class SaveSequential(Save):
                         self.three_opt.to_optimize(self.current_route)
 
                 self.solution.get_list_routes().append(self.current_route)
+                self.time_route = 0.0
 
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             self.list_capacities = list(Problem.get_problem().get_list_capacities())

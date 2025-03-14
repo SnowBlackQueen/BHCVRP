@@ -4,12 +4,13 @@ package cujae.inf.citi.om.data;
 
 import cujae.inf.citi.om.exceptions.DistanceNotAccessibleException;
 import cujae.inf.citi.om.exceptions.ItemNotFoundException;
+import cujae.inf.citi.om.exceptions.VehicleSpeedException;
 import java.util.ArrayList;
 
 //import cujae.inf.citi.om.matrix.NumericMatrix;
 import java.util.HashMap;
-import libmatrix.cujae.inf.citi.om.matrix.NumericArray;
-import libmatrix.cujae.inf.citi.om.matrix.NumericMatrix;
+import cujae.inf.ic.om.matrix.NumericArray;
+import cujae.inf.ic.om.matrix.NumericMatrix;
 
 public class Problem {
 	
@@ -17,11 +18,13 @@ public class Problem {
 	private ArrayList<Depot> listDepots;
 	private ProblemType typeProblem;
 	private NumericMatrix costMatrix;
+        private NumericMatrix timeMatrix;
 	
 	private static Problem problem = null;
 	private ArrayList<Double> listCapacities = null;
         private ArrayList<BusStop> listBusesStop;
         private double maximumWalkDistance;
+        private float vehicleSpeed = (float) 83.33;
 	
 	private Problem() {
 		super();
@@ -29,6 +32,7 @@ public class Problem {
 		listDepots = new ArrayList<Depot>();
                 listBusesStop = new ArrayList<BusStop>();
 		costMatrix = new NumericMatrix();
+                timeMatrix = new NumericMatrix();
 	}
 
 	/* M�todo que implementa el Patr�n Singleton*/
@@ -112,6 +116,14 @@ public class Problem {
 		this.costMatrix = costMatrix;
 	}
 	
+        public NumericMatrix getTimeMatrix() {
+		return timeMatrix;
+	}
+
+	public void setTimeMatrix(NumericMatrix timeMatrix) {
+		this.timeMatrix = timeMatrix;
+	}
+        
 	public ArrayList<Double> getListCapacities() {
 		return listCapacities;
 	}
@@ -132,6 +144,19 @@ public class Problem {
                 throw new DistanceNotAccessibleException("La distancia a recorrer no es accesible. Debe ser mayor que 0");
             }  
                 
+        }
+        
+        public float getVehicleSpeed(){
+            return vehicleSpeed;
+        }
+        
+        public void setVehicleSpeed(float vehicleSpeed) throws VehicleSpeedException{
+            if (vehicleSpeed > 0){
+                this.vehicleSpeed = vehicleSpeed;
+            }
+            else {
+                throw new VehicleSpeedException("La velocidad del vehículo debe ser mayor que 0");
+            }  
         }
         
         public ArrayList<BusStop> getListBusesStop(){
@@ -619,4 +644,38 @@ public class Problem {
             return count;
 
         }
+
+    public int getPosElement(BusStop busStop) {
+        int i = 0;
+        boolean found = false;
+        int posElement = -1;
+        int countCustomers = listCustomers.size();
+        int countDepots = listDepots.size();
+        int countBusStops = listBusesStop.size();
+        int idElement = Integer.parseInt(busStop.getIdBusStop());
+        
+        // Buscar en la lista de depósitos
+        while (i < countDepots && !found) {
+            if (listDepots.get(i).getIdDepot() == idElement) {
+                posElement = i + countBusStops;
+                found = true;
+            } else {
+                i++;
+            }
+        }
+
+        i = 0;
+        // Buscar en la lista de paradas de autobús
+        while (i < countBusStops && !found) {
+            if (listBusesStop.get(i).getIdBusStop().equals(busStop.getIdBusStop())) {
+                posElement = i;
+                found = true;
+            } else {
+                i++;
+            }
+        }  
+        
+        return posElement;        
+    } 
+        
 }

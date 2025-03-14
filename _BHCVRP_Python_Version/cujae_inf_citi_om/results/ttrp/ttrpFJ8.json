@@ -1,0 +1,184 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "FisherJaikumar",
+    "total_cost": 2159.16,
+    "total_routes": 15,
+    "execution_time": 0.15057635307312012,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                75,
+                73,
+                63,
+                69,
+                68,
+                64,
+                61,
+                62,
+                66,
+                67,
+                65,
+                60,
+                70,
+                72,
+                71
+            ]
+        },
+        {
+            "route_id": 2,
+            "customers": [
+                17,
+                16,
+                18,
+                12
+            ]
+        },
+        {
+            "route_id": 3,
+            "customers": [
+                29,
+                28,
+                25,
+                26,
+                24,
+                22,
+                21,
+                20,
+                23,
+                19,
+                27
+            ]
+        },
+        {
+            "route_id": 4,
+            "customers": [
+                35,
+                33
+            ]
+        },
+        {
+            "route_id": 5,
+            "customers": [
+                57,
+                55,
+                52,
+                59
+            ]
+        },
+        {
+            "route_id": 6,
+            "customers": [
+                8,
+                9,
+                2,
+                4,
+                3,
+                5,
+                1,
+                7,
+                10,
+                6
+            ]
+        },
+        {
+            "route_id": 7,
+            "customers": [
+                32,
+                31,
+                30,
+                34
+            ]
+        },
+        {
+            "route_id": 8,
+            "customers": [
+                36,
+                38,
+                37
+            ]
+        },
+        {
+            "route_id": 9,
+            "customers": [
+                51,
+                46,
+                49,
+                48,
+                47,
+                45,
+                44,
+                42,
+                41,
+                40,
+                43,
+                39,
+                50
+            ]
+        },
+        {
+            "route_id": 10,
+            "customers": [
+                58,
+                56
+            ]
+        },
+        {
+            "route_id": 11,
+            "customers": [
+                90,
+                88,
+                89,
+                87,
+                85,
+                86,
+                99,
+                74,
+                100
+            ]
+        },
+        {
+            "route_id": 12,
+            "customers": [
+                14,
+                15
+            ]
+        },
+        {
+            "route_id": 13,
+            "customers": [
+                53,
+                80,
+                78,
+                76,
+                77,
+                54,
+                79
+            ]
+        },
+        {
+            "route_id": 14,
+            "customers": [
+                93,
+                97,
+                96,
+                95,
+                94,
+                92,
+                91,
+                84,
+                83,
+                81,
+                98,
+                82
+            ]
+        },
+        {
+            "route_id": 15,
+            "customers": [
+                13,
+                11
+            ]
+        }
+    ]
+}

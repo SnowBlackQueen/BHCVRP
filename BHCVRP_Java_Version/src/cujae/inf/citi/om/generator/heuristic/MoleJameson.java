@@ -1,5 +1,9 @@
 package cujae.inf.citi.om.generator.heuristic;
 
+import cujae.inf.citi.om.solution.RouteType;
+import cujae.inf.citi.om.solution.Solution;
+import cujae.inf.citi.om.solution.RouteTTRP;
+import cujae.inf.citi.om.solution.Route;
 import java.util.ArrayList;
 
 import cujae.inf.citi.om.data.Customer;
@@ -9,7 +13,6 @@ import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.generator.postoptimization.Operator_3opt;
-import cujae.inf.citi.om.generator.solution.*;
 
 public class MoleJameson extends Heuristic{
 

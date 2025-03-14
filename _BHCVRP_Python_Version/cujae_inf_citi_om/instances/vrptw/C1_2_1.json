@@ -1,0 +1,201 @@
+{
+    "count_vehicles": 50,
+    "total_customers": 20,
+    "total_depots": 1,
+    "capacity_vehicles": [
+      200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0,
+      200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0,
+      200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0,
+      200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0,
+      200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0, 200.0
+    ],
+    "customers": [
+      {
+        "id_customer": 1,
+        "coordinate_x": 33.0,
+        "coordinate_y": 78.0,
+        "request": 20.0,
+        "initial_node": 750.0,
+        "end_node": 809.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 2,
+        "coordinate_x": 59.0,
+        "coordinate_y": 52.0,
+        "request": 20.0,
+        "initial_node": 553.0,
+        "end_node": 602.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 3,
+        "coordinate_x": 10.0,
+        "coordinate_y": 137.0,
+        "request": 30.0,
+        "initial_node": 147.0,
+        "end_node": 219.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 4,
+        "coordinate_x": 4.0,
+        "coordinate_y": 28.0,
+        "request": 10.0,
+        "initial_node": 616.0,
+        "end_node": 661.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 5,
+        "coordinate_x": 25.0,
+        "coordinate_y": 26.0,
+        "request": 20.0,
+        "initial_node": 128.0,
+        "end_node": 179.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 6,
+        "coordinate_x": 86.0,
+        "coordinate_y": 37.0,
+        "request": 10.0,
+        "initial_node": 478.0,
+        "end_node": 531.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 7,
+        "coordinate_x": 1.0,
+        "coordinate_y": 109.0,
+        "request": 10.0,
+        "initial_node": 616.0,
+        "end_node": 680.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 8,
+        "coordinate_x": 6.0,
+        "coordinate_y": 135.0,
+        "request": 40.0,
+        "initial_node": 351.0,
+        "end_node": 386.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 9,
+        "coordinate_x": 32.0,
+        "coordinate_y": 79.0,
+        "request": 20.0,
+        "initial_node": 655.0,
+        "end_node": 721.0,
+        "service_time": 90.0
+      },
+      {
+        "id_customer": 10,
+        "coordinate_x": 24.0,
+        "coordinate_y": 26.0,
+        "request": 20.0,
+        "initial_node": 219.0,
+        "end_node": 271.0,
+        "service_time": 90.0
+      },
+      {
+      "id_customer": 11,
+      "coordinate_x": 86.0,
+      "coordinate_y": 36.0,
+      "request": 20.0,
+      "initial_node": 384.0,
+      "end_node": 443.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 12,
+      "coordinate_x": 95.0,
+      "coordinate_y": 35.0,
+      "request": 10.0,
+      "initial_node": 196.0,
+      "end_node": 252.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 13,
+      "coordinate_x": 63.0,
+      "coordinate_y": 50.0,
+      "request": 10.0,
+      "initial_node": 364.0,
+      "end_node": 416.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 14,
+      "coordinate_x": 100.0,
+      "coordinate_y": 106.0,
+      "request": 10.0,
+      "initial_node": 567.0,
+      "end_node": 626.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 15,
+      "coordinate_x": 99.0,
+      "coordinate_y": 112.0,
+      "request": 20.0,
+      "initial_node": 846.0,
+      "end_node": 911.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 16,
+      "coordinate_x": 36.0,
+      "coordinate_y": 135.0,
+      "request": 10.0,
+      "initial_node": 598.0,
+      "end_node": 669.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 17,
+      "coordinate_x": 57.0,
+      "coordinate_y": 59.0,
+      "request": 10.0,
+      "initial_node": 824.0,
+      "end_node": 890.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 18,
+      "coordinate_x": 8.0,
+      "coordinate_y": 124.0,
+      "request": 10.0,
+      "initial_node": 231.0,
+      "end_node": 298.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 19,
+      "coordinate_x": 85.0,
+      "coordinate_y": 106.0,
+      "request": 20.0,
+      "initial_node": 186.0,
+      "end_node": 253.0,
+      "service_time": 90.0
+    },
+    {
+      "id_customer": 20,
+      "coordinate_x": 103.0,
+      "coordinate_y": 69.0,
+      "request": 30.0,
+      "initial_node": 33.0,
+      "end_node": 93.0,
+      "service_time": 90.0
+    }
+    ],
+    "depots": [
+      {
+        "id_depot": 0,
+        "coordinate_x": 70.0,
+        "coordinate_y": 70.0
+      }
+    ]
+  }

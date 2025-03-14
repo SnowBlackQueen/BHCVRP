@@ -1,0 +1,439 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "KilbyAlgorithm",
+    "total_cost": 6150.62,
+    "total_routes": 50,
+    "execution_time": 21.578691959381104,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                32,
+                70,
+                160,
+                189,
+                147,
+                103,
+                148,
+                136,
+                197,
+                124
+            ]
+        },
+        {
+            "route_id": 2,
+            "customers": [
+                4,
+                121,
+                108,
+                176,
+                143,
+                118,
+                72,
+                83,
+                57,
+                125,
+                82
+            ]
+        },
+        {
+            "route_id": 3,
+            "customers": [
+                18,
+                135,
+                183,
+                137,
+                58,
+                55,
+                161,
+                104,
+                117,
+                185
+            ]
+        },
+        {
+            "route_id": 4,
+            "customers": [
+                23,
+                130,
+                59,
+                105,
+                89,
+                198,
+                169,
+                92,
+                52,
+                195
+            ]
+        },
+        {
+            "route_id": 5,
+            "customers": [
+                47,
+                116,
+                91,
+                164,
+                73,
+                66,
+                129
+            ]
+        },
+        {
+            "route_id": 6,
+            "customers": [
+                8,
+                138,
+                199,
+                98,
+                54,
+                186,
+                127
+            ]
+        },
+        {
+            "route_id": 7,
+            "customers": [
+                16,
+                114,
+                151,
+                159,
+                56,
+                111,
+                142,
+                140
+            ]
+        },
+        {
+            "route_id": 8,
+            "customers": [
+                3,
+                184,
+                157,
+                177,
+                63,
+                88,
+                187
+            ]
+        },
+        {
+            "route_id": 9,
+            "customers": [
+                42,
+                123,
+                133,
+                153,
+                50,
+                170,
+                134,
+                156
+            ]
+        },
+        {
+            "route_id": 10,
+            "customers": [
+                35,
+                71,
+                144,
+                101,
+                126,
+                53,
+                166,
+                119
+            ]
+        },
+        {
+            "route_id": 11,
+            "customers": [
+                41,
+                179,
+                100,
+                109,
+                64,
+                154
+            ]
+        },
+        {
+            "route_id": 12,
+            "customers": [
+                19,
+                76,
+                68,
+                146,
+                102
+            ]
+        },
+        {
+            "route_id": 13,
+            "customers": [
+                21,
+                74,
+                97,
+                196,
+                120,
+                192
+            ]
+        },
+        {
+            "route_id": 14,
+            "customers": [
+                25,
+                77,
+                172,
+                110,
+                162
+            ]
+        },
+        {
+            "route_id": 15,
+            "customers": [
+                29,
+                87,
+                178,
+                173,
+                112,
+                168,
+                79
+            ]
+        },
+        {
+            "route_id": 16,
+            "customers": [
+                46,
+                190,
+                193,
+                106,
+                128
+            ]
+        },
+        {
+            "route_id": 17,
+            "customers": [
+                5,
+                158,
+                95,
+                167
+            ]
+        },
+        {
+            "route_id": 18,
+            "customers": [
+                44,
+                131,
+                62
+            ]
+        },
+        {
+            "route_id": 19,
+            "customers": [
+                2,
+                78,
+                155,
+                175
+            ]
+        },
+        {
+            "route_id": 20,
+            "customers": [
+                11,
+                139,
+                122
+            ]
+        },
+        {
+            "route_id": 21,
+            "customers": [
+                31,
+                85,
+                80
+            ]
+        },
+        {
+            "route_id": 22,
+            "customers": [
+                40,
+                152
+            ]
+        },
+        {
+            "route_id": 23,
+            "customers": [
+                33,
+                165
+            ]
+        },
+        {
+            "route_id": 24,
+            "customers": [
+                34,
+                67,
+                90
+            ]
+        },
+        {
+            "route_id": 25,
+            "customers": [
+                36,
+                188
+            ]
+        },
+        {
+            "route_id": 26,
+            "customers": [
+                7,
+                181
+            ]
+        },
+        {
+            "route_id": 27,
+            "customers": [
+                9,
+                99
+            ]
+        },
+        {
+            "route_id": 28,
+            "customers": [
+                14,
+                149
+            ]
+        },
+        {
+            "route_id": 29,
+            "customers": [
+                15,
+                96
+            ]
+        },
+        {
+            "route_id": 30,
+            "customers": [
+                20
+            ]
+        },
+        {
+            "route_id": 31,
+            "customers": [
+                24,
+                61
+            ]
+        },
+        {
+            "route_id": 32,
+            "customers": [
+                27
+            ]
+        },
+        {
+            "route_id": 33,
+            "customers": [
+                49,
+                93
+            ]
+        },
+        {
+            "route_id": 34,
+            "customers": [
+                1
+            ]
+        },
+        {
+            "route_id": 35,
+            "customers": [
+                10
+            ]
+        },
+        {
+            "route_id": 36,
+            "customers": [
+                13,
+                113
+            ]
+        },
+        {
+            "route_id": 37,
+            "customers": [
+                22,
+                150
+            ]
+        },
+        {
+            "route_id": 38,
+            "customers": [
+                26
+            ]
+        },
+        {
+            "route_id": 39,
+            "customers": [
+                28
+            ]
+        },
+        {
+            "route_id": 40,
+            "customers": [
+                30
+            ]
+        },
+        {
+            "route_id": 41,
+            "customers": [
+                37,
+                81
+            ]
+        },
+        {
+            "route_id": 42,
+            "customers": [
+                39
+            ]
+        },
+        {
+            "route_id": 43,
+            "customers": [
+                43
+            ]
+        },
+        {
+            "route_id": 44,
+            "customers": [
+                107
+            ]
+        },
+        {
+            "route_id": 45,
+            "customers": [
+                6
+            ]
+        },
+        {
+            "route_id": 46,
+            "customers": [
+                12
+            ]
+        },
+        {
+            "route_id": 47,
+            "customers": [
+                17
+            ]
+        },
+        {
+            "route_id": 48,
+            "customers": [
+                38
+            ]
+        },
+        {
+            "route_id": 49,
+            "customers": [
+                45
+            ]
+        },
+        {
+            "route_id": 50,
+            "customers": [
+                48
+            ]
+        }
+    ]
+}

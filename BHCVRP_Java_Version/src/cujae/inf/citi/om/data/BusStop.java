@@ -5,6 +5,7 @@
 package cujae.inf.citi.om.data;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -29,6 +30,14 @@ public class BusStop {
         setCapacityBusStop(capacity);
 
         this.listCustomers = new ArrayList<String>();
+    }
+    
+    public BusStop(int idBusStop, int capacity, Location locationBus, ArrayList<Integer> listCustomers){
+        this.idBusStop = String.valueOf(idBusStop);
+        setLocationBusStop(locationBus);
+        setCapacityBusStop(capacity);
+
+        this.listCustomers = (ArrayList<String>) listCustomers.stream().map(String::valueOf).collect(Collectors.toList());
     }
     
     public String getIdBusStop(){

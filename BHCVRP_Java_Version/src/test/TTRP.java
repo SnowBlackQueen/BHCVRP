@@ -6,15 +6,16 @@ package test;
 
 import cujae.inf.citi.om.data.CustomerType;
 import cujae.inf.citi.om.data.ProblemType;
-import cujae.inf.citi.om.factory.interfaces.DistanceType;
+import cujae.inf.ic.om.factory.DistanceType;
 import cujae.inf.citi.om.factory.interfaces.HeuristicType;
-import cujae.inf.citi.om.generator.controller.StrategyHeuristic;
-import cujae.inf.citi.om.generator.solution.Solution;
+import cujae.inf.citi.om.controller.StrategyHeuristic;
+import cujae.inf.citi.om.solution.Solution;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import cujae.inf.citi.om.i_o.input.LoadFile;
 
 /**
  *
@@ -25,14 +26,14 @@ public class TTRP {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException 
+    public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosTTRP/Instancia_TTRP_20/Resultado_MoleJameson20.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosTTRP/Instancia_TTRP_10/Resultado_MJ_10.txt");
             PrintStream printStream = new PrintStream(fileOutputStream);
 
             System.setOut(printStream);
-            String pathFiles = "instances-ttrp//TTRP_20.txt";
+            String pathFiles = "instances-ttrp//TTRP_1.txt";
                 //int totalInstances = 5;
                 LoadFile loadFile = new LoadFile();
 
@@ -63,7 +64,8 @@ public class TTRP {
                     loadFile.loadCustomersTTRP(idCustomers, axisXCustomers, axisYCustomers, requestCustomers, typeCustomers);
                     loadFile.loadDepotsTTRP(idDepots, axisXDepots, axisYDepots);
 
-                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances);
+                    DistanceType distanceType = DistanceType.Euclidean;
+                    loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances, distanceType);
 
                     ArrayList<ArrayList<Integer>> idAssignedCustomers = new ArrayList<ArrayList<Integer>>();
                     idAssignedCustomers.add(idCustomers);
@@ -122,7 +124,7 @@ public class TTRP {
                     printStream.close();
             fileOutputStream.close();
 
-            System.setOut(System.out); // Restaurar la salida estándar
+            //System.setOut(System.out); // Restaurar la salida estándar
             } catch (IOException e) {
                 e.printStackTrace();
             }

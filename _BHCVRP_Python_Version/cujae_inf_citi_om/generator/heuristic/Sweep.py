@@ -28,14 +28,34 @@ class Sweep(Heuristic):
                 self.route.get_list_bus_stops().append(self.bus_stop.get_id_bus_stop())
                 self.list_bus_stops.remove(self.bus_stop)
         else:
-            self.bubble_method(self.customers_to_visit)
+            if self.type_problem == ProblemType.VRPTW:
+                current_node_id = self.customer.get_id_customer()
+                self.feasible_customers = self.get_feasible_customers(current_node_id)
+                if self.feasible_customers:
+                    self.bubble_method(self.feasible_customers)
 
-            self.index = self.random.randint(0, len(self.customers_to_visit) - 1)
+                    self.index = self.random.randint(0, len(self.feasible_customers) - 1)
 
-            if self.index == len(self.customers_to_visit):
-                self.index = 0
+                    if self.index == len(self.feasible_customers):
+                        self.index = 0
 
-            self.customer = self.customers_to_visit[self.index]
+                    self.customer = self.feasible_customers[self.index]
+
+                    time_matrix = Problem.get_problem().get_time_matrix()
+                    current_time = time_matrix[current_node_id, self.customer.get_id_customer()]
+                    customer_ready_time = self.customer.get_time_window().get_initial_node()
+                    customer_service_time = self.customer.get_time_window().get_service_time()
+                    self.time_route = max(current_time, customer_ready_time) + customer_service_time
+
+            else:
+                self.bubble_method(self.customers_to_visit)
+
+                self.index = self.random.randint(0, len(self.customers_to_visit) - 1)
+
+                if self.index == len(self.customers_to_visit):
+                    self.index = 0
+
+                self.customer = self.customers_to_visit[self.index]
             if not self.initialized:
                 self.request_route = self.customer.get_request_customer()
                 self.route.get_list_id_customers().append(self.customer.get_id_customer())

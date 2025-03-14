@@ -68,13 +68,16 @@ class KilbyAlgorithm(Heuristic):
         self, route=None, request_route=None, list_tau=None, list_metrics=None
     ):
         if (
-            self.type_problem in [0, 1, 2, 3, 4, 5]
+            self.type_problem in [0, 1, 2, 3, 4, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.TTRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
+            print("entra a creating")
             while self.list_kilby_costs:
                 i = 0
                 while i < len(self.list_candidate_routes) and self.list_kilby_costs:
@@ -133,6 +136,7 @@ class KilbyAlgorithm(Heuristic):
             while self.routes_with_elements < len(self.list_candidate_routes):
                 self.list_candidate_routes.pop(j)
             # print("creating2")
+            print("termina creating")
 
     def processing(
         self,
@@ -204,6 +208,7 @@ class KilbyAlgorithm(Heuristic):
                 self.list_candidate_routes.pop(self.pos_route)
 
         else:
+            print("entra a processing")
             while self.list_candidate_routes and self.customers_to_visit:
                 self.metric_kilby = Metric()
                 self.metric_kilby = self.get_best_element(
@@ -213,6 +218,7 @@ class KilbyAlgorithm(Heuristic):
                     self.capacity_vehicle,
                     self.count_trailers,
                 )
+                print("sale de get_best_element")
 
                 if self.metric_kilby is None:
                     self.pos_route = self.close_route(self.list_candidate_routes)
@@ -355,10 +361,10 @@ class KilbyAlgorithm(Heuristic):
                 #
                 # listRouteOpt.append(listCandidateRoutes[posRoute])
                 # listCandidateRoutes.remove(posRoute)
-            print("processing2")
+            print("termina processing")
 
     def execute(self):
-        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP:
+        if self.type_problem in [0, 3] or self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == 5 or self.type_problem == ProblemType.SBRP or self.type_problem == ProblemType.VRPTW or self.type_problem == 6:
             if self.type_problem == ProblemType.SBRP:
                 if self.list_bus_stops:
                     self.list_kilby_costs = []
@@ -389,8 +395,10 @@ class KilbyAlgorithm(Heuristic):
                         self.customers_to_visit,
                     )
 
+                    print("entra al execute, va para creating")
                     self.creating()
 
+                    print("va pal processing")
                     self.processing(
                         self.customers_to_visit,
                         self.count_vehicles,
@@ -399,8 +407,10 @@ class KilbyAlgorithm(Heuristic):
                         self.id_depot,
                         self.solution,
                     )
+                    print("termina processing")
 
             self.solution.set_list_routes(self.list_route_opt)
+            print("devuelve la solución")
 
         elif self.type_problem == 1 or self.type_problem == ProblemType.HFVRP:
             list_capacities = list(Problem.get_problem().get_list_capacities())
@@ -734,13 +744,16 @@ class KilbyAlgorithm(Heuristic):
         found = False
         i = 0
 
+        print("entra al get_best_element")
         while i < len(list_element) and not found:
             if (
                 Problem.get_problem().get_type_problem() == ProblemType.CVRP
+                or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.MDVRP
                 or Problem.get_problem().get_type_problem() == ProblemType.SBRP
+                or Problem.get_problem().get_type_problem() == ProblemType.VRPTW
                 or (
                     Problem.get_problem().get_type_problem() == ProblemType.TTRP
                     and isinstance(list_routes[0], RouteTTRP)
@@ -776,14 +789,37 @@ class KilbyAlgorithm(Heuristic):
                         + list_element[i].get_request_customer()
                         <= total_capacity
                     ):
-                        best_id_element = list_element[i].get_id_customer()
-                        best_cost = self.calculate_cost_of_kilby(
-                            id_depot,
-                            list_routes[0].get_list_id_customers()[0],
-                            list_element[0].get_id_customer(),
-                        )
-                        best_route = j
-                        found = True
+                        tw_flag = True
+                        if self.type_problem == ProblemType.VRPTW:
+                            print("entra a TW")
+                            self.time_route = self.get_time_route(list_routes[j].get_list_id_customers())
+                            self.feasible_customers = self.get_feasible_customers(
+                                list_routes[j].get_list_id_customers()[-1])
+                            if list_element[i] in self.feasible_customers:
+                                time_matrix = Problem.get_problem().get_time_matrix()
+                                current_time = time_matrix[
+                                    list_routes[j].get_list_id_customers()[-1], list_element[i].get_id_customer()]
+                                customer_ready_time = list_element[i].get_time_window().get_initial_node()
+                                customer_service_time = list_element[i].get_time_window().get_service_time()
+                                self.time_route = max(current_time, customer_ready_time) + customer_service_time
+                                print("tw")
+                            else:
+                                tw_flag = False
+                                best_cost = self.calculate_cost_of_kilby(
+                                    id_depot,
+                                    list_routes[0].get_list_id_customers()[0],
+                                    list_element[0].get_id_customer(),
+                                )
+                                j += 1
+                        if tw_flag:
+                            best_id_element = list_element[i].get_id_customer()
+                            best_cost = self.calculate_cost_of_kilby(
+                                id_depot,
+                                list_routes[0].get_list_id_customers()[0],
+                                list_element[0].get_id_customer(),
+                            )
+                            best_route = j
+                            found = True
                     else:
                         j += 1
 
@@ -795,10 +831,12 @@ class KilbyAlgorithm(Heuristic):
             ):  # this loop started at 1, had to change it
                 if (
                     Problem.get_problem().get_type_problem() == ProblemType.CVRP
+                    or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.HFVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.OVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.MDVRP
                     or Problem.get_problem().get_type_problem() == ProblemType.SBRP
+                    or Problem.get_problem().get_type_problem() == ProblemType.VRPTW
                     or (
                         Problem.get_problem().get_type_problem() == ProblemType.TTRP
                         and isinstance(list_routes[l], RouteTTRP)

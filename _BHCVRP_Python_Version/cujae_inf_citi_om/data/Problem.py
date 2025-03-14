@@ -214,11 +214,11 @@ class Problem:
 
             i = 0
             while i < count_bus_stops and not found:
-                if isinstance(id_element, int):
+                """if isinstance(id_element, int):
                     # Convert to the string format "bus_stop_id_#"
                     id_element = f"bus_stop_id_{id_element}"
                 if isinstance(id_element, BusStop):
-                    id_element = id_element.get_id_bus_stop()
+                    id_element = id_element.get_id_bus_stop()"""
                 if self._list_buses_stop[i].get_id_bus_stop() == id_element:
                     pos_element = i
                     found = True

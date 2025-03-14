@@ -1,0 +1,99 @@
+{
+    "distance_type": "Euclidean",
+    "heuristic_type": "FisherJaikumar",
+    "total_cost": 1648.9,
+    "total_routes": 8,
+    "execution_time": 0.04487895965576172,
+    "routes": [
+        {
+            "route_id": 1,
+            "customers": [
+                12,
+                17,
+                13,
+                46,
+                24
+            ]
+        },
+        {
+            "route_id": 2,
+            "customers": [
+                25,
+                7,
+                30,
+                6
+            ]
+        },
+        {
+            "route_id": 3,
+            "customers": [
+                32,
+                16,
+                36,
+                14,
+                41,
+                43,
+                44
+            ]
+        },
+        {
+            "route_id": 4,
+            "customers": [
+                19,
+                35,
+                34
+            ]
+        },
+        {
+            "route_id": 5,
+            "customers": [
+                11,
+                5,
+                50,
+                47,
+                42,
+                23,
+                26,
+                22,
+                45,
+                31
+            ]
+        },
+        {
+            "route_id": 6,
+            "customers": [
+                3,
+                39,
+                40,
+                18
+            ]
+        },
+        {
+            "route_id": 7,
+            "customers": [
+                2,
+                27,
+                21
+            ]
+        },
+        {
+            "route_id": 8,
+            "customers": [
+                1,
+                49,
+                37,
+                15,
+                33,
+                10,
+                29,
+                48,
+                28,
+                38,
+                20,
+                8,
+                4,
+                9
+            ]
+        }
+    ]
+}

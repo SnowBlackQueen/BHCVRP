@@ -1,0 +1,6 @@
+Tipo de distancia,Euclidean
+Tipo de heurística,FisherJaikumar
+Costo total,566.53
+Tiempo de ejecución,0.05086374282836914
+Ruta,Clientes
+R1,"[11, 16, 21, 20, 22, 1, 8, 23, 18, 2, 17, 4, 19, 15, 5, 12, 6, 14, 13, 7, 3, 10, 24, 9]"

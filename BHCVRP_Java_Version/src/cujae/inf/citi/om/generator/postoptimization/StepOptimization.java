@@ -3,7 +3,7 @@ package cujae.inf.citi.om.generator.postoptimization;
 import java.util.ArrayList;
 import java.util.List;
 
-import cujae.inf.citi.om.generator.solution.Route;
+import cujae.inf.citi.om.solution.Route;
 
 /*Clase abstracta que define el comportamiento de un m�todo de post-optimizaci�n */
 

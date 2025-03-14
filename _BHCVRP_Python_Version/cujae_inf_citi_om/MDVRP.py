@@ -7,22 +7,20 @@ from data.ProblemType import ProblemType
 from controller.StrategyHeuristic import StrategyHeuristic
 from controller.StrategyHeuristic import AssignmentTypePython
 from i_o.output.ExportResult import ExportResult
+from tools.DistanceType import DistanceType
 
 
 def main():
     try:
-        """file_output = open(
-            "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\Instancia_p14\\Resultado_Matching1.txt",
-            "w",
-        )"""
-        # sys.stdout = file_output
+        path_files = "instances\\mdvrp\\p1.json"
+        path_file_result = "results\\mdvrp\\p1"
 
-        path_files = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\MDVRP\\p1"
-        # total_instances = 5
+        # Obtener la extensión del archivo
+        file_extension = os.path.splitext(path_files)[1].lower()
+
         load_file = LoadFile()
 
-        # for i in range(1, total_instances):
-        load_file.load_file(path_files)  # i + 1
+        load_file.load_file(path_files)
 
         id_customers = []
         axis_x_customers = []
@@ -36,13 +34,39 @@ def main():
         capacity_vehicles = []
 
         list_distances = []
+        distance_type = DistanceType.Euclidean
+        heuristic_type = HeuristicType.KilbyAlgorithm
 
-        load_file.load_count_vehicles_for_depot(count_vehicles)
-        load_file.is_load_capacity_vehicles(capacity_vehicles)
-        load_file.is_load_customers(
-            id_customers, axis_x_customers, axis_y_customers, request_customers
-        )
-        load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
+        # Validar si el archivo es .txt o .json
+        if file_extension == ".json":
+            # Cargar archivo .json usando el método creado anteriormente
+            problem_instance = load_file.load_mdvrp_from_json(path_files)
+            if problem_instance:
+                id_customers = problem_instance.get_problem().get_list_id_customers()
+                for i in range(len(id_customers)):
+                    customer = problem_instance.get_problem().get_list_customers()[i]
+                    axis_x_customers.append(customer.get_location_customer().get_axis_x())
+                    axis_y_customers.append(customer.get_location_customer().get_axis_y())
+                    request_customers.append(customer.get_request_customer())
+
+                depots = problem_instance.get_problem().get_list_depots()
+                for i in range(len(depots)):
+                    id_depots.append(depots[i].get_id_depot())
+                    axis_x_depots.append(depots[i].get_location_depot().get_axis_x())
+                    axis_y_depots.append(depots[i].get_location_depot().get_axis_y())
+
+                count_vehicles = problem_instance.get_problem().get_list_count_vehicles(
+                    list_depots=problem_instance.get_problem().get_list_depots())
+                capacity_vehicles = problem_instance.get_problem().get_list_capacity_vehicles(
+                    list_depots=problem_instance.get_problem().get_list_depots())
+
+        else:
+            load_file.load_count_vehicles_for_depot(count_vehicles)
+            load_file.is_load_capacity_vehicles(capacity_vehicles)
+            load_file.is_load_customers(
+                id_customers, axis_x_customers, axis_y_customers, request_customers
+            )
+            load_file.is_load_depots(id_depots, axis_x_depots, axis_y_depots)
 
         load_file.fill_list_distances(
             id_customers,
@@ -52,9 +76,9 @@ def main():
             axis_x_depots,
             axis_y_depots,
             list_distances,
+            distance_type
         )
 
-        heuristic_type = HeuristicType.KilbyAlgorithm
 
         if StrategyHeuristic.get_strategy_heuristic().load_problem_with_assign(
             id_customers,
@@ -105,6 +129,7 @@ def main():
             output_text = (
                 " \n"
                 "------------------------------------------\n"
+                f"DISTANCIA: {distance_type.name}\n"
                 f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
                 f"COSTO TOTAL: {cost}\n"
                 f"TOTAL DE RUTAS: {request_by_route}\n"
@@ -121,11 +146,13 @@ def main():
             output_text += "------------------------------------------\n"
 
             # Exportar resultados en diferentes formatos
-            ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+            full_path = f"{path_file_result}.txt"
+            ExportResult.to_txt(output_text, full_path)
 
             # Para formato JSON y XML
             # Recopilar resultados en un diccionario
             results = {
+                "distance_type": distance_type.name,
                 "heuristic_type": heuristic_type.name,
                 "total_cost": cost,
                 "total_routes": request_by_route,
@@ -139,12 +166,15 @@ def main():
                 ]
             }
 
-            ExportResult.to_json(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
-            ExportResult.to_xml(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")
+            full_path = f"{path_file_result}.json"
+            ExportResult.to_json(results, full_path)
+            full_path = f"{path_file_result}.xml"
+            ExportResult.to_xml(results, full_path)
 
             # Para formato CSV
             # Crear una lista de listas para el CSV
             csv_data = [
+                ["Tipo de distancia", distance_type.name],
                 ["Tipo de heurística", heuristic_type.name],
                 ["Costo total", cost],
                 ["Tiempo de ejecución", time],
@@ -156,9 +186,10 @@ def main():
                 csv_data.append([f"R{j + 1}", result.get_list_routes()[j].get_list_id_customers()])
 
             # Exportar a CSV
+            full_path = f"{path_file_result}.csv"
             ExportResult.to_csv(
                 csv_data,
-                "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv"
+                full_path
             )
 
     except IOError as e:

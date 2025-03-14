@@ -51,11 +51,13 @@ class CMT(Heuristic):
         list_metrics_cmt_by_customer=None,
     ):
         if (
-            self.type_problem in [0, 1, 2, 3, 5]
+            self.type_problem in [0, 1, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.HFVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
             if self.type_problem == ProblemType.SBRP or self.type_problem == 5:
                 if self.capacity_vehicle >= (
@@ -79,20 +81,38 @@ class CMT(Heuristic):
                 if self.capacity_vehicle >= (
                     request_route + self.element_to_insert.get_request_customer()
                 ):
-                    request_route += self.element_to_insert.get_request_customer()
-                    route.get_list_id_customers().append(
-                        self.element_to_insert.get_id_customer()
-                    )
+                    tw_flag = True
+                    print("entró a creating")
+                    if self.type_problem == ProblemType.VRPTW:
+                        self.time_route = self.get_time_route(self.route.get_list_id_customers())
+                        self.feasible_customers = self.get_feasible_customers(self.route.get_list_id_customers()[-1])
+                        if self.element_to_insert in self.feasible_customers:
+                            time_matrix = Problem.get_problem().get_time_matrix()
+                            current_time = time_matrix[
+                                self.route.get_list_id_customers()[-1], self.element_to_insert.get_id_customer()]
+                            customer_ready_time = self.element_to_insert.get_time_window().get_initial_node()
+                            customer_service_time = self.element_to_insert.get_time_window().get_service_time()
+                            self.time_route = max(current_time, customer_ready_time) + customer_service_time
+                            print("tw")
+                        else:
+                            tw_flag = False
+                            list_tau_costs.pop(self.pos_best_tau)
+                    if tw_flag:
+                        request_route += self.element_to_insert.get_request_customer()
+                        route.get_list_id_customers().append(
+                            self.element_to_insert.get_id_customer()
+                        )
 
-                    # if len(route.get_list_id_customers()) >= 6:
-                    #   self.three_opt.to_optimize(route)
+                        # if len(route.get_list_id_customers()) >= 6:
+                        #   self.three_opt.to_optimize(route)
 
-                    list_tau_costs.pop(self.pos_best_tau)
-                    self._delete_element(
-                        self.element_to_insert.get_id_customer(),
-                        list_metrics_cmt_by_customer,
-                    )
-                    self.customers_to_visit.remove(self.element_to_insert)
+                        list_tau_costs.pop(self.pos_best_tau)
+                        self._delete_element(
+                            self.element_to_insert.get_id_customer(),
+                            list_metrics_cmt_by_customer,
+                        )
+                        self.customers_to_visit.remove(self.element_to_insert)
+                        print("se añadió ruta")
                 else:
                     list_tau_costs.pop(self.pos_best_tau)
             return route
@@ -136,10 +156,12 @@ class CMT(Heuristic):
         solution,
     ):
         if (
-            self.type_problem in [0, 2, 3, 5]
+            self.type_problem in [0, 2, 3, 5, 6]
             or self.type_problem == ProblemType.CVRP
+            or self.type_problem == ProblemType.OVRP
             or self.type_problem == ProblemType.MDVRP
             or self.type_problem == ProblemType.SBRP
+            or self.type_problem == ProblemType.VRPTW
         ):
             while self.list_candidate_routes:
                 self.list_metrics_cmt_by_element = []
@@ -190,6 +212,7 @@ class CMT(Heuristic):
                             self.list_tau_costs[self.pos_best_tau].get_id_element(),
                             self.customers_to_visit,
                         )
+                    print("processing")
                     self.route = self.creating(
                         self.route,
                         self.request_route,
@@ -327,7 +350,7 @@ class CMT(Heuristic):
             return self.solution
 
     def execute(self):
-        if self.type_problem == ProblemType.CVRP or self.type_problem in [0, 3]:
+        if self.type_problem == ProblemType.CVRP or self.type_problem == ProblemType.OVRP or self.type_problem == ProblemType.VRPTW or self.type_problem in [0, 3, 6]:
             while self.customers_to_visit:
                 self.list_candidate_routes = self._do_first_phase(
                     self.customers_to_visit,
@@ -339,6 +362,7 @@ class CMT(Heuristic):
                 self.list_root_elements = self._update_elements_to_visit(
                     self.list_candidate_routes, self.customers_to_visit
                 )
+                print("execute")
                 self.solution = self.processing(
                     self.customers_to_visit,
                     self.count_vehicles,
@@ -538,7 +562,7 @@ class CMT(Heuristic):
             route.set_id_depot(id_depot)
             list_elements.remove(root_customer)
 
-        if type_problem in [ProblemType.CVRP, ProblemType.SBRP, ProblemType.MDVRP]:
+        if type_problem in [ProblemType.CVRP, ProblemType.OVRP, ProblemType.SBRP, ProblemType.MDVRP, ProblemType.VRPTW]:
             if not list_elements:
                 list_routes.append(route)
             else:

@@ -9,8 +9,8 @@ import cujae.inf.citi.om.data.DepotMDVRP;
 import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.data.Problem;
 import cujae.inf.citi.om.data.ProblemType;
-import cujae.inf.citi.om.generator.solution.Route;
-import cujae.inf.citi.om.generator.solution.Solution;
+import cujae.inf.citi.om.solution.Route;
+import cujae.inf.citi.om.solution.Solution;
 import java.util.ArrayList;
 
 /**

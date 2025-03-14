@@ -3,19 +3,31 @@ from factory.interfaces.HeuristicType import HeuristicType
 from data.ProblemType import ProblemType
 from controller.StrategyHeuristic import StrategyHeuristic
 from data.Problem import Problem
+from data.BusStop import BusStop
+from tools.DistanceType import DistanceType
 from i_o.output.ExportResult import ExportResult
+import os
 
 
 def main():
     try:
-        file_output = open(
+        """file_output = open(
             "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\Resultado_BSS_Random1.txt",
             "w",
         )
-        # sys.stdout = file_output
+        # sys.stdout = file_output"""
 
-        path_file_original_instance = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\instance-4_B-80_P-800_D-1_MW-10_MBC-15_MVC-25_BSS.json"
-        path_file_solution_BSS = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\BSS_solution-11_B-74_P-800_S-METAHEURISTIC_A-MH_GENETIC_BSS.json"
+        path_file_original_instance = "instances\\sbrp\\instance_24\\instance-24_B-40_P-200_D-1_MW-5_MBC-15_MVC-25_BSS.json"
+        path_file_solution_BSS = "instances\\sbrp\\instance_24\\BSS_solution-36_B-65_P-200_S-heuristic_A-self_heuristic_BSS.json.json"
+
+        path_file_result = "results\\sbrp\\inst24_MJ1"
+        file_extension = os.path.splitext(path_file_original_instance)[1].lower()
+
+        # total_instances = 5
+        load_file = LoadFile()
+
+        distance_type = DistanceType.Euclidean
+        heuristic_type = HeuristicType.MoleJameson
 
         # total_instances = 5
         load_file = LoadFile()
@@ -37,7 +49,6 @@ def main():
             axis_x_depots.append(axis_x)
             axis_y_depots.append(axis_y)
 
-
         list_distances = []
 
         bus_stops = load_file.load_bus_stops_from_json(path_file_solution_BSS)
@@ -56,14 +67,11 @@ def main():
             axis_x_bus_stops.append(axis_x)
             axis_y_bus_stops.append(axis_y)
 
-
-
         load_file.fill_list_distances(
             id_bus_stops, axis_x_bus_stops, axis_y_bus_stops,
             id_depots, axis_x_depots, axis_y_depots,
-            list_distances)
+            list_distances, distance_type)
 
-        heuristic_type = HeuristicType.CMT
         problem = Problem.get_problem()
         problem.set_type_problem(type_problem=ProblemType.SBRP)
         Problem.get_problem().set_cost_matrix(StrategyHeuristic.get_strategy_heuristic().fill_cost_matrix_with_list_distances(list_distances))
@@ -74,7 +82,7 @@ def main():
         request_by_route = len(StrategyHeuristic.get_strategy_heuristic().get_request_by_route())
         time = StrategyHeuristic.get_strategy_heuristic().get_time_execute()
 
-        print(" ")
+        """print(" ")
         print("------------------------------------------")
         # print("INSTANCIA: P" + (i + 1))
         print("HEURÍSTICA DE CONSTRUCCIÓN: " + heuristic_type.name)
@@ -102,10 +110,11 @@ def main():
                 # print(" ", len(result.get_list_routes()[j].get_list_id_customers()))
         print("------------------------------------------")
 
-        file_output.close()
+        file_output.close()"""
 
-        """# Construir la estructura de datos para exportar
-        if heuristic_type == HeuristicType.SaveSequential or heuristic_type == HeuristicType.SaveParallel or heuristic_type == HeuristicType.MatchingBasedSavingAlgorithm or heuristic_type == HeuristicType.KilbyAlgorithm:
+        # Construir la estructura de datos para exportar
+        if (heuristic_type == HeuristicType.SaveSequential or heuristic_type == HeuristicType.SaveParallel or heuristic_type == HeuristicType.MatchingBasedSavingAlgorithm
+                or heuristic_type == HeuristicType.KilbyAlgorithm):
             data = {
                 "heuristic_type": heuristic_type.name,
                 "total_cost": cost,
@@ -144,6 +153,70 @@ def main():
                                                   result.get_list_routes()[j].get_list_bus_stops()]))]
                 for j in range(request_by_route)
             ]
+
+        elif heuristic_type == HeuristicType.CMT or heuristic_type == HeuristicType.MoleJameson:
+            data = {
+                "heuristic_type": heuristic_type.name,
+                "total_cost": cost,
+                "execution_time": time,
+                "routes": []
+            }
+
+            for j in range(request_by_route):
+                route = {
+                    "route_id": j + 1,
+                    "bus_stops": []
+                }
+
+                for bus_stop in result.get_list_routes()[j].get_list_bus_stops():
+                    if isinstance(bus_stop, BusStop):
+                        route["bus_stops"].append(bus_stop.get_id_bus_stop())
+                    else:
+                        route["bus_stops"].append(bus_stop)
+
+                data["routes"].append(route)
+
+            output_text = (
+                " \n"
+                "------------------------------------------\n"
+                f"HEURÍSTICA DE CONSTRUCCIÓN: {heuristic_type.name}\n"
+                f"COSTO TOTAL: {cost}\n"
+                f"TOTAL DE RUTAS: {request_by_route}\n"
+                f"TIEMPO DE EJECUCIÓN: {time}\n"
+                " \n"
+            )
+            for j in range(request_by_route):
+                bus_stops = []
+
+                # Obtener la lista de paradas de autobús para la ruta actual
+                for bus_stop in result.get_list_routes()[j].get_list_bus_stops():
+                    if isinstance(bus_stop, BusStop):
+                        bus_stops.append(bus_stop.get_id_bus_stop())
+                    else:
+                        bus_stops.append(bus_stop)  # O puedes usar bus_stop.get_id_bus_stop() si solo necesitas el ID
+
+                # Formatear la salida para la ruta actual
+                output_text += f"R{j + 1}{bus_stops}\n"
+            output_text += "------------------------------------------\n"
+
+            # Exportar a CSV
+            csv_data = [["Ruta", "Paradas"]]
+
+            for j in range(request_by_route):
+                ruta = f"R{j + 1}"
+                paradas = []
+                paradas = result.get_list_routes()[j].get_list_bus_stops()
+
+                # Convertir las paradas a una cadena separada por comas
+                for bs in paradas:
+                    if isinstance(bs, BusStop):
+                        paradas.insert(j, bs.get_id_bus_stop())
+                        paradas.remove(bs)
+
+                paradas_str = ", ".join(map(str, paradas))
+
+                # Añadir la fila correspondiente a csv_data
+                csv_data.append([ruta, paradas_str])
 
         else:
             data = {
@@ -185,15 +258,19 @@ def main():
                 for j in range(request_by_route)
             ]
 
-        ExportResult.to_txt(output_text, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.txt")
+        full_path = f"{path_file_result}.txt"
+        ExportResult.to_txt(output_text, full_path)
 
         # Exportar a JSON
-        ExportResult.to_json(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.json")
+        full_path = f"{path_file_result}.json"
+        ExportResult.to_json(data, full_path)
 
-        ExportResult.to_csv(csv_data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv")
+        full_path = f"{path_file_result}.csv"
+        ExportResult.to_csv(csv_data, full_path)
 
         # Exportar a XML
-        ExportResult.to_xml(data, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml")"""
+        full_path = f"{path_file_result}.xml"
+        ExportResult.to_xml(data, full_path)
         # sys.stdout = sys.__stdout__  # Restore standard output
     except IOError as e:
         print(e)

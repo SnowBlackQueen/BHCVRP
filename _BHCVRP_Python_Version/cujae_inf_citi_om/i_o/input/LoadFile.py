@@ -1,14 +1,24 @@
+import io
 from typing import List
+from io import FileIO
+from io import StringIO
+from scipy.spatial.distance import cdist
+import numpy as np
+
 import re
 import json
-import numpy as np
-from scipy.spatial.distance import cdist
 from data.CustomerType import CustomerType
 from data.BusStop import BusStop
 from data.Location import Location
 from data.Problem import Problem
+from data.Customer import Customer
 from data.Depot import Depot
 from data.Fleet import Fleet
+from data.TimeWindow import TimeWindow
+from data.FleetTTRP import FleetTTRP
+from data.CustomerTTRP import CustomerTTRP
+from tools.DistanceType import DistanceType
+from service.OSRMService import OSRMService
 
 class LoadFile:
     def __init__(self):
@@ -152,7 +162,7 @@ class LoadFile:
 
         return distance"""
 
-    """def fill_list_distances(
+    def fill_list_distances(
         self,
         id_customers,
         axis_x_customers,
@@ -161,73 +171,100 @@ class LoadFile:
         axis_x_depots,
         axis_y_depots,
         list_distances,
+        distance_type
     ):
-        total_customers = len(id_customers)
-        total_depots = len(id_depots)
-        for i in range(total_customers):
-            distances_from_customers = [
-                self.calculate_distance(
-                    axis_x_customers[j],
-                    axis_y_customers[j],
-                    axis_x_customers[i],
-                    axis_y_customers[i],
-                )
-                for j in range(total_customers)
-            ]
-            for k in range(total_depots):
-                distances_from_customers.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_customers[i],
-                        axis_y_customers[i],
-                    )
-                )
-            list_distances.append(distances_from_customers)
+        # Crear una instancia de OSRMService
+        osrm_service = OSRMService()
 
-        for i in range(total_depots):
-            distances_from_customers = [
-                self.calculate_distance(
-                    axis_x_customers[j],
-                    axis_y_customers[j],
-                    axis_x_depots[i],
-                    axis_y_depots[i],
-                )
-                for j in range(total_customers)
-            ]
-            for k in range(total_depots):
-                distances_from_customers.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_depots[i],
-                        axis_y_depots[i],
-                    )
-                )
-            list_distances.append(distances_from_customers)"""
-
-    def fill_list_distances(self,
-            id_customers,
-            axis_x_customers,
-            axis_y_customers,
-            id_depots,
-            axis_x_depots,
-            axis_y_depots,
-            list_distances,
-    ):
         # Convertir las coordenadas de clientes y depósitos en arrays de NumPy
-        customers_locations = np.column_stack((axis_x_customers, axis_y_customers))
-        depots_locations = np.column_stack((axis_x_depots, axis_y_depots))
+        customers_coords = np.array(list(zip(axis_x_customers, axis_y_customers)))
+        depots_coords = np.array(list(zip(axis_x_depots, axis_y_depots)))
 
-        # Combinar todas las ubicaciones (clientes + depósitos)
-        all_locations = np.vstack([customers_locations, depots_locations])
+        # Calcular las distancias según el tipo de distancia
+        if distance_type == DistanceType.Real:
+            # Calcular distancias reales usando OSRMService
+            for i in range(len(customers_coords)):
+                distances_from_customers = []
+                for j in range(len(customers_coords)):
+                    if i == j:
+                        distances_from_customers.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            customers_coords[i][0], customers_coords[i][1],
+                            customers_coords[j][0], customers_coords[j][1]
+                        )
+                        distances_from_customers.append(distance)
 
-        # Calcular la matriz de distancias usando cdist
-        distance_matrix = cdist(all_locations, all_locations, metric='euclidean')
+                for j in range(len(depots_coords)):
+                    distance = osrm_service.calculate_distance(
+                        customers_coords[i][0], customers_coords[i][1],
+                        depots_coords[j][0], depots_coords[j][1]
+                    )
+                    distances_from_customers.append(distance)
 
-        # Llenar list_distances con las distancias calculadas
-        for i in range(len(all_locations)):
-            list_distances.append(distance_matrix[i].tolist())
+                list_distances.append(distances_from_customers)
+
+            for i in range(len(depots_coords)):
+                distances_from_depots = []
+                for j in range(len(customers_coords)):
+                    distance = osrm_service.calculate_distance(
+                        depots_coords[i][0], depots_coords[i][1],
+                        customers_coords[j][0], customers_coords[j][1]
+                    )
+                    distances_from_depots.append(distance)
+
+                for j in range(len(depots_coords)):
+                    if i == j:
+                        distances_from_depots.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            depots_coords[i][0], depots_coords[i][1],
+                            depots_coords[j][0], depots_coords[j][1]
+                        )
+                        distances_from_depots.append(distance)
+
+                list_distances.append(distances_from_depots)
+
+        else:
+            # Calcular distancias usando métricas tradicionales (Euclidean, Haversine, etc.)
+            if distance_type == DistanceType.Euclidean:
+                distance_type = 'euclidean'
+            elif distance_type == DistanceType.Haversine:
+                distance_type = 'ha'
+            elif distance_type == DistanceType.Chebyshev:
+                distance_type = 'chebyshev'
+            elif distance_type == DistanceType.Manhattan:
+                distance_type = 'cityblock'
+
+            # Calcular las distancias entre clientes
+            customer_to_customer_distances = cdist(customers_coords, customers_coords, metric=distance_type)
+
+            # Calcular las distancias entre clientes y depósitos
+            customer_to_depot_distances = cdist(customers_coords, depots_coords, metric=distance_type)
+
+            # Calcular las distancias entre depósitos
+            depot_to_depot_distances = cdist(depots_coords, depots_coords, metric=distance_type)
+
+            # Combinar las distancias en una sola lista
+            for i in range(len(customers_coords)):
+                # Distancias entre clientes
+                distances_from_customers = customer_to_customer_distances[i].tolist()
+
+                # Distancias entre el cliente actual y los depósitos
+                distances_from_customers.extend(customer_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_customers)
+
+            for i in range(len(depots_coords)):
+                # Distancias entre el depósito actual y los clientes
+                distances_from_depots = customer_to_depot_distances[:, i].tolist()
+
+                # Distancias entre depósitos
+                distances_from_depots.extend(depot_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_depots)
 
     def load_count_vehicles_fleet(self, instance_file):
         fleet = FleetAux()
@@ -348,7 +385,7 @@ class LoadFile:
                 capacity_bus_stop=bus_stop_data['total_passengers_assigned'],
                 # Assuming capacity is the same as total passengers assigned
                 location_bus_stop=location,
-                list_customers=[passenger['passenger_id'] for passenger in bus_stop_data['passenger_list']]
+                list_customers=bus_stop_data['passengers'] #
             )
 
             # Step 4: Add the BusStop instance to the Problem instance
@@ -395,52 +432,376 @@ class LoadFile:
         self,
         id_bus_stops, axis_x_bus_stops, axis_y_bus_stops,
         id_depots, axis_x_depots, axis_y_depots,
-        list_distances,
+        list_distances, distance_type
     ):
-        total_bus_stops = len(id_bus_stops)
-        total_depots = len(id_depots)
-        for i in range(total_bus_stops):
-            distances_from_bus_stops = [
-                self.calculate_distance(
-                    axis_x_bus_stops[j],
-                    axis_y_bus_stops[j],
-                    axis_x_bus_stops[i],
-                    axis_y_bus_stops[i],
-                )
-                for j in range(total_bus_stops)
-            ]
-            for k in range(total_depots):
-                distances_from_bus_stops.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_bus_stops[i],
-                        axis_y_bus_stops[i],
-                    )
-                )
-            list_distances.append(distances_from_bus_stops)
+        # Crear una instancia de OSRMService
+        osrm_service = OSRMService()
 
-        for i in range(total_depots):
-            distances_from_bus_stops = [
-                self.calculate_distance(
-                    axis_x_bus_stops[j],
-                    axis_y_bus_stops[j],
-                    axis_x_depots[i],
-                    axis_y_depots[i],
-                )
-                for j in range(total_bus_stops)
-            ]
-            for k in range(total_depots):
-                distances_from_bus_stops.append(
-                    self.calculate_distance(
-                        axis_x_depots[k],
-                        axis_y_depots[k],
-                        axis_x_depots[i],
-                        axis_y_depots[i],
-                    )
-                )
-            list_distances.append(distances_from_bus_stops)
+        # Convertir las coordenadas de paradas de autobús y depósitos en arrays de NumPy
+        bus_stops_coords = np.array(list(zip(axis_x_bus_stops, axis_y_bus_stops)))
+        depots_coords = np.array(list(zip(axis_x_depots, axis_y_depots)))
 
+        # Calcular las distancias según el tipo de distancia
+        if distance_type == DistanceType.Real:
+            # Calcular distancias reales usando OSRMService
+            for i in range(len(bus_stops_coords)):
+                distances_from_bus_stops = []
+                for j in range(len(bus_stops_coords)):
+                    if i == j:
+                        distances_from_bus_stops.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            bus_stops_coords[i][0], bus_stops_coords[i][1],
+                            bus_stops_coords[j][0], bus_stops_coords[j][1]
+                        )
+                        distances_from_bus_stops.append(distance)
+
+                for j in range(len(depots_coords)):
+                    distance = osrm_service.calculate_distance(
+                        bus_stops_coords[i][0], bus_stops_coords[i][1],
+                        depots_coords[j][0], depots_coords[j][1]
+                    )
+                    distances_from_bus_stops.append(distance)
+
+                list_distances.append(distances_from_bus_stops)
+
+            for i in range(len(depots_coords)):
+                distances_from_depots = []
+                for j in range(len(bus_stops_coords)):
+                    distance = osrm_service.calculate_distance(
+                        depots_coords[i][0], depots_coords[i][1],
+                        bus_stops_coords[j][0], bus_stops_coords[j][1]
+                    )
+                    distances_from_depots.append(distance)
+
+                for j in range(len(depots_coords)):
+                    if i == j:
+                        distances_from_depots.append(0.0)  # Distancia a sí mismo es 0
+                    else:
+                        distance = osrm_service.calculate_distance(
+                            depots_coords[i][0], depots_coords[i][1],
+                            depots_coords[j][0], depots_coords[j][1]
+                        )
+                        distances_from_depots.append(distance)
+
+                list_distances.append(distances_from_depots)
+
+        else:
+            # Calcular distancias usando métricas tradicionales (Euclidean, Haversine, etc.)
+            if distance_type == DistanceType.Euclidean:
+                distance_type = 'euclidean'
+            elif distance_type == DistanceType.Haversine:
+                distance_type = 'haversine'
+            elif distance_type == DistanceType.Chebyshev:
+                distance_type = 'chebyshev'
+            elif distance_type == DistanceType.Manhattan:
+                distance_type = 'cityblock'
+
+            # Calcular las distancias entre paradas de autobús
+            bus_stop_to_bus_stop_distances = cdist(bus_stops_coords, bus_stops_coords, metric=distance_type)
+
+            # Calcular las distancias entre paradas de autobús y depósitos
+            bus_stop_to_depot_distances = cdist(bus_stops_coords, depots_coords, metric=distance_type)
+
+            # Calcular las distancias entre depósitos
+            depot_to_depot_distances = cdist(depots_coords, depots_coords, metric=distance_type)
+
+            # Combinar las distancias en una sola lista
+            for i in range(len(bus_stops_coords)):
+                # Distancias entre paradas de autobús
+                distances_from_bus_stops = bus_stop_to_bus_stop_distances[i].tolist()
+
+                # Distancias entre la parada de autobús actual y los depósitos
+                distances_from_bus_stops.extend(bus_stop_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_bus_stops)
+
+            for i in range(len(depots_coords)):
+                # Distancias entre el depósito actual y las paradas de autobús
+                distances_from_depots = bus_stop_to_depot_distances[:, i].tolist()
+
+                # Distancias entre depósitos
+                distances_from_depots.extend(depot_to_depot_distances[i].tolist())
+
+                # Agregar a la lista de distancias
+                list_distances.append(distances_from_depots)
+
+    def load_cvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = [data['capacity_vehicles']]
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_hfvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_mdvrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_ttrp_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos y remolques
+            capacity_vehicle = data['capacity_vehicle']
+            capacity_trailer = [data['capacity_trailer']]
+            count_vehicles = data['count_vehicles']
+            count_trailers = [data['count_trailers']]
+
+            # Crear la flota de vehículos y remolques
+            fleet = FleetTTRP(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicle, count_trailers=count_trailers, capacity_trailer=capacity_trailer)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = CustomerTTRP(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request'],
+                    type_customer=customer_data['type_customer']
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
+
+    def load_vrptw_from_json(self, file_path: str):
+        """
+        Carga la información de un archivo JSON y la convierte en instancias de las clases Customer, Depot y Fleet.
+
+        :param file_path: Ruta del archivo JSON.
+        :return: Una instancia de Problem con los datos cargados.
+        """
+        try:
+            # Cargar el archivo JSON
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+            # Crear una instancia de Problem
+            problem_instance = Problem.get_problem()
+
+            # Cargar la información de los vehículos
+            count_vehicles = [data['count_vehicles']]
+            capacity_vehicles = data['capacity_vehicles']
+
+            # Crear la flota de vehículos
+            fleet = Fleet(count_vehicles=count_vehicles, capacity_vehicle=capacity_vehicles)
+
+            # Cargar la información de los clientes
+            customers = []
+            for customer_data in data['customers']:
+                time_window = TimeWindow(initial_node= customer_data['initial_node'], end_node= customer_data['end_node'], service_time= customer_data['service_time'])
+
+                location = Location(customer_data['coordinate_x'], customer_data['coordinate_y'])
+                customer = Customer(
+                    id_customer=customer_data['id_customer'],
+                    location_customer=location,
+                    request_customer=customer_data['request'],
+                    time_window= time_window
+                )
+                customers.append(customer)
+
+            # Cargar la información de los depósitos
+            depots = []
+            for depot_data in data['depots']:
+                location = Location(depot_data['coordinate_x'], depot_data['coordinate_y'])
+                depot = Depot(
+                    id_depot=depot_data['id_depot'],
+                    location_depot=location,
+                    list_fleets=[fleet]  # Asignar la flota al depósito
+                )
+                depots.append(depot)
+
+            # Asignar los clientes y depósitos a la instancia de Problem
+            problem_instance.set_list_customers(customers)
+            problem_instance.set_list_depots(depots)
+
+            return problem_instance
+
+        except Exception as e:
+            print(f"Error al cargar el archivo JSON: {e}")
+            return None
 
 class CustomerAux:
     def __init__(self):

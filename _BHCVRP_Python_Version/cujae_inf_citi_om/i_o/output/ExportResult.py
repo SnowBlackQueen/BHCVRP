@@ -1,6 +1,8 @@
 import json
 import csv
 import xml.etree.ElementTree as ET
+from data.Problem import Problem
+from data.ProblemType import ProblemType
 
 class ExportResult:
     @staticmethod
@@ -39,9 +41,14 @@ class ExportResult:
 
         # Agregar rutas
         rutas_element = ET.SubElement(root, "rutas")
-        for route in data["routes"]:
-            ruta_element = ET.SubElement(rutas_element, "ruta", id=str(route["route_id"]))
-            ET.SubElement(ruta_element, "clientes").text = ", ".join(map(str, route["customers"]))
+        if Problem.get_problem().get_type_problem() == ProblemType.SBRP:
+            for route in data["routes"]:
+                ruta_element = ET.SubElement(rutas_element, "ruta", id=str(route["route_id"]))
+                ET.SubElement(ruta_element, "paradas").text = ", ".join(map(str, route["bus_stops"]))
+        else:
+            for route in data["routes"]:
+                ruta_element = ET.SubElement(rutas_element, "ruta", id=str(route["route_id"]))
+                ET.SubElement(ruta_element, "clientes").text = ", ".join(map(str, route["customers"]))
 
         # Crear el árbol XML y guardar en un archivo
         tree = ET.ElementTree(root)

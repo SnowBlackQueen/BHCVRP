@@ -1,0 +1,10 @@
+ 
+------------------------------------------
+DISTANCIA: Euclidean
+HEURÍSTICA DE CONSTRUCCIÓN: FisherJaikumar
+COSTO TOTAL: 566.53
+TOTAL DE RUTAS: 1
+TIEMPO DE EJECUCIÓN: 0.04106616973876953
+ 
+R1[11, 16, 21, 20, 22, 1, 8, 23, 18, 2, 17, 4, 19, 15, 5, 12, 6, 14, 13, 7, 3, 10, 24, 9]
+------------------------------------------

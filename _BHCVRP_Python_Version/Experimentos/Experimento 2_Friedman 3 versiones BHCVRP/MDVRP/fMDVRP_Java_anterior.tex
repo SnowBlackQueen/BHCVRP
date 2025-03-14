@@ -1,0 +1,75 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{graphicx}
+\usepackage{lscape}
+\title{Output tables for 1xN statistical comparisons.}
+\author{}
+\date{\today}
+\begin{document}
+\begin{landscape}
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+
+\section{Average rankings of Friedman test}
+
+
+Average ranks obtained by each method in the Friedman test.
+
+\begin{table}[!htp]
+\centering
+\begin{tabular}{|c|c|}\hline
+Algorithm&Ranking\\\hline
+Random&7\\NN&5\\Sweep&6\\SaveSeq&3\\SaveParall&1.375\\MJ&1.625\\CMT&4\\\hline\end{tabular}
+\caption{Average Rankings of the algorithms (Friedman)}
+\end{table}
+
+Friedman statistic (distributed according to chi-square with 6 degrees of freedom): 47.196429. \newline P-value computed by Friedman Test: 0.\newline
+
+
+\newpage
+
+\section{Post hoc comparison (Friedman)}
+
+
+P-values obtained in by applying post hoc methods over the results of Friedman procedure.
+
+\begin{table}[!htp]
+\centering\footnotesize
+\begin{tabular}{ccccccc}
+$i$&algorithm&$z=(R_0 - R_i)/SE$&$p$&Holm &Finner&Li\\
+\hline6&Random&5.207738&0&0.008333&0.008512&0.009634\\5&Sweep&4.281918&0.000019&0.01&0.016952&0.009634\\4&NN&3.356098&0.000791&0.0125&0.025321&0.009634\\3&CMT&2.430278&0.015087&0.016667&0.033617&0.009634\\2&SaveSeq&1.504458&0.132464&0.025&0.041844&0.009634\\1&MJ&0.231455&0.816961&0.05&0.05&0.05\\\hline
+\end{tabular}
+\caption{Post Hoc comparison Table for $\alpha=0.05$ (FRIEDMAN)}
+\end{table}Holm's procedure rejects those hypotheses that have an unadjusted p-value $\le0.025$.
+
+Finner's procedure rejects those hypotheses that have an unadjusted p-value $\le0.041844$.
+
+Li's procedure rejects those hypotheses that have an unadjusted p-value $\le0.009634$.
+
+
+\newpage
+
+\section{Adjusted P-Values (Friedman)}
+
+
+Adjusted P-values obtained through the application of the post hoc methods (Friedman).
+
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{cccc}
+i&algorithm&unadjusted $p$&$p_{Holm}$\\
+\hline1&Random&0&0.000001\\2&Sweep&0.000019&0.000093\\3&NN&0.000791&0.003162\\4&CMT&0.015087&0.045262\\5&SaveSeq&0.132464&0.264927\\6&MJ&0.816961&0.816961\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (I)}
+\end{table}
+\begin{table}[!htp]
+\centering\small
+\begin{tabular}{ccccc}
+i&algorithm&unadjusted $p$&$p_{Finner}$&$p_{Li}$\\
+\hline1&Random&0&0.000001&0.000001\\2&Sweep&0.000019&0.000056&0.000101\\3&NN&0.000791&0.00158&0.0043\\4&CMT&0.015087&0.022545&0.07615\\5&SaveSeq&0.132464&0.156772&0.41985\\6&MJ&0.816961&0.816961&0.816961\\\hline
+\end{tabular}
+\caption{Adjusted $p$-values (FRIEDMAN) (II)}
+\end{table}
+
+\newpage
+\end{landscape}\end{document}

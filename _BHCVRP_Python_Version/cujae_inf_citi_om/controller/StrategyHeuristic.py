@@ -26,6 +26,7 @@ from tools.Tools import Tools
 from tools.OrderType import OrderType
 from tools.DistanceType import DistanceType
 from generator.heuristic.Heuristic import Heuristic
+from service.OSRMService import OSRMService
 
 
 class StrategyHeuristic:
@@ -765,6 +766,53 @@ class StrategyHeuristic:
 
         return cost_matrix
 
+    # Método encargado de llenar la matriz de costo usando distancias reales
+    def fill_cost_matrix_real(self, customers, depots):
+        # Crear una instancia del cliente OSRM
+        osrm_client = OSRMService()
+
+        total_customers = len(customers)
+        total_depots = len(depots)
+        total_locations = total_customers + total_depots
+
+        # Inicializar la matriz de costos con infinito
+        cost_matrix = np.full((total_locations, total_locations), np.inf)
+
+        # Llenar la matriz con distancias obtenidas de la API OSRM
+        for i in range(total_locations):
+            # Obtener las coordenadas del punto inicial (cliente o depósito)
+            if i < total_customers:
+                axis_x_ini = customers[i].location.axis_x
+                axis_y_ini = customers[i].location.axis_y
+            else:
+                axis_x_ini = depots[i - total_customers].location.axis_x
+                axis_y_ini = depots[i - total_customers].location.axis_y
+
+            for j in range(total_locations):
+                # Obtener las coordenadas del punto final (cliente o depósito)
+                if j < total_customers:
+                    axis_x_end = customers[j].location.axis_x
+                    axis_y_end = customers[j].location.axis_y
+                else:
+                    axis_x_end = depots[j - total_customers].location.axis_x
+                    axis_y_end = depots[j - total_customers].location.axis_y
+
+                # Evitar calcular la distancia de un punto consigo mismo
+                if i != j:
+                    try:
+                        # Obtener la distancia entre los puntos usando OSRM
+                        route = osrm_client.calculate_distance(axis_x_ini, axis_y_ini, axis_x_end, axis_y_end)
+                        """distance = route['routes'][0]['distance']  # Distancia en metros
+                        cost_matrix[i, j] = distance
+                        cost_matrix[j, i] = distance  # La distancia es simétrica"""
+                    except Exception as e:
+                        print(f"Error al calcular la distancia entre los puntos {i} y {j}: {e}")
+
+                osrm_client.clear_distance_cache()
+
+        return cost_matrix
+
+    # Método encargado de llenar la matriz de tiempo
     def fill_time_matrix(self, list_distances, vehicle_speed):
         size = len(list_distances)
         time_matrix = np.array(list_distances).reshape(size, size)
