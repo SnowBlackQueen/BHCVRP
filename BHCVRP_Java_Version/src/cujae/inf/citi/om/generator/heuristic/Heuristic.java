@@ -10,13 +10,15 @@ import cujae.inf.citi.om.data.ProblemType;
 import cujae.inf.citi.om.data.Depot;
 import cujae.inf.citi.om.data.DepotMDVRP;
 import cujae.inf.citi.om.controller.StrategyHeuristic;
+import cujae.inf.citi.om.data.CustomerTTRP;
+import cujae.inf.citi.om.data.Fleet;
+import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.solution.Route;
 import cujae.inf.citi.om.solution.RouteTTRP;
+import cujae.inf.citi.om.solution.RouteType;
 import cujae.inf.citi.om.solution.Solution;
 import java.util.Iterator;
-//import cujae.inf.citi.om.matrix.NumericMatrix;
 import cujae.inf.ic.om.matrix.NumericMatrix;
-//import cujae.inf.citi.om.matrix.RowCol;
 import cujae.inf.ic.om.matrix.RowCol;
 
 /* Clase abstracta que modela una heur�stica de construcci�n*/
@@ -24,6 +26,22 @@ import cujae.inf.ic.om.matrix.RowCol;
 public abstract class Heuristic {
 	
         boolean initialized = false;
+        ProblemType typeProblem = Problem.getProblem().getTypeProblem();
+    private int posDepot;
+    private int idDepot;
+    private double capacityVehicle;
+    private int countVehicles;
+    Route route;
+    private Customer customer;
+    double requestRoute;
+    ArrayList<Customer> customersToVisit;
+    private Solution solution;
+    private int vehicleCount;
+    private ArrayList<Double> listCapacities;
+    boolean isTC;
+    private double capacityTrailer;
+    private NumericMatrix time_matrix;
+    private double time_route;
     
 	/* M�todo abstracto encargado de generar la soluci�n*/
 	public abstract Solution getSolutionInicial();
@@ -55,7 +73,7 @@ public abstract class Heuristic {
                     if ((depots.get(i) instanceof DepotMDVRP) || ((DepotMDVRP)depots.get(i)).getListAssignedCustomers().isEmpty()) {
                         posDepot = i;
                         idDepot = depots.get(posDepot).getIdDepot();  // VERIFICAR!!
-                        ArrayList<Customer> customersAssignedByDepot = Problem.getProblem().getCustomersAssignedByIDDepot(idDepot);
+                        ArrayList<Customer> customersAssignedByDepot = Problem.getProblem().getCustomersAssignedByIDDepot(idDepot, Problem.getProblem().getListCustomers(), Problem.getProblem().getListDepots());
                         customersToVisit = new ArrayList<>(customersAssignedByDepot);
 
                         found = true;
@@ -150,7 +168,7 @@ public abstract class Heuristic {
                 for (int depotIndex = this.posDepot; depotIndex < depots.size(); depotIndex++) {
                     if (depotIndex != this.posDepot) {
                         this.idDepot = depots.get(depotIndex).getIdDepot();
-                        ArrayList<Customer> customersToVisit = Problem.getProblem().getCustomersAssignedByIdDepot(
+                        ArrayList<Customer> customersToVisit = Problem.getProblem().getCustomersAssignedByIDDepot(
                                                                                     this.idDepot,
                                                                                     Problem.getProblem().getListCustomers(),
                                                                                     Problem.getProblem().getListDepots());
@@ -174,24 +192,23 @@ public abstract class Heuristic {
             
             else if (Problem.getProblem().getTypeProblem().equals(ProblemType.TTRP) || Problem.getProblem().getTypeProblem().ordinal() == 4){
                 boolean isTC = false;
-                int capacityTrailer = Problem.getProblem()
-                        .getListDepots()[posDepot]
-                        .getListFleets()[0]
-                        .getCapacityTrailer();
+                double capacityTrailer = ((FleetTTRP) Problem.getProblem()
+                        .getListDepots().get(posDepot)
+                        .getListFleets().get(0)).getCapacityTrailer();
 
-                CustomerType customerType = customer.getTypeCustomer();
+                CustomerType customerType = ((CustomerTTRP) customer).getTypeCustomer();
 
                 processing();
 
                 route.setRequestRoute(requestRoute);
 
-                if (customer.getTypeCustomer() == CustomerType.TC || customer.getTypeCustomer() == 1) {
-                    route.setTypeRoute(RouteType.PTR.value);
+                if (((CustomerTTRP) customer).getTypeCustomer() == CustomerType.TC /*|| ((CustomerTTRP) customer).getTypeCustomer() == 1*/) {
+                    ((RouteTTRP)route).setTypeRoute(RouteType.PTR);
                 } else {
                     if (isTC) {
-                        route.setTypeRoute(RouteType.CVR.value);
+                        ((RouteTTRP)route).setTypeRoute(RouteType.CVR);
                     } else {
-                        route.setTypeRoute(RouteType.PVR.value);
+                        ((RouteTTRP)route).setTypeRoute(RouteType.PVR);
                     }
                 }
 
@@ -205,8 +222,8 @@ public abstract class Heuristic {
         }
         
         public void processing() {
-            boolean created = False;
-            if (this.typeProblem == ProblemType.CVRP || this.typeProblem == 0) {
+            boolean created = false;
+            if (this.typeProblem == ProblemType.CVRP) {
                 if (this.requestRoute + this.customer.getRequestCustomer() <= this.capacityVehicle) {
                     this.requestRoute += this.customer.getRequestCustomer();
                     this.route.getListIdCustomers().add(this.customer.getIdCustomer());
@@ -227,8 +244,7 @@ public abstract class Heuristic {
                     created = true;
                 }
 
-                //return new Tuple<>(created, this.route);
-            } else if (this.typeProblem == ProblemType.HFVRP || this.typeProblem == 1) {
+            } else if (this.typeProblem == ProblemType.HFVRP) {
                 while (!this.customersToVisit.isEmpty()) {
                     this.initializeSpecifics();
 
@@ -240,11 +256,10 @@ public abstract class Heuristic {
                         this.route.setRequestRoute(this.requestRoute);
                         this.route.setIdDepot(this.idDepot);
                         this.solution.getListRoutes().add(this.route);
-                        return new Tuple<>(false, null); // Indicating that a new vehicle/route is needed
                     }
                 }
                 //return new Tuple<>(true, null); // Indicating that the vehicle still has capacity
-            } else if (this.typeProblem == ProblemType.MDVRP || this.typeProblem == 2) {
+            } else if (this.typeProblem == ProblemType.MDVRP) {
                 while (!this.customersToVisit.isEmpty() && this.countVehicles > 0) {
                     this.initializeSpecifics();
 
@@ -312,7 +327,7 @@ public abstract class Heuristic {
                         this.solution.getListRoutes().add(this.route);
                     }
                 }
-            } else if (this.typeProblem == ProblemType.TTRP || this.typeProblem == 4) {
+            } else if (this.typeProblem == ProblemType.TTRP) {
                 if (this.requestRoute + this.customer.getRequestCustomer() <= this.capacityVehicle) {
                     this.requestRoute += this.customer.getRequestCustomer();
                     this.route.getListIdCustomers().add(this.customer.getIdCustomer());
@@ -326,14 +341,13 @@ public abstract class Heuristic {
                         this.route.getCostRoute(),
                         this.idDepot,
                         new ArrayList<>(),
-                        RouteType.PTR.value,
-                        null
+                        RouteType.PTR
                     );
                     this.solution.getListRoutes().add(this.route); // VERIFY!!
 
                     this.route = new RouteTTRP();
                     this.requestRoute = this.customer.getRequestCustomer();
-                    this.typeCustomer = this.customer.getTypeCustomer();
+                    CustomerType typeCustomer = ((CustomerTTRP)this.customer).getTypeCustomer();
                     this.route.getListIdCustomers().add(this.customer.getIdCustomer());
                     this.customersToVisit.remove(this.customer);
                 }
@@ -344,26 +358,27 @@ public abstract class Heuristic {
         }   
         
         public void creating(){
-            if (this.typeProblem == ProblemType.CVRP || this.typeProblem == 0) {
+            if (this.typeProblem == ProblemType.CVRP) {
                 int vehicleCountInt = vehicleCount;
                 while (customersToVisit != null && !customersToVisit.isEmpty() && vehicleCountInt > 0) {
                     this.initializeSpecifics();  // Para que customer sea tratado según la variante
-                    boolean found;
-                    Route newRoute;
-                    found = this.creating();
+                    boolean found = true;
+                    Route newRoute = new Route();
+                    this.creating();
                     if (found) {
                         route = newRoute;
                         vehicleCountInt--;
                     }
                 }
-            } else if (this.typeProblem == ProblemType.HFVRP || this.typeProblem == 1) {
+            } else if (this.typeProblem == ProblemType.HFVRP) {
                 this.listCapacities = new ArrayList<>(Problem.getProblem().getListCapacities());
-                int vehicleCapacity = this.listCapacities.get(0);
+                Double vehicleCapacity = this.listCapacities.get(0);
                 boolean isOpen = true;
 
                 while (customersToVisit != null && !customersToVisit.isEmpty() && !this.listCapacities.isEmpty()) {
                     // this.route = new Route();
-                    boolean success = this.creating(this.route, requestRoute, this.customer, vehicleCapacity);
+                    boolean success = true;
+                    this.creating();
 
                     if (!success) {
                         // Manejo cuando se agota la capacidad del vehículo actual
@@ -386,14 +401,14 @@ public abstract class Heuristic {
                     //     this.solution.getListRoutes().add(this.route);
                     // }
                 }
-            } else if (this.typeProblem == ProblemType.TTRP || this.typeProblem == 4) {
+            } else if (this.typeProblem == ProblemType.TTRP) {
                 while (customersToVisit != null && !customersToVisit.isEmpty()) {
                     this.initializeSpecifics();
                     boolean found = false;
-                    if (this.customer.getTypeCustomer() == CustomerType.TC || this.customer.getTypeCustomer() == 1) {
-                        found = this.creating();
+                    if (((CustomerTTRP)this.customer).getTypeCustomer() == CustomerType.TC) {
+                        this.creating();
                     } else {
-                        if (this.customer.getTypeCustomer() == CustomerType.TC || this.customer.getTypeCustomer() == 1) {
+                        if (((CustomerTTRP)this.customer).getTypeCustomer() == CustomerType.TC) {
                             this.isTC = true;
                         }
 
@@ -407,38 +422,36 @@ public abstract class Heuristic {
                             RouteTTRP routeTTRP;
                             if (this.isTC) {
                                 routeTTRP = new RouteTTRP(
-                                    2,
                                     this.route.getListIdCustomers(),
                                     this.route.getRequestRoute(),
                                     this.route.getCostRoute(),
                                     this.route.getIdDepot(),
                                     new ArrayList<>(),
-                                    this.route.getMaximumDistance()
+                                        RouteType.CVR
                                 );
                                 this.route = routeTTRP;
-                                this.route.setTypeRoute(RouteType.CVR.value);
+                                ((RouteTTRP)this.route).setTypeRoute(RouteType.CVR);
                             } else {
                                 routeTTRP = new RouteTTRP(
-                                    1,
                                     this.route.getListIdCustomers(),
                                     this.route.getRequestRoute(),
                                     this.route.getCostRoute(),
                                     this.route.getIdDepot(),
                                     new ArrayList<>(),
-                                    this.route.getMaximumDistance()
+                                        RouteType.PVR
                                 );
                                 this.route = routeTTRP;
-                                this.route.setTypeRoute(RouteType.PVR.value);
+                                ((RouteTTRP)this.route).setTypeRoute(RouteType.PVR);
                             }
 
-                            this.route.setIdDepot(depotId);
+                            this.route.setIdDepot(idDepot);
                             this.solution.getListRoutes().add(this.route);
                             this.isTC = false;
 
                             this.route = new RouteTTRP();
 
                             requestRoute = this.customer.getRequestCustomer();
-                            this.typeCustomer = this.customer.getTypeCustomer();
+                            CustomerType typeCustomer = ((CustomerTTRP)this.customer).getTypeCustomer();
                             this.route.getListIdCustomers().add(this.customer.getIdCustomer());
                             customersToVisit.remove(this.customer);
                         }
@@ -628,5 +641,46 @@ public abstract class Heuristic {
 		
 		return firstCustomer;
 	}
+        
+        protected ArrayList<Customer> get_feasible_customers(int current_node_id){
+            ArrayList<Customer> feasible_customers = new ArrayList<>();
+            this.time_matrix = Problem.getProblem().getTimeMatrix();
+            
+            for (Customer cust : this.customersToVisit) {
+                double travel_time = this.time_matrix.getItem(current_node_id, cust.getIdCustomer());
+                double arrival_time = this.time_route + travel_time;
+                // Si se llega antes del ready_time, se espera
+                double effectiveTime = Math.max(arrival_time, cust.getTimeWindow().getInitialNode());
+                // Verificamos la ventana de tiempo del cliente
+                if (effectiveTime > cust.getTimeWindow().getEndNode()) {
+                    continue;  // No es factible por ventana de tiempo
+                }
+                // Verificamos la capacidad
+                if (requestRoute + cust.getRequestCustomer() > capacityVehicle) {
+                    continue;
+                }
+                feasible_customers.add(cust);
+            }
+
+            return feasible_customers;
+        }
+        
+        protected double getTimeRoute(ArrayList<Integer> listId) {
+            ArrayList<Integer> localListId = new ArrayList<>(listId);
+            double timeRoute = 0.0;
+            localListId.add(0, idDepot);
+            for (int index = 0; index < localListId.size() - 1; index++) {
+                int id = localListId.get(index);
+                this.time_matrix = Problem.getProblem().getTimeMatrix();
+                int nextId = localListId.get(index + 1);
+                double currentTime = this.time_matrix.getItem(id, nextId);
+                Customer customer = Problem.getProblem().getCustomerByIDCustomer(nextId);
+                double customerReadyTime = customer.getTimeWindow().getInitialNode();
+                double customerServiceTime = customer.getTimeWindow().getServiceTime();
+                timeRoute = Math.max(currentTime, customerReadyTime) + customerServiceTime;
+            }
+
+            return timeRoute;
+        }
         
 }

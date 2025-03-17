@@ -56,7 +56,7 @@ public class SaveParallel extends Save {
 					posDepot = i;
 					
 					idDepot = Problem.getProblem().getListDepots().get(posDepot).getIdDepot();	
-					CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(idDepot));
+					CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(idDepot, Problem.getProblem().getListCustomers(), Problem.getProblem().getListDepots()));
 					
 					found = true;
 				}
@@ -351,7 +351,7 @@ public class SaveParallel extends Save {
 					if(j != posDepot)
 					{
 						idDepot = Problem.getProblem().getListDepots().get(j).getIdDepot();
-						CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(idDepot));
+						CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(idDepot, Problem.getProblem().getListCustomers(), Problem.getProblem().getListDepots()));
 						
 						capacityVehicle = Problem.getProblem().getListDepots().get(j).getListFleets().get(0).getCapacityVehicle();
 						countVehicles = Problem.getProblem().getListDepots().get(j).getListFleets().get(0).getCountVehicles();

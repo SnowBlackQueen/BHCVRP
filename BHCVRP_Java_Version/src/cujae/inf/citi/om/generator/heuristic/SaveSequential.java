@@ -53,7 +53,7 @@ public class SaveSequential extends Save {
 			
 			while((i < Problem.getProblem().getListDepots().size()) && (!found))
 			{
-				CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(Problem.getProblem().getListDepots().get(i).getIdDepot()));
+				CustomersToVisit = new ArrayList<Customer>(Problem.getProblem().getCustomersAssignedByIDDepot(Problem.getProblem().getListDepots().get(i).getIdDepot(), Problem.getProblem().getListCustomers(), Problem.getProblem().getListDepots()));
 			
 				if(!CustomersToVisit.isEmpty())
 				{
@@ -299,7 +299,7 @@ public class SaveSequential extends Save {
 					if(j != posDepot)
 					{
 						idDepot = Problem.getProblem().getListDepots().get(j).getIdDepot();	
-						CustomersToVisit = Problem.getProblem().getCustomersAssignedByIDDepot(idDepot);
+						CustomersToVisit = Problem.getProblem().getCustomersAssignedByIDDepot(idDepot, Problem.getProblem().getListCustomers(), Problem.getProblem().getListDepots());
 						
 						capacityVehicle = Problem.getProblem().getListDepots().get(j).getListFleets().get(0).getCapacityVehicle();
 					

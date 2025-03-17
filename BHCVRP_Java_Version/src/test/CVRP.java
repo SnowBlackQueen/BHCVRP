@@ -28,12 +28,12 @@ public class CVRP {
     public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Resultado_CVRPc141_C5.txt");
-            PrintStream printStream = new PrintStream(fileOutputStream);
+            //FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosCVRP/Resultado_CVRPc141_C5.txt");
+            //PrintStream printStream = new PrintStream(fileOutputStream);
 
-            System.setOut(printStream);
+            //System.setOut(printStream);
         
-            String pathFiles = "D:/Escuela/BHCVRP_Python_Version/Resultados/HFVRP/C1_4_1.txt";
+            String pathFiles = "D:/Escuela/BHCVRP_Python_Version/Resultados/CVRP/CVRP_1";
             //int totalInstances = 5;
             LoadFile loadFile = new LoadFile();
 
@@ -63,7 +63,7 @@ public class CVRP {
                 loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listDistances, distanceType);
 
 
-                HeuristicType heuristicType = HeuristicType.CMT;
+                HeuristicType heuristicType = HeuristicType.RandomMethod;
 
                 if(StrategyHeuristic.getStrategyHeuristic().loadCVRP(idCustomers, requestCustomers, idDepots, countVehicles.get(0), capacityVehicles.get(0), listDistances, axisXCustomers, axisYCustomers, axisXDepots, axisYDepots, ProblemType.CVRP))
                         {
@@ -85,8 +85,8 @@ public class CVRP {
                                     System.out.println("R" + (j+1) + result.getListRoutes().get(j).getListIdCustomers());
                                 System.out.println("------------------------------------------");
                         }
-            printStream.close();
-            fileOutputStream.close();
+            //printStream.close();
+            //fileOutputStream.close();
 
             System.setOut(System.out); // Restaurar la salida estándar
             } catch (IOException e) {

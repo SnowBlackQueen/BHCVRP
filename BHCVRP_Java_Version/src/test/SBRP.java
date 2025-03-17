@@ -4,6 +4,8 @@
  */
 package test;
 
+import cujae.inf.citi.om.i_o.input.LoadFile;
+
 /**
  *
  * @author kmych

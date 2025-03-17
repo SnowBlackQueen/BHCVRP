@@ -20,13 +20,13 @@ public class MDVRP
                                         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception
     {
     	try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p16/Resultado_CMT_20.txt");
-            PrintStream printStream = new PrintStream(fileOutputStream);
+            //FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosMDVRP/Instancia_p16/Resultado_CMT_20.txt");
+            //PrintStream printStream = new PrintStream(fileOutputStream);
 
-            System.setOut(printStream);
+            //System.setOut(printStream);
 
             
-            String pathFiles = "C-mdvrp//p16"; 
+            String pathFiles = "D:/Escuela/BHCVRP/resources/previous/C-mdvrp/p16"; 
 		//int totalInstances = 5;
 		LoadFile loadFile = new LoadFile();
 
@@ -56,7 +56,7 @@ public class MDVRP
                         loadFile.fillListDistances(idCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, 
                                 listDistances, distanceType);
 			
-                        HeuristicType heuristicType = HeuristicType.CMT;
+                        HeuristicType heuristicType = HeuristicType.RandomMethod;
 /*			FleetAux fleet = loadFile.loadCountVehiclesFleet();
 			int countCustomers = loadFile.loadCountCustomers();
 	    	int countDepots = loadFile.loadCountDepots();
@@ -88,8 +88,8 @@ public class MDVRP
                             System.out.println("------------------------------------------");
                     }
                     
-                printStream.close();
-                fileOutputStream.close();
+                //printStream.close();
+                //fileOutputStream.close();
 
                 System.setOut(System.out); // Restaurar la salida estándar
             } catch (IOException e) {

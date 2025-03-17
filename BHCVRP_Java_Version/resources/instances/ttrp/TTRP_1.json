@@ -1,0 +1,367 @@
+{
+    "capacity_vehicle": 100.0,
+    "capacity_trailer": 100.0,
+    "total_customers": 50,
+    "count_vehicles": 5,
+    "count_trailers": 3,
+    "total_depots": 1,
+    "depots": [
+      {
+        "id_depot": 0,
+        "coordinate_x": 30.0,
+        "coordinate_y": 40.0
+      }
+    ],
+    "customers": [
+      {
+        "id_customer": 1,
+        "coordinate_x": 37.0,
+        "coordinate_y": 52.0,
+        "request": 7.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 2,
+        "coordinate_x": 49.0,
+        "coordinate_y": 49.0,
+        "request": 30.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 3,
+        "coordinate_x": 52.0,
+        "coordinate_y": 64.0,
+        "request": 16.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 4,
+        "coordinate_x": 20.0,
+        "coordinate_y": 26.0,
+        "request": 9.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 5,
+        "coordinate_x": 40.0,
+        "coordinate_y": 30.0,
+        "request": 21.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 6,
+        "coordinate_x": 21.0,
+        "coordinate_y": 47.0,
+        "request": 15.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 7,
+        "coordinate_x": 17.0,
+        "coordinate_y": 63.0,
+        "request": 19.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 8,
+        "coordinate_x": 31.0,
+        "coordinate_y": 62.0,
+        "request": 23.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 9,
+        "coordinate_x": 52.0,
+        "coordinate_y": 33.0,
+        "request": 11.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 10,
+        "coordinate_x": 51.0,
+        "coordinate_y": 21.0,
+        "request": 5.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 11,
+        "coordinate_x": 42.0,
+        "coordinate_y": 41.0,
+        "request": 19.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 12,
+        "coordinate_x": 31.0,
+        "coordinate_y": 32.0,
+        "request": 29.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 13,
+        "coordinate_x": 5.0,
+        "coordinate_y": 25.0,
+        "request": 23.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 14,
+        "coordinate_x": 12.0,
+        "coordinate_y": 42.0,
+        "request": 21.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 15,
+        "coordinate_x": 36.0,
+        "coordinate_y": 16.0,
+        "request": 10.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 16,
+        "coordinate_x": 52.0,
+        "coordinate_y": 41.0,
+        "request": 15.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 17,
+        "coordinate_x": 27.0,
+        "coordinate_y": 23.0,
+        "request": 3.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 18,
+        "coordinate_x": 17.0,
+        "coordinate_y": 33.0,
+        "request": 41.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 19,
+        "coordinate_x": 13.0,
+        "coordinate_y": 13.0,
+        "request": 9.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 20,
+        "coordinate_x": 57.0,
+        "coordinate_y": 58.0,
+        "request": 28.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 21,
+        "coordinate_x": 62.0,
+        "coordinate_y": 42.0,
+        "request": 8.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 22,
+        "coordinate_x": 42.0,
+        "coordinate_y": 57.0,
+        "request": 8.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 23,
+        "coordinate_x": 16.0,
+        "coordinate_y": 57.0,
+        "request": 16.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 24,
+        "coordinate_x": 8.0,
+        "coordinate_y": 52.0,
+        "request": 10.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 25,
+        "coordinate_x": 7.0,
+        "coordinate_y": 38.0,
+        "request": 28.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 26,
+        "coordinate_x": 27.0,
+        "coordinate_y": 68.0,
+        "request": 7.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 27,
+        "coordinate_x": 30.0,
+        "coordinate_y": 48.0,
+        "request": 15.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 28,
+        "coordinate_x": 43.0,
+        "coordinate_y": 67.0,
+        "request": 14.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 29,
+        "coordinate_x": 58.0,
+        "coordinate_y": 48.0,
+        "request": 6.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 30,
+        "coordinate_x": 58.0,
+        "coordinate_y": 27.0,
+        "request": 19.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 31,
+        "coordinate_x": 37.0,
+        "coordinate_y": 69.0,
+        "request": 11.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 32,
+        "coordinate_x": 38.0,
+        "coordinate_y": 46.0,
+        "request": 12.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 33,
+        "coordinate_x": 46.0,
+        "coordinate_y": 10.0,
+        "request": 23.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 34,
+        "coordinate_x": 61.0,
+        "coordinate_y": 33.0,
+        "request": 26.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 35,
+        "coordinate_x": 62.0,
+        "coordinate_y": 63.0,
+        "request": 17.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 36,
+        "coordinate_x": 63.0,
+        "coordinate_y": 69.0,
+        "request": 6.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 37,
+        "coordinate_x": 32.0,
+        "coordinate_y": 22.0,
+        "request": 9.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 38,
+        "coordinate_x": 45.0,
+        "coordinate_y": 35.0,
+        "request": 15.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 39,
+        "coordinate_x": 59.0,
+        "coordinate_y": 15.0,
+        "request": 14.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 40,
+        "coordinate_x": 5.0,
+        "coordinate_y": 6.0,
+        "request": 7.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 41,
+        "coordinate_x": 10.0,
+        "coordinate_y": 17.0,
+        "request": 27.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 42,
+        "coordinate_x": 21.0,
+        "coordinate_y": 10.0,
+        "request": 13.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 43,
+        "coordinate_x": 5.0,
+        "coordinate_y": 64.0,
+        "request": 11.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 44,
+        "coordinate_x": 30.0,
+        "coordinate_y": 15.0,
+        "request": 16.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 45,
+        "coordinate_x": 39.0,
+        "coordinate_y": 10.0,
+        "request": 10.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 46,
+        "coordinate_x": 32.0,
+        "coordinate_y": 39.0,
+        "request": 5.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 47,
+        "coordinate_x": 25.0,
+        "coordinate_y": 32.0,
+        "request": 25.0,
+        "type_customer": 1
+      },
+      {
+        "id_customer": 48,
+        "coordinate_x": 25.0,
+        "coordinate_y": 55.0,
+        "request": 17.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 49,
+        "coordinate_x": 48.0,
+        "coordinate_y": 28.0,
+        "request": 18.0,
+        "type_customer": 0
+      },
+      {
+        "id_customer": 50,
+        "coordinate_x": 56.0,
+        "coordinate_y": 37.0,
+        "request": 10.0,
+        "type_customer": 1
+      }
+    ]
+  }

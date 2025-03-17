@@ -29,7 +29,7 @@ public class VRPTW {
     public static void main(String[] args) throws IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception {
         try {
             // Ruta del archivo de entrada
-            String pathFiles = "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\VRPTW\\C1_2_1.txt";
+            String pathFiles = "resources\\instances\\vrptw\\C1_2_1.txt";
 
             // Cargar el archivo
             LoadFile loadFile = new LoadFile();
@@ -140,14 +140,14 @@ public class VRPTW {
                 ExportResult.toXml(results, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.xml");
 
                 // 3. Exportar a CSV
-                List<List<String>> csvData = new ArrayList<>();
-                csvData.add(List.of("Tipo de heurística", heuristicType.name()));
-                csvData.add(List.of("Costo total", String.valueOf(cost)));
-                csvData.add(List.of("Tiempo de ejecución", String.valueOf(time)));
-                csvData.add(List.of("Ruta", "Clientes"));
+                ArrayList<ArrayList<String>> csvData = new ArrayList<>();
+                csvData.add((ArrayList<String>) List.of("Tipo de heurística", heuristicType.name()));
+                csvData.add((ArrayList<String>) List.of("Costo total", String.valueOf(cost)));
+                csvData.add((ArrayList<String>) List.of("Tiempo de ejecución", String.valueOf(time)));
+                csvData.add((ArrayList<String>) List.of("Ruta", "Clientes"));
 
                 for (int j = 0; j < requestByRoute; j++) {
-                    csvData.add(List.of("R" + (j + 1), routes.get(j).getListIdCustomers().toString()));
+                    csvData.add((ArrayList<String>) List.of("R" + (j + 1), routes.get(j).getListIdCustomers().toString()));
                 }
 
                 ExportResult.toCsv(csvData, "D:\\Escuela\\BHCVRP_Python_Version\\Resultados\\resultado.csv");

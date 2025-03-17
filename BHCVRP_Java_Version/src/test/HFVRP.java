@@ -29,12 +29,12 @@ public class HFVRP {
     public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_1/Resultado_SS_1.txt");
-            PrintStream printStream = new PrintStream(fileOutputStream);
+            //FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosHFVRP/Instancia_HFVRP_1/Resultado_SS_1.txt");
+            //PrintStream printStream = new PrintStream(fileOutputStream);
 
-            System.setOut(printStream);
+            //System.setOut(printStream);
 
-            String pathFiles = "modified-hfvrp//HFVRP_1";
+            String pathFiles = "D:/Escuela/BHCVRP/resources/previous/modified-hfvrp//HFVRP_1";
                 //int totalInstances = 5;
                 LoadFile loadFile = new LoadFile();
 
@@ -65,7 +65,7 @@ public class HFVRP {
 
                     ProblemType typeProblem = ProblemType.HFVRP;
                     OrderType orderType = OrderType.Descending;
-                    HeuristicType heuristicType = HeuristicType.SaveSequential;
+                    HeuristicType heuristicType = HeuristicType.RandomMethod;
 
                     if(StrategyHeuristic.getStrategyHeuristic().loadHFVRP(idCustomers, requestCustomers, idDepots, 
                             countVehicles.get(0), capacityVehicles.get(0), listDistances, 
@@ -90,8 +90,8 @@ public class HFVRP {
                                         System.out.println("R" + (j+1) + result.getListRoutes().get(j).getListIdCustomers());
                                     System.out.println("------------------------------------------");
                             }
-            printStream.close();
-            fileOutputStream.close();
+            //printStream.close();
+            //fileOutputStream.close();
 
             System.setOut(System.out); // Restaurar la salida estándar
             } catch (IOException e) {

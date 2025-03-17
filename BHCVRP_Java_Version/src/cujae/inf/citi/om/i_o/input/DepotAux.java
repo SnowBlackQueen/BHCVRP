@@ -1,5 +1,6 @@
 package cujae.inf.citi.om.i_o.input;
 
+import cujae.inf.citi.om.data.Location;
 import java.util.ArrayList;
 
 
@@ -22,6 +23,14 @@ public class DepotAux {
 		this.listFleets = listFleets;
 		this.axisX = axisX;
 		this.axisY = axisY;
+		
+	}
+        
+        public DepotAux(int idDepot, ArrayList<FleetAux> listFleets, Location location) {
+		super();
+		this.idDepot = idDepot;
+		this.listFleets = listFleets;
+		location = new Location(axisX, axisY);
 		
 	}
 

@@ -436,7 +436,7 @@ public class Problem {
 	}
      
     /*M�todo que dado el dep�sito devuelve la lista de clientes asignados*/
-    public ArrayList<Customer> getCustomersAssignedByIDDepot(int idDepot){
+    public ArrayList<Customer> getCustomersAssignedByIDDepot(int idDepot, ArrayList<Customer> listCustomers, ArrayList<Depot> listDepots){
     	ArrayList<Customer> listCustomersAssigned = new ArrayList<Customer>();
     	int countCustomers = listCustomers.size();
     	int posDepot = getPosElement(idDepot) - countCustomers;

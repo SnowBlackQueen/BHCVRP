@@ -1,5 +1,7 @@
 package cujae.inf.citi.om.i_o.input;
 
+import cujae.inf.citi.om.data.Location;
+
 
 public class CustomerAux {
 
@@ -22,6 +24,14 @@ public class CustomerAux {
 		this.requestCustomer = requestCustomer;
 		this.axisX = axisX;
 		this.axisY = axisY;
+	}
+        
+        public CustomerAux(int idCustomer, double requestCustomer,
+			Location location) {
+		super();
+		this.idCustomer = idCustomer;
+		this.requestCustomer = requestCustomer;
+                location = new Location(axisX, axisY);
 	}
 
 	public int getIdCustomer() {

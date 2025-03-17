@@ -5,10 +5,14 @@
 package cujae.inf.citi.om.i_o.input;
 
 import cujae.inf.citi.om.data.BusStop;
+import cujae.inf.citi.om.data.Customer;
+import cujae.inf.citi.om.data.CustomerTTRP;
 import cujae.inf.citi.om.data.Depot;
 import cujae.inf.citi.om.data.Fleet;
+import cujae.inf.citi.om.data.FleetTTRP;
 import cujae.inf.citi.om.data.Location;
 import cujae.inf.citi.om.data.Problem;
+import cujae.inf.citi.om.data.TimeWindow;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -518,5 +522,258 @@ public class LoadFile {
             serviceTimes.add(Double.parseDouble(tokens[6]));
         }
     }
+
+    public Problem loadCVRPFromJson(String filePath) {
+        try (FileReader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject data = new JSONObject(tokener);
+
+            Problem problemInstance = Problem.getProblem();
+
+            int countVehicles = data.getInt("count_vehicles");
+            double capacityVehicles = data.getDouble("capacity_vehicles");
+
+            Fleet fleet = new Fleet(countVehicles, capacityVehicles);
+
+            ArrayList<Customer> customers = new ArrayList<>();
+            JSONArray customersArray = data.getJSONArray("customers");
+            for (int i = 0; i < customersArray.length(); i++) {
+                JSONObject customerData = customersArray.getJSONObject(i);
+                Location location = new Location(customerData.getDouble("coordinate_x"), customerData.getDouble("coordinate_y"));
+                Customer customer = new Customer(
+                        customerData.getInt("id_customer"),
+                        customerData.getDouble("request"),
+                        location
+                );
+                customers.add(customer);
+            }
+
+            ArrayList<Depot> depots = new ArrayList<>();
+            JSONArray depotsArray = data.getJSONArray("depots");
+            for (int i = 0; i < depotsArray.length(); i++) {
+                JSONObject depotData = depotsArray.getJSONObject(i);
+                Location location = new Location(depotData.getDouble("coordinate_x"), depotData.getDouble("coordinate_y"));
+                Depot depot = new Depot(
+                        depotData.getInt("id_depot"),
+                        location,
+                        new ArrayList<Fleet>(List.of(fleet))                       
+                );
+                depots.add(depot);
+            }
+
+            problemInstance.setListCustomers(customers);
+            problemInstance.setListDepots(depots);
+
+            return problemInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Problem loadHFVRPFromJson(String filePath) {
+        try (FileReader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject data = new JSONObject(tokener);
+
+            Problem problemInstance = Problem.getProblem();
+
+            int countVehicles = data.getInt("count_vehicles");
+            double capacityVehicles = data.getDouble("capacity_vehicles");
+
+            Fleet fleet = new Fleet(countVehicles, capacityVehicles);
+
+            ArrayList<Customer> customers = new ArrayList<>();
+            JSONArray customersArray = data.getJSONArray("customers");
+            for (int i = 0; i < customersArray.length(); i++) {
+                JSONObject customerData = customersArray.getJSONObject(i);
+                Location location = new Location(customerData.getDouble("coordinate_x"), customerData.getDouble("coordinate_y"));
+                Customer customer = new Customer(
+                        customerData.getInt("id_customer"),
+                        customerData.getDouble("request"),
+                        location
+                );
+                customers.add(customer);
+            }
+
+            ArrayList<Depot> depots = new ArrayList<>();
+            JSONArray depotsArray = data.getJSONArray("depots");
+            for (int i = 0; i < depotsArray.length(); i++) {
+                JSONObject depotData = depotsArray.getJSONObject(i);
+                Location location = new Location(depotData.getDouble("coordinate_x"), depotData.getDouble("coordinate_y"));
+                Depot depot = new Depot(
+                        depotData.getInt("id_depot"),
+                        location,
+                        new ArrayList<>(List.of(fleet))
+                );
+                depots.add(depot);
+            }
+
+            problemInstance.setListCustomers(customers);
+            problemInstance.setListDepots(depots);
+
+            return problemInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Problem loadMDVRPFromJson(String filePath) {
+        try (FileReader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject data = new JSONObject(tokener);
+
+            Problem problemInstance = Problem.getProblem();
+
+            int countVehicles = data.getInt("count_vehicles");
+            double capacityVehicles = data.getDouble("capacity_vehicles");
+
+            Fleet fleet = new Fleet(countVehicles, capacityVehicles);
+
+            ArrayList<Customer> customers = new ArrayList<>();
+            JSONArray customersArray = data.getJSONArray("customers");
+            for (int i = 0; i < customersArray.length(); i++) {
+                JSONObject customerData = customersArray.getJSONObject(i);
+                Location location = new Location(customerData.getDouble("coordinate_x"), customerData.getDouble("coordinate_y"));
+                Customer customer = new Customer(
+                        customerData.getInt("id_customer"),
+                        customerData.getDouble("request"),
+                        location
+                );
+                customers.add(customer);
+            }
+
+            ArrayList<Depot> depots = new ArrayList<>();
+            JSONArray depotsArray = data.getJSONArray("depots");
+            for (int i = 0; i < depotsArray.length(); i++) {
+                JSONObject depotData = depotsArray.getJSONObject(i);
+                Location location = new Location(depotData.getDouble("coordinate_x"), depotData.getDouble("coordinate_y"));
+                Depot depot = new Depot(
+                        depotData.getInt("id_depot"),
+                        location,
+                        new ArrayList<>(List.of(fleet))
+                );
+                depots.add(depot);
+            }
+
+            problemInstance.setListCustomers(customers);
+            problemInstance.setListDepots(depots);
+
+            return problemInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Problem loadTTRPFromJson(String filePath) {
+        try (FileReader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject data = new JSONObject(tokener);
+
+            Problem problemInstance = Problem.getProblem();
+
+            double capacityVehicle = data.getDouble("capacity_vehicle");
+            double capacityTrailer = data.getDouble("capacity_trailer");
+            int countVehicles = data.getInt("count_vehicles");
+            int countTrailers = data.getInt("count_trailers");
+
+            FleetTTRP fleet = new FleetTTRP(countVehicles, capacityVehicle, countTrailers, capacityTrailer);
+
+            ArrayList<CustomerTTRP> customers = new ArrayList<>();
+            JSONArray customersArray = data.getJSONArray("customers");
+            for (int i = 0; i < customersArray.length(); i++) {
+                JSONObject customerData = customersArray.getJSONObject(i);
+                Location location = new Location(customerData.getDouble("coordinate_x"), customerData.getDouble("coordinate_y"));
+                CustomerTTRP customer = new CustomerTTRP(
+                        customerData.getInt("id_customer"),
+                        customerData.getDouble("request"),
+                        location,
+                        customerData.getInt("type_customer")
+                );
+                customers.add(customer);
+            }
+
+            ArrayList<Depot> depots = new ArrayList<>();
+            JSONArray depotsArray = data.getJSONArray("depots");
+            for (int i = 0; i < depotsArray.length(); i++) {
+                JSONObject depotData = depotsArray.getJSONObject(i);
+                Location location = new Location(depotData.getDouble("coordinate_x"), depotData.getDouble("coordinate_y"));
+                Depot depot = new Depot(
+                        depotData.getInt("id_depot"),
+                        location,
+                        new ArrayList<>(List.of(fleet))
+                );
+                depots.add(depot);
+            }
+            
+            ArrayList<Customer> customers_ttrp = new ArrayList<>(customers);
+
+            problemInstance.setListCustomers(customers_ttrp);
+            problemInstance.setListDepots(depots);
+
+            return problemInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Problem loadVRPTWFromJson(String filePath) {
+        try (FileReader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject data = new JSONObject(tokener);
+
+            Problem problemInstance = Problem.getProblem();
+
+            int countVehicles = data.getInt("count_vehicles");
+            double capacityVehicles = data.getDouble("capacity_vehicles");
+
+            Fleet fleet = new Fleet(countVehicles, capacityVehicles);
+
+            ArrayList<Customer> customers = new ArrayList<>();
+            JSONArray customersArray = data.getJSONArray("customers");
+            for (int i = 0; i < customersArray.length(); i++) {
+                JSONObject customerData = customersArray.getJSONObject(i);
+                TimeWindow timeWindow = new TimeWindow(
+                        customerData.getFloat("initial_node"),
+                        customerData.getFloat("end_node"),
+                        customerData.getFloat("service_time")
+                );
+
+                Location location = new Location(customerData.getDouble("coordinate_x"), customerData.getDouble("coordinate_y"));
+                Customer customer = new Customer(
+                        customerData.getInt("id_customer"),
+                        customerData.getDouble("request"),
+                        location,
+                        timeWindow
+                );
+                customers.add(customer);
+            }
+
+            ArrayList<Depot> depots = new ArrayList<>();
+            JSONArray depotsArray = data.getJSONArray("depots");
+            for (int i = 0; i < depotsArray.length(); i++) {
+                JSONObject depotData = depotsArray.getJSONObject(i);
+                Location location = new Location(depotData.getDouble("coordinate_x"), depotData.getDouble("coordinate_y"));
+                Depot depot = new Depot(
+                        depotData.getInt("id_depot"),
+                        location,
+                        new ArrayList<>(List.of(fleet))
+                );
+                depots.add(depot);
+            }
+
+            problemInstance.setListCustomers(customers);
+            problemInstance.setListDepots(depots);
+
+            return problemInstance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
 }
         

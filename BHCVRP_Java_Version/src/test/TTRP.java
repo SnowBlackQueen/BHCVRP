@@ -29,11 +29,11 @@ public class TTRP {
     public static void main(String[] args) throws IOException, IllegalArgumentException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, Exception 
     {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosTTRP/Instancia_TTRP_10/Resultado_MJ_10.txt");
-            PrintStream printStream = new PrintStream(fileOutputStream);
+            //FileOutputStream fileOutputStream = new FileOutputStream("/D:/Escuela/BHCVRP/ResultadosTTRP/Instancia_TTRP_10/Resultado_MJ_10.txt");
+            //PrintStream printStream = new PrintStream(fileOutputStream);
 
-            System.setOut(printStream);
-            String pathFiles = "instances-ttrp//TTRP_1.txt";
+            //System.setOut(printStream);
+            String pathFiles = "D:/Escuela/BHCVRP/resources/previous/instances-ttrp/TTRP_1.txt";
                 //int totalInstances = 5;
                 LoadFile loadFile = new LoadFile();
 
@@ -70,7 +70,7 @@ public class TTRP {
                     ArrayList<ArrayList<Integer>> idAssignedCustomers = new ArrayList<ArrayList<Integer>>();
                     idAssignedCustomers.add(idCustomers);
 
-                    HeuristicType heuristicType = HeuristicType.MoleJameson;
+                    HeuristicType heuristicType = HeuristicType.RandomMethod;
                     int countExecution = 100;
 
                     if(heuristicType == HeuristicType.Sweep){
@@ -121,8 +121,8 @@ public class TTRP {
                                     System.out.println("------------------------------------------");
                             }
                     }
-                    printStream.close();
-            fileOutputStream.close();
+                    //printStream.close();
+            //fileOutputStream.close();
 
             //System.setOut(System.out); // Restaurar la salida estándar
             } catch (IOException e) {

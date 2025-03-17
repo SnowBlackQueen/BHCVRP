@@ -567,7 +567,7 @@ public class StrategyHeuristic {
 				}
 				
 				
-                                if(Controller.getController().loadProblem(idCustomers, requestCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listCountV, listDistances))
+                                if(Controller.getController().loadProblem(idCustomers, requestCustomers, axisXCustomers, axisYCustomers, idDepots, axisXDepots, axisYDepots, listCountV, listCapV))
 				{
 					Controller.getController().executeAssignment(typeAssignment);
 					adapt(Controller.getController().getSolution().getClusters());

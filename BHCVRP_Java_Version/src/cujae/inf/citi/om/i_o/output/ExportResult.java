@@ -6,6 +6,7 @@ package cujae.inf.citi.om.i_o.output;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class ExportResult {
         }
     }
 
-    public static void toCsv(List<List<String>> data, String filePath) throws IOException {
+    public static void toCsv(ArrayList<ArrayList<String>> data, String filePath) throws IOException {
         try (FileWriter file = new FileWriter(filePath)) {
             for (List<String> row : data) {
                 file.write(String.join(",", row) + "\n");
